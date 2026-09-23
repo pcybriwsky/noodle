@@ -254,7 +254,44 @@ def pasta(name, p):
     return make
 
 
-# id -> (label, generator). The sprout is the hand-drawn base and stays as is.
+INK = "#2B2420"
+FLOOR = re.compile(r'<ellipse cx="4\d" cy="8\d" rx="[\d.]+" ry="2.6" fill="currentColor" stroke="none" opacity="0.08">(?:\s*<animate[^>]*/>\s*</ellipse>)?|<ellipse cx="4\d" cy="8\d" rx="[\d.]+" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>')
+EXTRAS_OUT = re.compile(r'<(circle|ellipse|path) data-part="(?:glow|cue)"[^>]*?(?:/>|>.*?</\1>)', re.S)
+
+
+def paper(svg: str, uid: str) -> str:
+    """Papercraft: the figure becomes a paper cutout. A copy of the figure without its glows and
+    arrows renders only the paper around it (hard shadow, white die-cut edge, one ink outline around
+    the whole silhouette); the full figure draws on top. Limbs stay ink: it's printed on paper."""
+    head, inner = re.match(r"(<svg[^>]*>)(.*)</svg>", svg.strip(), re.S).groups()
+    inner = FLOOR.sub("", inner).replace("currentColor", INK)
+    base = EXTRAS_OUT.sub("", inner)
+    base = re.sub(r'id="([^"]+)"', r'id="\1-b"', base)
+    base = re.sub(r"url\(#([^)]+)\)", r"url(#\1-b)", base)
+    head = head.replace("<svg ", '<svg overflow="visible" ', 1)
+    defs = (f'<defs><filter id="paper-{uid}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">'
+            '<feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/>'
+            '<feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/>'
+            '<feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/>'
+            '<feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/>'
+            '<feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/>'
+            '<feComposite in2="so" operator="in" result="shadow"/>'
+            '<feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge>'
+            '</filter></defs>')
+    return f'{head}{defs}<g data-part="paper" filter="url(#paper-{uid})">{base}</g>{inner}</svg>'
+
+
+_puid = [0]
+
+
+def papered(make):
+    def wrapped(svg: str) -> str:
+        _puid[0] += 1
+        return paper(make(svg), f"p{_puid[0]}")
+    return wrapped
+
+
+# id -> (label, generator). Everyone, the sprout included, comes out as a paper cutout.
 CHARACTERS = {
     "rigatoni": ("Toni the Rigatoni", pasta("rigatoni", Rigatoni())),
     "spaghetti": ("Sammy the Spaghetti", pasta("spaghetti", Spaghetti())),
@@ -262,6 +299,7 @@ CHARACTERS = {
     "lasagna": ("Lenny the Lasagna", pasta("lasagna", Lasagna())),
     "sprout": ("Sprout", lambda s: s),
 }
+CHARACTERS = {k: (label, papered(make)) for k, (label, make) in CHARACTERS.items()}
 EXTRAS = [("wave", "Wave (intro)"), ("hang", "Hang (entrance)")]  # generated for every character too
 
 grids = {}
@@ -272,7 +310,7 @@ for name, (label, make) in CHARACTERS.items():
     for file, title, spec in items:
         base = figs / file
         svg = make(base.read_text()) if base.exists() else '<div class="missing"></div>'
-        if name != "sprout" and base.exists():
+        if base.exists():
             out = figs / name / file
             out.parent.mkdir(exist_ok=True)
             out.write_text(svg)
@@ -297,16 +335,16 @@ page = f"""<!doctype html>
 <title>Noodle figures</title>
 <style>
   :root {{
-    --bg: #FFFFFF; --tile: #FBF4EF; --fg: #2B2420; --muted: #8A817B; --line: #EDE6E1; --accent: #B85A3A;
+    --bg: #F4EDE2; --tile: #EADCC5; --fg: #2B2420; --muted: #8A817B; --line: #EDE6E1; --accent: #B85A3A;
     color-scheme: light;
   }}
   :root[data-theme="dark"] {{
-    --bg: #161312; --tile: #221D1B; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
+    --bg: #221D1B; --tile: #433831; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
     color-scheme: dark;
   }}
   @media (prefers-color-scheme: dark) {{
     :root:not([data-theme="light"]) {{
-      --bg: #161312; --tile: #221D1B; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
+      --bg: #221D1B; --tile: #433831; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
       color-scheme: dark;
     }}
   }}

@@ -5,7 +5,7 @@ Stretching while Claude is noodling.
 ![Toni the Rigatoni dropping in on a noodle](docs/demo.gif)
 <!-- GIF placeholder: record a card popping up and drop it at docs/demo.gif -->
 
-While Claude Code is busy on a long prompt, a little noodle drops in from your menu bar on a strand of spaghetti with a quick desk stretch. Pick your pasta: Toni the Rigatoni, Sammy the Spaghetti, Patty the Penne, or Lenny the Lasagna. Quick prompts never trigger a card, and it never steals focus from your terminal or editor.
+While Claude Code is busy on a long prompt, a little papercraft noodle drops in from your menu bar on a strand of spaghetti with a quick desk stretch. Pick your pasta: Toni the Rigatoni, Sammy the Spaghetti, Patty the Penne, or Lenny the Lasagna. Quick prompts never trigger a card, and it never steals focus from your terminal or editor.
 
 Works everywhere Claude Code runs hooks: the CLI, the VS Code and Cursor extensions, and the Code tab in Claude Desktop. macOS only.
 
@@ -29,6 +29,7 @@ Needs Xcode command line tools (`swift`) and `jq`.
 - Working late? No quiet hours by default, so you still get nudged.
 - Done logs it, Snooze pushes the next one back 10 minutes, and ignoring it is fine too.
 - **How to** opens beginner steps for the move, plus the most common mistake to avoid.
+- Everything is papercraft: the noodle is a paper cutout, the card is a sheet taped to your screen, and Done stamps it before it peels away.
 - If Claude finishes while a card is up, it says so, and you can finish your set.
 - The menu bar icon shows today's count and has Pause, Show one now, Say hi to Toni, and Settings.
 

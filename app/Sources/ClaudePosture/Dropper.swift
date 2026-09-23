@@ -60,15 +60,15 @@ final class Dropper: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
     /// Fades the rig out as the card appears in its place.
     func finish() {
         let g = generation
-        NSAnimationContext.runAnimationGroup({ ctx in
+        NSAnimationContext.runAnimationGroup { ctx in
             ctx.duration = 0.2
             panel.animator().alphaValue = 0
-        }, completionHandler: { [weak self] in
-            Task { @MainActor in
-                guard let self, self.generation == g else { return }
-                self.panel.orderOut(nil)
-            }
-        })
+        }
+        Task { [weak self] in   // don't rely on the completion handler, see CardController.present
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            guard let self, self.generation == g else { return }
+            self.panel.orderOut(nil)
+        }
     }
 
     /// Stops a drop in progress without calling back (the card was dismissed mid-drop).

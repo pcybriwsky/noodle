@@ -35,151 +35,169 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <style>
+  /* Papercraft: a sheet of paper taped to your screen, hanging from a paper noodle. */
   :root {
-    --bg: #FFFFFF;
-    --fg: #2B2420;
-    --muted: #6B625C;
-    --faint: #9A918A;
-    --tile: #FBF3E6;
-    --accent: #B7552F;
-    --btn: #F3EEEA;
-    --btn-hover: #EBE4DF;
-    --primary: #2B2420;
-    --on-primary: #FFFFFF;
-    --line: rgba(43, 36, 32, 0.09);
-    --track: rgba(217, 119, 87, 0.14);
-    --bar: #D97757;
-    --ok: #3E9B5B;
-    --shadow: 0 10px 30px rgba(43, 36, 32, 0.14), 0 0 0 0.5px rgba(43, 36, 32, 0.12);
+    --paper: #FFFBF2; --fg: #3A2A20; --muted: #6B5A4C; --faint: #9A8878;
+    --tile: #EADCC5; --accent: #C63D2F; --stamp: #C63D2F; --pencil: #3A2A20;
+    --perf: rgba(58, 42, 32, 0.25); --fill: #E9A07F; --ok: #3E8E54;
+    --line: rgba(58, 42, 32, 0.12); --btn: #F1E7D8; --primary: #3A2A20; --on-primary: #FFFBF2;
+    --shadow: 3px 5px 0 rgba(58, 42, 32, 0.16), 0 0 0 1px rgba(58, 42, 32, 0.08);
+    --display: ui-rounded, "SF Pro Rounded", -apple-system, sans-serif;
+    --hand: "Noteworthy", "Chalkboard SE", "Marker Felt", cursive;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #221E1C; --fg: #F6F1EE; --muted: #BDB4AE; --faint: #8F8680; --tile: #2E2825;
-      --accent: #F0A07F; --btn: #37302D; --btn-hover: #413935; --primary: #F6F1EE; --on-primary: #221E1C;
-      --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16); --bar: #E08A67; --ok: #6CCB8A;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+      --paper: #322A26; --fg: #F6EDE2; --muted: #CDBFB1; --faint: #A89888; --tile: #433831;
+      --accent: #F08A6E; --stamp: #F0705C; --pencil: #F6EDE2; --perf: rgba(255, 255, 255, 0.25); --ok: #7BD394;
+      --line: rgba(255, 255, 255, 0.1); --btn: #40362F; --primary: #F6EDE2; --on-primary: #322A26;
+      --shadow: 3px 5px 0 rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #221E1C; --fg: #F6F1EE; --muted: #BDB4AE; --faint: #8F8680; --tile: #2E2825;
-    --accent: #F0A07F; --btn: #37302D; --btn-hover: #413935; --primary: #F6F1EE; --on-primary: #221E1C;
-    --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16); --bar: #E08A67; --ok: #6CCB8A;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    --paper: #322A26; --fg: #F6EDE2; --muted: #CDBFB1; --faint: #A89888; --tile: #433831;
+    --accent: #F08A6E; --stamp: #F0705C; --pencil: #F6EDE2; --perf: rgba(255, 255, 255, 0.25); --ok: #7BD394;
+    --line: rgba(255, 255, 255, 0.1); --btn: #40362F; --primary: #F6EDE2; --on-primary: #322A26;
+    --shadow: 3px 5px 0 rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
   }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; background: transparent; overflow: hidden; }
   body {
-    padding: 24px;
-    font: 12px/16px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    padding: 24px; position: relative;
+    font: 12px/16px var(--display);
     color: var(--fg);
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none; user-select: none;
     cursor: default;
   }
   .card {
-    position: relative; width: 340px; background: var(--bg); border-radius: 14px;
+    position: relative; width: 340px; background: var(--paper) var(--grain); border-radius: 8px;
     box-shadow: var(--shadow); overflow: hidden;
+    transition: transform .38s cubic-bezier(.4, 0, .7, .2), opacity .38s ease;
   }
   .main { display: flex; gap: 14px; padding: 14px; height: 132px; }
   .fig {
-    flex: none; width: 104px; height: 104px; border-radius: 11px; background: var(--tile);
+    flex: none; width: 104px; height: 104px; border-radius: 9px; background: var(--tile) var(--grain);
     color: var(--fg); display: grid; place-items: center;
   }
-  .fig svg { width: 96px; height: 96px; display: block; }
+  .fig svg { width: 92px; height: 92px; display: block; overflow: visible; }
   .fig .missing { width: 64px; height: 64px; border-radius: 50%; border: 1.5px dashed var(--faint); opacity: .5; }
 
   .body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .name { font-size: 15px; line-height: 19px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .meta { flex: none; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .name { font-size: 16px; line-height: 20px; font-weight: 700; letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta { flex: none; font: 12px/16px var(--hand); color: var(--faint); }
   .line {
-    margin-top: 3px; color: var(--muted); height: 32px;
+    margin-top: 2px; color: var(--muted); height: 32px;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .status { margin-top: 3px; height: 32px; display: none; align-items: center; gap: 7px; color: var(--fg); font-weight: 510; }
-  .status i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+  .status { margin-top: 2px; height: 32px; display: none; align-items: center; gap: 6px; font: 13px/16px var(--hand); color: var(--ok); }
+  .status svg { flex: none; width: 14px; height: 14px; }
   .card.stopped .line { display: none; }
   .card.stopped .status { display: flex; }
 
-  .specrow { margin-top: 3px; display: flex; align-items: center; justify-content: space-between; height: 18px; }
-  .spec { font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .specrow { margin-top: 2px; display: flex; align-items: center; justify-content: space-between; height: 18px; }
+  .spec { font-weight: 700; color: var(--accent); white-space: nowrap; }
   .howto {
-    font: inherit; font-weight: 510; color: var(--muted); background: none; border: 0; padding: 1px 0 1px 6px;
+    font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; padding: 1px 0 1px 6px;
     display: inline-flex; align-items: center; gap: 3px; cursor: pointer; border-radius: 5px;
   }
   .howto:hover { color: var(--fg); }
   .howto svg { width: 10px; height: 10px; transition: transform .18s ease; }
   .card.open .howto svg { transform: rotate(180deg); }
 
-  .actions { margin-top: auto; display: flex; align-items: center; gap: 6px; }
+  .actions { margin-top: auto; display: flex; align-items: center; gap: 10px; }
+  .stamp { border: 0; background: none; padding: 0; margin: -3px 0 -3px -3px; cursor: pointer; color: var(--stamp); line-height: 0; }
+  .stamp svg { width: 70px; height: 31px; display: block; transition: transform .12s ease; }
+  .stamp:hover svg { transform: rotate(-2deg) scale(1.04); }
+  .pencil {
+    font: 15px/18px var(--hand); color: var(--pencil); background: none; border: 0; padding: 0 1px 1px;
+    border-bottom: 1.5px solid var(--pencil); cursor: pointer;
+  }
+  .pencil:hover { opacity: .75; }
+  button:focus-visible { outline: 2px solid var(--fill); outline-offset: 2px; }
+  .left { margin-left: auto; font: 12px/16px var(--hand); color: var(--faint); font-variant-numeric: tabular-nums; }
   button.b {
-    font: inherit; font-weight: 590; height: 24px; padding: 0 12px; border: 0; border-radius: 7px;
+    font: inherit; font-weight: 700; height: 24px; padding: 0 12px; border: 0; border-radius: 6px;
     background: var(--btn); color: var(--fg); cursor: pointer;
   }
-  button.b:hover { background: var(--btn-hover); }
-  button.b.primary { background: var(--primary); color: var(--on-primary); }
-  button.b.primary:hover { opacity: .88; }
-  button:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
-  .left { margin-left: auto; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  button.b.primary { background: var(--primary); color: var(--on-primary); box-shadow: 1.5px 2px 0 rgba(58, 42, 32, 0.2); }
+  button.b:hover { opacity: .88; }
 
-  .steps { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
+  .steps { display: none; border-top: 1.5px dashed var(--line); padding: 12px 16px 18px 14px; }
   .card.open .steps { display: block; }
-  .steps h2 { margin: 0 0 8px; font-size: 11px; line-height: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+  .steps h2, .setup h2 { margin: 0 0 8px; font: 14px/18px var(--hand); color: var(--faint); }
   .steps ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   .steps li { display: flex; gap: 10px; font-size: 12.5px; line-height: 17px; color: var(--fg); }
   .steps li b {
-    flex: none; width: 18px; height: 18px; margin-top: -1px; border-radius: 50%; background: var(--tile);
-    color: var(--accent); font-size: 11px; font-weight: 700; display: grid; place-items: center;
+    flex: none; width: 19px; height: 19px; margin-top: -1px; border-radius: 50%; background: var(--tile);
+    color: var(--accent); font-size: 11px; font-weight: 800; display: grid; place-items: center;
+    box-shadow: 1px 1.5px 0 rgba(58, 42, 32, 0.15);
   }
-  .tip { margin-top: 12px; padding: 9px 11px; border-radius: 9px; background: var(--tile); font-size: 12px; line-height: 16px; color: var(--fg); }
-  .tip strong { font-weight: 650; color: var(--accent); }
-  .safety { margin-top: 10px; font-size: 11px; line-height: 15px; color: var(--faint); }
+  .tip {
+    margin-top: 12px; padding: 9px 11px; border-radius: 3px; background: #FFF0B8 var(--grain); color: #3A2A20;
+    font-size: 12px; line-height: 16px; box-shadow: 2px 3px 0 rgba(58, 42, 32, 0.12); transform: rotate(-0.6deg);
+  }
+  .tip strong { font-weight: 800; color: #B4452F; }
+  .safety { margin-top: 10px; font: 12px/15px var(--hand); color: var(--faint); }
 
-  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--track); }
-  .progress > div { height: 100%; background: var(--bar); transform-origin: left; }
+  /* Progress: a tear-off perforation that fills in as time runs down */
+  .progress { position: absolute; left: 12px; right: 12px; bottom: 6px; height: 3px; border-top: 1.5px dashed var(--perf); }
+  .progress > div { position: absolute; left: 0; right: 0; top: -2px; height: 3px; border-radius: 2px; background: var(--fill); transform-origin: left; }
 
   .ex { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .wbody { flex: 1; min-height: 0; display: none; flex-direction: column; }
   .card.welcome .ex, .card.welcome .progress, .card.welcome .steps { display: none; }
   .card.welcome .wbody { display: flex; }
   .dots { flex: none; display: flex; gap: 4px; align-self: center; }
-  .dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--line); }
-  .dots i.on { background: var(--bar); }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+  .dots i.on { background: var(--fill); }
   .card.welcome .main { height: 160px; }
   .card.welcome .fig { align-self: center; }
   .wtext { margin-top: 5px; color: var(--muted); line-height: 17px; }
   .wbody .actions { padding-top: 12px; }
-  .setup { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
+  .setup { display: none; border-top: 1.5px dashed var(--line); padding: 12px 16px 16px 14px; }
   .card.welcome.setup-open .setup { display: block; }
-  .pick { display: none; border-top: 1px solid var(--line); padding: 12px 14px 14px; }
-  .card.welcome.pick-open .pick { display: flex; flex-direction: column; gap: 6px; }
+  .pick { display: none; border-top: 1.5px dashed var(--line); padding: 12px 14px 14px; }
+  .card.welcome.pick-open .pick { display: flex; flex-direction: column; gap: 7px; }
   .pick button {
     font: inherit; text-align: left; display: flex; gap: 10px; align-items: flex-start; width: 100%;
-    padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer;
+    padding: 9px 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); cursor: pointer;
+    box-shadow: 1.5px 2px 0 rgba(58, 42, 32, 0.1);
   }
   .pick button:hover { background: var(--tile); }
-  .pick button[aria-pressed="true"] { background: var(--tile); border-color: var(--bar); }
+  .pick button[aria-pressed="true"] { background: var(--tile); border-color: var(--fill); }
   .pick .radio { flex: none; width: 14px; height: 14px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--faint); display: grid; place-items: center; }
-  .pick button[aria-pressed="true"] .radio { border-color: var(--bar); }
-  .pick button[aria-pressed="true"] .radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bar); }
-  .pick b { display: block; font-size: 12.5px; line-height: 17px; font-weight: 650; }
+  .pick button[aria-pressed="true"] .radio { border-color: var(--accent); }
+  .pick button[aria-pressed="true"] .radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .pick b { display: block; font-size: 12.5px; line-height: 17px; font-weight: 700; }
   .pick span { display: block; font-size: 12px; line-height: 16px; color: var(--muted); }
-  .setup h2 { margin: 0 0 8px; font-size: 11px; line-height: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
   .setup ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   .setup li { display: flex; gap: 10px; font-size: 12.5px; line-height: 17px; }
   .setup li svg { flex: none; width: 18px; height: 18px; margin-top: -1px; }
-  .setup li b { font-weight: 650; }
+  .setup li b { font-weight: 700; }
 
+  /* The paper noodle the card hangs from, and the washi tape holding it on */
   .noodle { position: absolute; left: 82px; top: 0; display: none; overflow: visible; transform-origin: 8px 0; animation: sway 2.8s ease-in-out infinite; }
-  body.noodled .noodle { display: block; }
+  .tape { position: absolute; left: 64px; top: 14px; width: 52px; height: 20px; display: none; z-index: 2; }
+  body.noodled .noodle, body.noodled .tape { display: block; }
   @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
 
-  @media (prefers-reduced-motion: reduce) { .howto svg { transition: none; } }
+  /* Done: stamp it, then the sheet peels off the tape and floats away */
+  .bigstamp {
+    position: absolute; left: 50%; top: 50%; width: 150px; height: 66px; margin: -33px 0 0 -40px; color: var(--stamp);
+    opacity: 0; pointer-events: none; transform: scale(1.7) rotate(-8deg);
+  }
+  .card.stamped .bigstamp { opacity: .92; transform: scale(1) rotate(-8deg); transition: transform .16s cubic-bezier(.3, 1.6, .5, 1), opacity .1s; }
+  .card.peel { transform: translate(6px, -16px) rotate(4deg); opacity: 0; }
+  body.peeling .noodle, body.peeling .tape { opacity: 0; transition: opacity .3s .15s; }
+
+  @media (prefers-reduced-motion: reduce) { .howto svg, .card { transition: none; } .noodle { animation: none; } }
 
   /* Browser preview only */
   .demo { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; width: 340px; }
-  .demo button { font: 11px/1 -apple-system, sans-serif; padding: 6px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+  .demo button { font: 11px/1 -apple-system, sans-serif; padding: 6px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -191,7 +209,7 @@
         <div class="ex">
         <div class="top"><span class="name" id="name"></span><span class="meta" id="meta"></span></div>
         <div class="line" id="instruction"></div>
-        <div class="status" id="status"><i></i><span id="statusText"></span></div>
+        <div class="status" id="status"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5 L5.8 10.5 L11.5 3.5"/></svg><span id="statusText"></span></div>
         <div class="specrow">
           <span class="spec" id="spec"></span>
           <button class="howto" id="howto" aria-expanded="false" aria-controls="steps">
@@ -200,8 +218,8 @@
           </button>
         </div>
         <div class="actions">
-          <button class="b primary" id="done">Done</button>
-          <button class="b" id="snooze">Snooze</button>
+          <button class="stamp" id="done" aria-label="Done"><svg viewBox="0 0 70 31" aria-hidden="true"><defs><filter id="ink" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" seed="2" result="n"/><feComponentTransfer in="n" result="m"><feFuncA type="discrete" tableValues="1 1 1 1 1 0.35"/></feComponentTransfer><feComposite in="SourceGraphic" in2="m" operator="in"/></filter></defs><g transform="rotate(-5 35 15.5)" filter="url(#ink)"><rect x="4" y="5" width="62" height="21" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/><text x="35" y="20.2" text-anchor="middle" font-family="ui-rounded, -apple-system, sans-serif" font-weight="900" font-size="12.5" letter-spacing="1.6" fill="currentColor">DONE</text></g></svg></button>
+          <button class="pencil" id="snooze">snooze</button>
           <span class="left" id="left"></span>
         </div>
         </div>
@@ -227,7 +245,9 @@
       <div class="safety">Keep it gentle. Stop if anything hurts, tingles, or feels sharp.</div>
     </section>
     <div class="progress"><div id="bar"></div></div>
+    <svg viewBox="0 0 70 31" class="bigstamp" aria-hidden="true"><defs><filter id="ink2" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" seed="2" result="n"/><feComponentTransfer in="n" result="m"><feFuncA type="discrete" tableValues="1 1 1 1 1 0.35"/></feComponentTransfer><feComposite in="SourceGraphic" in2="m" operator="in"/></filter></defs><g transform="rotate(-5 35 15.5)" filter="url(#ink2)"><rect x="4" y="5" width="62" height="21" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/><text x="35" y="20.2" text-anchor="middle" font-family="ui-rounded, -apple-system, sans-serif" font-weight="900" font-size="12.5" letter-spacing="1.6" fill="currentColor">DONE</text></g></svg>
   </div>
+  <svg class="tape" viewBox="0 0 52 20" aria-hidden="true"><g transform="rotate(-4 26 10)"><path d="M2 3 L50 3 L48.5 6 L50 9 L48.5 12 L50 15 L50 17 L2 17 L3.5 14 L2 11 L3.5 8 L2 5 Z" fill="#E9A07F" opacity="0.78"/><path d="M9 3 V17 M17 3 V17 M25 3 V17 M33 3 V17 M41 3 V17" stroke="#FFFFFF" stroke-width="2.4" opacity="0.3"/></g></svg>
 <script>
   window.CARD = { width: 340, height: 132, pad: 24 };
 
@@ -286,10 +306,16 @@
     n.setAttribute("height", String(h));
     let d = "M8 0", flip = 1;
     for (let y = 0; y < h; y += 8) { const e = Math.min(y + 8, h); d += ` Q${8 + 3 * flip} ${(y + e) / 2} 8 ${e}`; flip = -flip; }
-    n.innerHTML = `<path d="${d}" stroke="#C99338" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
+    n.innerHTML = `<path d="${d}" stroke="#FFFFFF" stroke-width="7.4"/><path d="${d}" stroke="#3A2A20" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
+  }
+
+  function resetPaper() {
+    card.classList.remove("stamped", "peel");
+    document.body.classList.remove("peeling");
   }
 
   window.showCard = function (p) {
+    resetPaper();
     setNoodle(p.noodle);
     card.classList.remove("stopped", "welcome", "setup-open", "pick-open");
     $("name").textContent = p.name || "";
@@ -315,7 +341,7 @@
   };
 
   window.setSubtitle = function (text) {
-    $("statusText").textContent = "Claude's done. Finish your set.";
+    $("statusText").textContent = "Claude's done! Finish your set.";
     card.classList.add("stopped");
   };
 
@@ -372,6 +398,7 @@
   }
 
   window.showWelcome = function (p) {
+    resetPaper();
     setNoodle(p && p.noodle);
     clearInterval(timer);
     card.classList.remove("stopped", "open");
@@ -388,7 +415,16 @@
   });
   $("wSkip").addEventListener("click", () => send({ action: "welcome-close" }));
 
-  $("done").addEventListener("click", () => send({ action: "done" }));
+  // Done: the stamp thunks down, then the sheet peels off and floats away before Swift hides it.
+  let finishing = false;
+  $("done").addEventListener("click", () => {
+    if (finishing) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return send({ action: "done" });
+    finishing = true;
+    card.classList.add("stamped");
+    setTimeout(() => { card.classList.add("peel"); document.body.classList.add("peeling"); }, 420);
+    setTimeout(() => { send({ action: "done" }); finishing = false; }, 820);
+  });
   $("snooze").addEventListener("click", () => send({ action: "snooze" }));
   $("howto").addEventListener("click", () => setOpen(!card.classList.contains("open"), true));
 
@@ -404,8 +440,8 @@
       const ex = list[i];
       const file = ex.figure.split("/").pop();
       window.showCard(Object.assign({}, ex, {
-        figure: character === "sprout" ? ex.figure : `figures/${character}/${file}`,
-        index: i + 1, total: list.length, doneToday: 2,
+        figure: `figures/${character}/${file}`,
+        index: i + 1, total: list.length, doneToday: 2, noodle: 16,
         subtitle: "Claude's on it. Good time for a quick one.",
       }));
     };
@@ -416,7 +452,7 @@
       if (a === "stop") window.setSubtitle("Claude's done, finish your set");
       if (a === "theme") { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark"; }
       if (a === "char") { const cast = ["rigatoni", "spaghetti", "penne", "lasagna", "sprout"]; character = cast[(cast.indexOf(character) + 1) % cast.length]; show(); }
-      if (a === "intro") window.showWelcome({ figure: character === "sprout" ? "figures/wave.svg" : `figures/${character}/wave.svg` });
+      if (a === "intro") window.showWelcome({ figure: `figures/${character}/wave.svg`, noodle: 16 });
     });
     fetch("exercises.json").then((r) => r.json()).then((ex) => { list = ex; show(); });
   }

@@ -15,7 +15,14 @@
   #strand { position: absolute; left: 50%; margin-left: -8px; overflow: visible; }
   #toni { position: absolute; left: 50%; margin-left: -48px; width: 96px; height: 96px; color: #2B2420; }
   @media (prefers-color-scheme: dark) { #toni { color: #F6F1EE; } }
-  #toni svg { width: 96px; height: 96px; display: block; }
+  #toni svg { width: 96px; height: 96px; display: block; overflow: visible; }
+  /* light paper on a string: it sways as it drops, then settles */
+  #toni { transform-origin: 50% 6px; }
+  #rig.dropping #toni { animation: flutter var(--dur) ease-out both; }
+  @keyframes flutter {
+    0% { transform: rotate(-9deg); } 30% { transform: rotate(7deg); } 55% { transform: rotate(-5deg); }
+    75% { transform: rotate(3deg); } 90% { transform: rotate(-1deg); } 100% { transform: rotate(0); }
+  }
   @keyframes drop {
     0%   { transform: translateY(var(--from)); }
     62%  { transform: translateY(7px); }
@@ -57,10 +64,13 @@
     strand.style.top = `${-height}px`;
     strand.setAttribute("height", String(height + hands));
     const d = strandPath(0, height + hands);
-    strand.innerHTML = `<path d="${d}" stroke="#C99338" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
+    strand.innerHTML = `<path d="${d}" stroke="#FFFFFF" stroke-width="7.4"/><path d="${d}" stroke="#3A2A20" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
 
     rig.style.animation = "none";
+    rig.classList.remove("dropping");
     void rig.offsetWidth;
+    rig.style.setProperty("--dur", `${p.duration}s`);
+    rig.classList.add("dropping");
     rig.style.setProperty("--from", `${-(toniTop + 110)}px`);
     rig.style.opacity = "1";
     rig.style.animation = `drop ${p.duration}s cubic-bezier(.3, .7, .4, 1) both`;

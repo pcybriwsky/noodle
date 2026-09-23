@@ -1,15 +1,40 @@
-<svg data-character="lasagna" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext">
+<svg overflow="visible" data-character="lasagna" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext"><defs><filter id="paper-p35" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p35)">
+  <defs><radialGradient id="cp-glow-lasagna35-b"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="#2B2420" stroke="none" opacity="0.08"/>
+  
+  <g data-part="legs">
+    <path d="M42 58 Q52 60 62 61 L62 83"/>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="#2B2420" stroke="none"/>
+    <path d="M46 58 Q57 60 67 61 L67 83"/>
+    <ellipse cx="70" cy="85" rx="5" ry="2.6" fill="#2B2420" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 46 60;-22 46 60;-22 46 60;0 46 60" keyTimes="0;0.4;0.65;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>
+    <path data-part="body" d="M32 25 L64 25 Q65.8 27.2 64 29.5 Q65.8 31.8 64 34.0 Q65.8 36.2 64 38.5 Q65.8 40.8 64 43.0 Q65.8 45.2 64 47.5 Q65.8 49.8 64 52.0 Q65.8 54.2 64 56.5 Q65.8 58.8 64 61.0 L32 61.0 Q30.2 58.8 32 56.5 Q30.2 54.2 32 52.0 Q30.2 49.8 32 47.5 Q30.2 45.2 32 43.0 Q30.2 40.8 32 38.5 Q30.2 36.2 32 34.0 Q30.2 31.8 32 29.5 Q30.2 27.2 32 25.0 Z" fill="#EDC36B" stroke="none"/><path d="M32 36 Q34 37.2 36 36 Q38 34.8 40 36 Q42 37.2 44 36 Q46 34.8 48 36 Q50 37.2 52 36 Q54 34.8 56 36 Q58 37.2 60 36 Q62 34.8 64 36 L64 39.5 Q62 38.3 60 39.5 Q58 40.7 56 39.5 Q54 38.3 52 39.5 Q50 40.7 48 39.5 Q46 38.3 44 39.5 Q42 40.7 40 39.5 Q38 38.3 36 39.5 Q34 40.7 32 39.5 Z" fill="#C9492F" stroke="none"/><path d="M32 45 Q34 46.2 36 45 Q38 43.8 40 45 Q42 46.2 44 45 Q46 43.8 48 45 Q50 46.2 52 45 Q54 43.8 56 45 Q58 46.2 60 45 Q62 43.8 64 45 L64 48 Q62 46.8 60 48 Q58 49.2 56 48 Q54 46.8 52 48 Q50 49.2 48 48 Q46 46.8 44 48 Q42 49.2 40 48 Q38 46.8 36 48 Q34 49.2 32 48 Z" fill="#F7EAD0" stroke="none"/><path d="M32 53 Q34 54.2 36 53 Q38 51.8 40 53 Q42 54.2 44 53 Q46 51.8 48 53 Q50 54.2 52 53 Q54 51.8 56 53 Q58 54.2 60 53 Q62 51.8 64 53 L64 56.5 Q62 55.3 60 56.5 Q58 57.7 56 56.5 Q54 55.3 52 56.5 Q50 57.7 48 56.5 Q46 55.3 44 56.5 Q42 57.7 40 56.5 Q38 55.3 36 56.5 Q34 57.7 32 56.5 Z" fill="#C9492F" stroke="none"/>
+    
+    <path d="M55 42 L66 27 L46 21"/>
+    <g data-part="head">
+      <path d="M32 12 L64 12 Q65.8 14.2 64 16.5 Q65.8 18.8 64 21.0 Q65.8 23.2 64 25.5 Q65.8 27.8 64 30.0 Q65.8 32.2 64 34.5 Q65.8 36.8 64 39.0 L32 39.0 Q30.2 36.8 32 34.5 Q30.2 32.2 32 30.0 Q30.2 27.8 32 25.5 Q30.2 23.2 32 21.0 Q30.2 18.8 32 16.5 Q30.2 14.2 32 12.0 Z" fill="#EDC36B" stroke="none"/><path d="M32 12 Q34 13.2 36 12 Q38 10.8 40 12 Q42 13.2 44 12 Q46 10.8 48 12 Q50 13.2 52 12 Q54 10.8 56 12 Q58 13.2 60 12 Q62 10.8 64 12 L64 15.2 Q62 14.0 60 15.2 Q58 16.4 56 15.2 Q54 14.0 52 15.2 Q50 16.4 48 15.2 Q46 14.0 44 15.2 Q42 16.4 40 15.2 Q38 14.0 36 15.2 Q34 16.4 32 15.2 Z" fill="#C9492F" stroke="none"/><path d="M32 15.2 Q34 16.4 36 15.2 Q38 14.0 40 15.2 Q42 16.4 44 15.2 Q46 14.0 48 15.2 Q50 16.4 52 15.2 Q54 14.0 56 15.2 Q58 16.4 60 15.2 Q62 14.0 64 15.2 L64 17.0 Q62 15.8 60 17.0 Q58 18.2 56 17.0 Q54 15.8 52 17.0 Q50 18.2 48 17.0 Q46 15.8 44 17.0 Q42 18.2 40 17.0 Q38 15.8 36 17.0 Q34 18.2 32 17.0 Z" fill="#F7EAD0" stroke="none"/>
+      <g data-part="face" transform="translate(0 -4)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+</g>
   <defs><radialGradient id="cp-glow-lasagna35"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
-  <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="#2B2420" stroke="none" opacity="0.08"/>
   <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
     <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.62;0.75;1" dur="2.8s" repeatCount="indefinite"/>
   </path>
   <g data-part="legs">
     <path d="M42 58 Q52 60 62 61 L62 83"/>
-    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="#2B2420" stroke="none"/>
     <path d="M46 58 Q57 60 67 61 L67 83"/>
-    <ellipse cx="70" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="70" cy="85" rx="5" ry="2.6" fill="#2B2420" stroke="none"/>
   </g>
   <g>
     <animateTransform attributeName="transform" type="rotate" values="0 46 60;-22 46 60;-22 46 60;0 46 60" keyTimes="0;0.4;0.65;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>

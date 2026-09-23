@@ -186,9 +186,11 @@ final class Posture {
 
     private func armDismiss(after seconds: Double) {
         dismissTask?.cancel()
+        debug("auto dismiss in \(Int(seconds))s")
         dismissTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
             guard !Task.isCancelled else { return }
+            debug("auto dismiss fired")
             self?.finish("ignored")
         }
     }

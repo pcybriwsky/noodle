@@ -1,11 +1,45 @@
-<svg data-character="spaghetti" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="scap">
-  <defs><radialGradient id="cp-glow-spaghetti13"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
-  <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+<svg overflow="visible" data-character="spaghetti" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="scap"><defs><filter id="paper-p13" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p13)">
+  <defs><radialGradient id="cp-glow-spaghetti13-b"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  
   <g data-part="legs">
     <path d="M43 58 Q42 71 40 83"/>
     <path d="M53 58 Q54 71 56 83"/>
-    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
-    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
+  </g>
+  <path data-part="body" d="M35 25 L61 25 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="#F2D07E" stroke="none"/><path d="M39 27.0 Q40.1 29.0 39 31.0 Q37.9 33.0 39 35.0 Q40.1 37.0 39 39.0 Q37.9 41.0 39 43.0 Q40.1 45.0 39 47.0 Q37.9 49.0 39 51.0 Q40.1 53.0 39 55.0 Q37.9 57.0 39 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M43.5 27.0 Q44.6 29.0 43.5 31.0 Q42.4 33.0 43.5 35.0 Q44.6 37.0 43.5 39.0 Q42.4 41.0 43.5 43.0 Q44.6 45.0 43.5 47.0 Q42.4 49.0 43.5 51.0 Q44.6 53.0 43.5 55.0 Q42.4 57.0 43.5 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M48 27.0 Q49.1 29.0 48 31.0 Q46.9 33.0 48 35.0 Q49.1 37.0 48 39.0 Q46.9 41.0 48 43.0 Q49.1 45.0 48 47.0 Q46.9 49.0 48 51.0 Q49.1 53.0 48 55.0 Q46.9 57.0 48 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M52.5 27.0 Q53.6 29.0 52.5 31.0 Q51.4 33.0 52.5 35.0 Q53.6 37.0 52.5 39.0 Q51.4 41.0 52.5 43.0 Q53.6 45.0 52.5 47.0 Q51.4 49.0 52.5 51.0 Q53.6 53.0 52.5 55.0 Q51.4 57.0 52.5 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M57 27.0 Q58.1 29.0 57 31.0 Q55.9 33.0 57 35.0 Q58.1 37.0 57 39.0 Q55.9 41.0 57 43.0 Q58.1 45.0 57 47.0 Q55.9 49.0 57 51.0 Q58.1 53.0 57 55.0 Q55.9 57.0 57 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/>
+  
+  <path d="M42 38 Q39.5 44 42.5 50" stroke="#A9502F" stroke-width="2.2">
+    <animateTransform attributeName="transform" type="translate" values="0 0;3.5 0;3.5 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M54 38 Q56.5 44 53.5 50" stroke="#A9502F" stroke-width="2.2">
+    <animateTransform attributeName="transform" type="translate" values="0 0;-3.5 0;-3.5 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M37 42 Q26 44 26 31">
+    <animate attributeName="d" values="M37 42 Q26 44 26 31;M38 45 Q30 52 28 39;M38 45 Q30 52 28 39;M37 42 Q26 44 26 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="26" cy="29" r="2.8" fill="#2B2420" stroke="none">
+    <animate attributeName="cx" values="26;28;28;26" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M59 42 Q70 44 70 31">
+    <animate attributeName="d" values="M59 42 Q70 44 70 31;M58 45 Q66 52 68 39;M58 45 Q66 52 68 39;M59 42 Q70 44 70 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="70" cy="29" r="2.8" fill="#2B2420" stroke="none">
+    <animate attributeName="cx" values="70;68;68;70" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <g data-part="head">
+    <path d="M35 25 A13 13 0 0 1 61 25 L61 39 L35 39 Z" fill="#F2D07E" stroke="none"/><path d="M39 18.1 Q40.1 20.1 39 22.1 Q37.9 24.1 39 26.1 Q40.1 28.1 39 30.1 Q37.9 32.1 39 34.1 Q40.1 36.1 39 38.1" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M43.5 15.3 Q44.6 17.3 43.5 19.3 Q42.4 21.3 43.5 23.3 Q44.6 25.3 43.5 27.3 Q42.4 29.3 43.5 31.3 Q44.6 33.3 43.5 35.3" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M48 14.5 Q49.1 16.5 48 18.5 Q46.9 20.5 48 22.5 Q49.1 24.5 48 26.5 Q46.9 28.5 48 30.5 Q49.1 32.5 48 34.5 Q46.9 36.5 48 38.5" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M52.5 15.3 Q53.6 17.3 52.5 19.3 Q51.4 21.3 52.5 23.3 Q53.6 25.3 52.5 27.3 Q51.4 29.3 52.5 31.3 Q53.6 33.3 52.5 35.3" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M57 18.1 Q58.1 20.1 57 22.1 Q55.9 24.1 57 26.1 Q58.1 28.1 57 30.1 Q55.9 32.1 57 34.1 Q58.1 36.1 57 38.1" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M49 13 C51 4 60 3 61 8 C62 13 55 14 56 9" stroke="#D5A54A" stroke-width="4"/><path d="M49 13 C51 4 60 3 61 8 C62 13 55 14 56 9" stroke="#F2D07E" stroke-width="2.4"/>
+  </g>
+</g>
+  <defs><radialGradient id="cp-glow-spaghetti13"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  
+  <g data-part="legs">
+    <path d="M43 58 Q42 71 40 83"/>
+    <path d="M53 58 Q54 71 56 83"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
   </g>
   <path data-part="body" d="M35 25 L61 25 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="#F2D07E" stroke="none"/><path d="M39 27.0 Q40.1 29.0 39 31.0 Q37.9 33.0 39 35.0 Q40.1 37.0 39 39.0 Q37.9 41.0 39 43.0 Q40.1 45.0 39 47.0 Q37.9 49.0 39 51.0 Q40.1 53.0 39 55.0 Q37.9 57.0 39 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M43.5 27.0 Q44.6 29.0 43.5 31.0 Q42.4 33.0 43.5 35.0 Q44.6 37.0 43.5 39.0 Q42.4 41.0 43.5 43.0 Q44.6 45.0 43.5 47.0 Q42.4 49.0 43.5 51.0 Q44.6 53.0 43.5 55.0 Q42.4 57.0 43.5 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M48 27.0 Q49.1 29.0 48 31.0 Q46.9 33.0 48 35.0 Q49.1 37.0 48 39.0 Q46.9 41.0 48 43.0 Q49.1 45.0 48 47.0 Q46.9 49.0 48 51.0 Q49.1 53.0 48 55.0 Q46.9 57.0 48 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M52.5 27.0 Q53.6 29.0 52.5 31.0 Q51.4 33.0 52.5 35.0 Q53.6 37.0 52.5 39.0 Q51.4 41.0 52.5 43.0 Q53.6 45.0 52.5 47.0 Q51.4 49.0 52.5 51.0 Q53.6 53.0 52.5 55.0 Q51.4 57.0 52.5 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M57 27.0 Q58.1 29.0 57 31.0 Q55.9 33.0 57 35.0 Q58.1 37.0 57 39.0 Q55.9 41.0 57 43.0 Q58.1 45.0 57 47.0 Q55.9 49.0 57 51.0 Q58.1 53.0 57 55.0 Q55.9 57.0 57 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/>
   <ellipse data-part="glow" cx="48" cy="45" rx="9.6" ry="10.5" fill="url(#cp-glow-spaghetti13)" stroke="none" opacity="0">
@@ -20,14 +54,14 @@
   <path d="M37 42 Q26 44 26 31">
     <animate attributeName="d" values="M37 42 Q26 44 26 31;M38 45 Q30 52 28 39;M38 45 Q30 52 28 39;M37 42 Q26 44 26 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
   </path>
-  <circle cx="26" cy="29" r="2.8" fill="currentColor" stroke="none">
+  <circle cx="26" cy="29" r="2.8" fill="#2B2420" stroke="none">
     <animate attributeName="cx" values="26;28;28;26" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
     <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
   </circle>
   <path d="M59 42 Q70 44 70 31">
     <animate attributeName="d" values="M59 42 Q70 44 70 31;M58 45 Q66 52 68 39;M58 45 Q66 52 68 39;M59 42 Q70 44 70 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
   </path>
-  <circle cx="70" cy="29" r="2.8" fill="currentColor" stroke="none">
+  <circle cx="70" cy="29" r="2.8" fill="#2B2420" stroke="none">
     <animate attributeName="cx" values="70;68;68;70" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
     <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
   </circle>

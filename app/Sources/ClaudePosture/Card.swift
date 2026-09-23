@@ -92,15 +92,15 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
         queued = nil
         generation += 1
         let g = generation
-        NSAnimationContext.runAnimationGroup({ ctx in
+        NSAnimationContext.runAnimationGroup { ctx in
             ctx.duration = 0.15
             panel.animator().alphaValue = 0
-        }, completionHandler: { [weak self] in
-            Task { @MainActor in
-                guard let self, self.generation == g else { return }
-                self.panel.orderOut(nil)
-            }
-        })
+        }
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            guard let self, self.generation == g else { return }
+            self.panel.orderOut(nil)
+        }
     }
 
     /// Where the card goes: the screen with the mouse, the visible frame, and the window frame.
@@ -146,14 +146,15 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
             ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
             panel.animator().setFrame(final, display: true)
             panel.animator().alphaValue = 1
-        }, completionHandler: { [weak self] in
-            Task { @MainActor in
-                // Pin the end state exactly, in case the animation was cut short.
-                guard let self, self.generation == g else { return }
-                self.panel.alphaValue = 1
-                self.panel.setFrame(final, display: true)
-            }
         })
+        // Pin the end state on our own clock: AppKit doesn't always run the completion handler
+        // for a panel that never becomes key, which left cards stuck invisible at alpha 0.
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            guard let self, self.generation == g, self.isVisible else { return }
+            self.panel.alphaValue = 1
+            self.panel.setFrame(final, display: true)
+        }
     }
 
     /// The card asked for a new height (the "How to" panel opened or closed). Keeps the edge

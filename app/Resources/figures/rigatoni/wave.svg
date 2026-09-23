@@ -1,19 +1,49 @@
-<svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="wave">
-  <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+<svg overflow="visible" data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="wave"><defs><filter id="paper-p9" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p9)">
+  
   <g data-part="legs">
     <path d="M43 58 Q42 71 40 83"/>
     <path d="M53 58 Q54 71 56 83"/>
-    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
-    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
   </g>
   <g>
     <animateTransform attributeName="transform" type="translate" values="0 0;0 -1.5;0 0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="0.8s" repeatCount="indefinite"/>
     <path d="M37 41 Q29 47 31 57"/>
-    <circle cx="31" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
+    <circle cx="31" cy="58.5" r="2.8" fill="#2B2420" stroke="none"/>
     <g>
       <animateTransform attributeName="transform" type="rotate" values="0 59 41;-22 59 41;0 59 41;-22 59 41;0 59 41" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.6s" repeatCount="indefinite"/>
       <path d="M58 41 Q69 37 70 24"/>
-      <circle cx="70.5" cy="22" r="2.8" fill="currentColor" stroke="none"/>
+      <circle cx="70.5" cy="22" r="2.8" fill="#2B2420" stroke="none"/>
+    </g>
+    <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25.0 L38.5 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25.0 L43 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25.0 L48 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25.0 L53 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25.0 L57.5 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+    <g data-part="head">
+      <animateTransform attributeName="transform" type="rotate" values="0 48 41;4 48 41;0 48 41;4 48 41;0 48 41" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.6s" repeatCount="indefinite"/>
+      <path d="M35 15 Q35 10 40 10 L56 10 Q61 10 61 15 L61 37 L35 37 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.6 L38.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.6 L43 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.6 L48 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.6 L53 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.6 L57.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="40" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+        <circle cx="56" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="44" cy="28" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <ellipse cx="52" cy="28" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M44.8 32.5 Q48 37.2 51.2 32.5 Z" fill="#2B2420" stroke="#2B2420" stroke-width="1.4"/>
+      </g>
+    </g>
+  </g>
+</g>
+  
+  <g data-part="legs">
+    <path d="M43 58 Q42 71 40 83"/>
+    <path d="M53 58 Q54 71 56 83"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="#2B2420" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -1.5;0 0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="0.8s" repeatCount="indefinite"/>
+    <path d="M37 41 Q29 47 31 57"/>
+    <circle cx="31" cy="58.5" r="2.8" fill="#2B2420" stroke="none"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="0 59 41;-22 59 41;0 59 41;-22 59 41;0 59 41" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.6s" repeatCount="indefinite"/>
+      <path d="M58 41 Q69 37 70 24"/>
+      <circle cx="70.5" cy="22" r="2.8" fill="#2B2420" stroke="none"/>
     </g>
     <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25.0 L38.5 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25.0 L43 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25.0 L48 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25.0 L53 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25.0 L57.5 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
     <g data-part="head">

@@ -238,5 +238,6 @@ func json(_ s: String) -> String {
 }
 
 func debug(_ msg: String) {
-    FileHandle.standardError.write(Data("[claude-posture] \(msg)\n".utf8))
+    let t = String(format: "%.2f", Date().timeIntervalSince1970.truncatingRemainder(dividingBy: 1000))
+    FileHandle.standardError.write(Data("[claude-posture \(t)] \(msg)\n".utf8))
 }
