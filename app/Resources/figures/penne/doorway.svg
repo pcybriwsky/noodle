@@ -1,5 +1,5 @@
 <svg data-character="penne" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="doorway">
-  <defs><radialGradient id="cp-glow-penne"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <defs><radialGradient id="cp-glow-penne22"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   <path d="M81 4 L81 90" opacity="0.25"/>
   <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
   <ellipse cx="47" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
@@ -15,7 +15,7 @@
       <path d="M51 58 Q51 71 51 83"/>
     </g>
     <path data-part="body" d="M35 23 L61 23 L61 58 L35 65 Z" fill="#EEBF62" stroke="none"/><path d="M38.5 23.0 L38.5 61.6" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M43 23.0 L43 60.3" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M48 23.0 L48 59.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M53 23.0 L53 57.7" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M57.5 23.0 L57.5 56.4" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/>
-    <circle data-part="glow" cx="57" cy="45" r="9.35" fill="url(#cp-glow-penne)" stroke="none" opacity="0">
+    <circle data-part="glow" cx="57" cy="45" r="9.35" fill="url(#cp-glow-penne22)" stroke="none" opacity="0">
       <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
     </circle>
     <g data-part="head">

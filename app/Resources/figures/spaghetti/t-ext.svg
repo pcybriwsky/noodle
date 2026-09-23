@@ -1,5 +1,5 @@
 <svg data-character="spaghetti" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext">
-  <defs><radialGradient id="cp-glow-spaghetti"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <defs><radialGradient id="cp-glow-spaghetti15"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
   <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
   <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
@@ -14,7 +14,7 @@
   <g>
     <animateTransform attributeName="transform" type="rotate" values="0 46 60;-22 46 60;-22 46 60;0 46 60" keyTimes="0;0.4;0.65;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>
     <path data-part="body" d="M35 25 L61 25 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="#F2D07E" stroke="none"/><path d="M39 27.0 Q40.1 29.0 39 31.0 Q37.9 33.0 39 35.0 Q40.1 37.0 39 39.0 Q37.9 41.0 39 43.0 Q40.1 45.0 39 47.0 Q37.9 49.0 39 51.0 Q40.1 53.0 39 55.0 Q37.9 57.0 39 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M43.5 27.0 Q44.6 29.0 43.5 31.0 Q42.4 33.0 43.5 35.0 Q44.6 37.0 43.5 39.0 Q42.4 41.0 43.5 43.0 Q44.6 45.0 43.5 47.0 Q42.4 49.0 43.5 51.0 Q44.6 53.0 43.5 55.0 Q42.4 57.0 43.5 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M48 27.0 Q49.1 29.0 48 31.0 Q46.9 33.0 48 35.0 Q49.1 37.0 48 39.0 Q46.9 41.0 48 43.0 Q49.1 45.0 48 47.0 Q46.9 49.0 48 51.0 Q49.1 53.0 48 55.0 Q46.9 57.0 48 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M52.5 27.0 Q53.6 29.0 52.5 31.0 Q51.4 33.0 52.5 35.0 Q53.6 37.0 52.5 39.0 Q51.4 41.0 52.5 43.0 Q53.6 45.0 52.5 47.0 Q51.4 49.0 52.5 51.0 Q53.6 53.0 52.5 55.0 Q51.4 57.0 52.5 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/><path d="M57 27.0 Q58.1 29.0 57 31.0 Q55.9 33.0 57 35.0 Q58.1 37.0 57 39.0 Q55.9 41.0 57 43.0 Q58.1 45.0 57 47.0 Q55.9 49.0 57 51.0 Q58.1 53.0 57 55.0 Q55.9 57.0 57 59.0" stroke="#D5A54A" stroke-width="1.2" opacity="0.8"/>
-    <circle data-part="glow" cx="39" cy="42" r="9.35" fill="url(#cp-glow-spaghetti)" stroke="none" opacity="0">
+    <circle data-part="glow" cx="39" cy="42" r="9.35" fill="url(#cp-glow-spaghetti15)" stroke="none" opacity="0">
       <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.42;0.65;0.8;1" dur="2.8s" repeatCount="indefinite"/>
     </circle>
     <path d="M55 42 L66 27 L46 21"/>

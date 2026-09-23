@@ -1,5 +1,5 @@
 <svg data-character="lasagna" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="calf-raise">
-  <defs><radialGradient id="cp-glow-lasagna"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <defs><radialGradient id="cp-glow-lasagna38"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08">
     <animate attributeName="rx" values="15;11;11;15" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
   </ellipse>
@@ -17,7 +17,7 @@
   </g>
   <g>
     <animateTransform attributeName="transform" type="translate" values="0 0;0 -7;0 -7;0 0" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
-    <ellipse data-part="glow" cx="48" cy="74" rx="10.4" ry="10.5" fill="url(#cp-glow-lasagna)" stroke="none" opacity="0">
+    <ellipse data-part="glow" cx="48" cy="74" rx="10.4" ry="10.5" fill="url(#cp-glow-lasagna38)" stroke="none" opacity="0">
       <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.6;0.75;1" dur="1.8s" repeatCount="indefinite"/>
     </ellipse>
     <path d="M45 58 Q45 71 45 83"/>

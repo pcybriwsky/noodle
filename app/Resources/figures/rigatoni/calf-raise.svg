@@ -1,5 +1,5 @@
 <svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="calf-raise">
-  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <defs><radialGradient id="cp-glow-rigatoni8"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08">
     <animate attributeName="rx" values="15;11;11;15" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
   </ellipse>
@@ -17,7 +17,7 @@
   </g>
   <g>
     <animateTransform attributeName="transform" type="translate" values="0 0;0 -7;0 -7;0 0" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
-    <ellipse data-part="glow" cx="48" cy="74" rx="10.4" ry="10.5" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+    <ellipse data-part="glow" cx="48" cy="74" rx="10.4" ry="10.5" fill="url(#cp-glow-rigatoni8)" stroke="none" opacity="0">
       <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.6;0.75;1" dur="1.8s" repeatCount="indefinite"/>
     </ellipse>
     <path d="M45 58 Q45 71 45 83"/>
@@ -26,7 +26,7 @@
     <path d="M57 41 Q62 48 60.5 56"/>
     <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
     <g data-part="head">
-      <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.6 L38.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.6 L43 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.6 L48 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.6 L53 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.6 L57.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <path d="M35 15 Q35 10 40 10 L56 10 Q61 10 61 15 L61 37 L35 37 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.6 L38.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.6 L43 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.6 L48 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.6 L53 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.6 L57.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
       <g data-part="face" transform="translate(0 -6)">
         <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
         <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>

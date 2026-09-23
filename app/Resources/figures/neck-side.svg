@@ -11,7 +11,8 @@
   <circle cx="31" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
   <path d="M59 41 Q67 47 65 57"/>
   <circle cx="65" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
-  <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+  <path data-part="body" data-neck="joint" d="M35 41 L61 41 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 Z" fill="#D97757" stroke="none"/>
+  <circle data-part="joint" cx="48" cy="41" r="13" fill="#D97757" stroke="none"/>
   <circle data-part="glow" cx="56" cy="37" r="9.35" fill="url(#cp-glow)" stroke="none" opacity="0">
     <animate attributeName="opacity" values="0;1;1;0;0;0;0" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" dur="4.4s" repeatCount="indefinite"/>
   </circle>

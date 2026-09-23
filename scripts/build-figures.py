@@ -66,63 +66,145 @@ def band(x1, x2, y, h, fill):
     return f'<path d="{d} Z" fill="{fill}" stroke="none"/>'
 
 
-def rigatoni_parts():
-    lift, pasta, hole, ridge = 6, "#EDBB5F", "#B9852E", "#CF9640"
+class Pasta:
+    """One noodle's shapes. torso(top) draws the body from `top` down to the hips, decor(y1, y2)
+    its texture between two heights. Head moves use joint() (tilts) and neck() (slides)."""
+    lift = 6
+    x1, x2 = 35, 61
+    color = "#EDBB5F"
+
+    def torso(self, top): raise NotImplementedError
+    def decor(self, y1, y2): return ""
+    def head(self): raise NotImplementedError
+
+    def joint(self, uid):
+        r = (self.x2 - self.x1) / 2
+        return (f'<clipPath id="j{uid}"><circle cx="48" cy="41" r="{r}"/></clipPath>'
+                f'<circle cx="48" cy="41" r="{r}" fill="{self.color}" stroke="none"/>'
+                f'<g clip-path="url(#j{uid})">{self.decor(41 - r, 41 + r)}</g>')
+
+    def neck_decor(self, values, timing):
+        return ""
+
+
+class Rigatoni(Pasta):
+    lift, color, hole, ridge = 6, "#EDBB5F", "#B9852E", "#CF9640"
     xs = (38.5, 43, 48, 53, 57.5)
-    body = (f'<path data-part="body" d="M40 {29 - lift} L56 {29 - lift} Q61 {29 - lift} 61 {34 - lift} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 {34 - lift} Q35 {29 - lift} 40 {29 - lift} Z" fill="{pasta}" stroke="none"/>'
-            + lines(xs, 25, 60, ridge))
-    head = (f'<rect x="35" y="{16 - lift}" width="26" height="27" rx="5" fill="{pasta}" stroke="none"/>'
-            + lines(xs, 21.6 - lift, 43 - lift, ridge)
-            + f'<ellipse cx="48" cy="{18.8 - lift}" rx="10.5" ry="2.6" fill="{hole}" stroke="none"/>')
-    return body, head, lift
+
+    def decor(self, y1, y2): return lines(self.xs, y1, y2, self.ridge)
+
+    def torso(self, top):
+        if top <= 29 - self.lift:   # standing: soft shoulders, hidden under the head anyway
+            t = top
+            shape = f"M40 {t} L56 {t} Q61 {t} 61 {t + 5} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 {t + 5} Q35 {t} 40 {t} Z"
+        else:
+            shape = f"M35 {top} L61 {top} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z"
+        return (f'<path data-part="body" d="{shape}" fill="{self.color}" stroke="none"/>'
+                + self.decor(max(top, 25), 60))
+
+    def head(self):
+        l = self.lift
+        t, b = 16 - l, 43 - l   # rounded top, square bottom so it meets the neck and torso without a notch
+        return (f'<path d="M35 {t + 5} Q35 {t} 40 {t} L56 {t} Q61 {t} 61 {t + 5} L61 {b} L35 {b} Z" fill="{self.color}" stroke="none"/>'
+                + self.decor(21.6 - l, 43 - l)
+                + f'<ellipse cx="48" cy="{18.8 - l}" rx="10.5" ry="2.6" fill="{self.hole}" stroke="none"/>')
+
+    def neck_decor(self, values, timing):
+        # ridges that lean with the neck: top ends follow the head, bottom ends stay on the torso
+        out = []
+        for x in self.xs:
+            ds = ";".join(f"M{x + dx} 37 L{x} 45" for dx in values)
+            out.append(f'<path d="M{x} 37 L{x} 45" stroke="{self.ridge}" stroke-width="1.3" opacity="0.8">'
+                       f'<animate attributeName="d" values="{ds}" {timing}/></path>')
+        return "".join(out)
 
 
-def spaghetti_parts():
-    lift, pasta, strand = 4, "#F2D07E", "#D5A54A"
+class Spaghetti(Pasta):
+    lift, color, strand = 4, "#F2D07E", "#D5A54A"
     xs = (39, 43.5, 48, 52.5, 57)
-    top = 29 - lift
-    body = (f'<path data-part="body" d="M35 {top} L61 {top} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="{pasta}" stroke="none"/>'
-            + lines(xs, top + 2, 60, strand, 1.2, wave=1.1))
-    dome = lambda x: top - (13 ** 2 - (x - 48) ** 2) ** 0.5 + 2.5
-    curl = f"M49 {17 - lift} C51 {8 - lift} 60 {7 - lift} 61 {12 - lift} C62 {17 - lift} 55 {18 - lift} 56 {13 - lift}"
-    head = (f'<path d="M35 {top} A13 13 0 0 1 61 {top} L61 {43 - lift} L35 {43 - lift} Z" fill="{pasta}" stroke="none"/>'
-            + lines(xs, dome, 43 - lift, strand, 1.2, wave=1.1)
-            + f'<path d="{curl}" stroke="{strand}" stroke-width="4"/><path d="{curl}" stroke="{pasta}" stroke-width="2.4"/>')
-    return body, head, lift
+
+    def decor(self, y1, y2): return lines(self.xs, y1, y2, self.strand, 1.2, wave=1.1)
+
+    def torso(self, top):
+        return (f'<path data-part="body" d="M35 {top} L61 {top} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="{self.color}" stroke="none"/>'
+                + self.decor(top + 2, 60))
+
+    def head(self):
+        top = 29 - self.lift
+        dome = lambda x: top - (13 ** 2 - (x - 48) ** 2) ** 0.5 + 2.5
+        curl = f"M49 {17 - self.lift} C51 {8 - self.lift} 60 {7 - self.lift} 61 {12 - self.lift} C62 {17 - self.lift} 55 {18 - self.lift} 56 {13 - self.lift}"
+        return (f'<path d="M35 {top} A13 13 0 0 1 61 {top} L61 {43 - self.lift} L35 {43 - self.lift} Z" fill="{self.color}" stroke="none"/>'
+                + lines(self.xs, dome, 43 - self.lift, self.strand, 1.2, wave=1.1)
+                + f'<path d="{curl}" stroke="{self.strand}" stroke-width="4"/><path d="{curl}" stroke="{self.color}" stroke-width="2.4"/>')
 
 
-def penne_parts():
-    lift, pasta, hole, ridge = 6, "#EEBF62", "#B5812B", "#CC933D"
+class Penne(Pasta):
+    lift, color, hole, ridge = 6, "#EEBF62", "#B5812B", "#CC933D"
     xs = (38.5, 43, 48, 53, 57.5)
-    slant_top = lambda x: (18 - lift) - 8 * (x - 35) / 26          # cut from low-left to high-right
-    slant_bottom = lambda x: 65 - 7 * (x - 35) / 26
-    body = (f'<path data-part="body" d="M35 {29 - lift} L61 {29 - lift} L61 58 L35 65 Z" fill="{pasta}" stroke="none"/>'
-            + lines(xs, 29 - lift, lambda x: slant_bottom(x) - 2.5, ridge))
-    head = (f'<path d="M35 {slant_top(35)} L61 {slant_top(61)} L61 {43 - lift} L35 {43 - lift} Z" fill="{pasta}" stroke="none"/>'
-            + lines(xs, lambda x: slant_top(x) + 4, 43 - lift, ridge)
-            + f'<ellipse cx="48" cy="{slant_top(48) + 0.5:.1f}" rx="11.5" ry="2.4" fill="{hole}" stroke="none" transform="rotate(-17 48 {slant_top(48) + 0.5:.1f})"/>')
-    return body, head, lift
+
+    def slant_top(self, x): return (18 - self.lift) - 8 * (x - 35) / 26   # cut from low-left to high-right
+    def slant_bottom(self, x): return 65 - 7 * (x - 35) / 26
+
+    def decor(self, y1, y2): return lines(self.xs, y1, lambda x: min(y2, self.slant_bottom(x) - 2.5), self.ridge)
+
+    def torso(self, top):
+        return (f'<path data-part="body" d="M35 {top} L61 {top} L61 58 L35 65 Z" fill="{self.color}" stroke="none"/>'
+                + self.decor(top, 70))
+
+    def head(self):
+        st = self.slant_top
+        return (f'<path d="M35 {st(35)} L61 {st(61)} L61 {43 - self.lift} L35 {43 - self.lift} Z" fill="{self.color}" stroke="none"/>'
+                + lines(self.xs, lambda x: st(x) + 4, 43 - self.lift, self.ridge)
+                + f'<ellipse cx="48" cy="{st(48) + 0.5:.1f}" rx="11.5" ry="2.4" fill="{self.hole}" stroke="none" transform="rotate(-17 48 {st(48) + 0.5:.1f})"/>')
+
+    neck_decor = Rigatoni.neck_decor
 
 
-def lasagna_parts():
-    lift, pasta, sauce, cheese = 4, "#EDC36B", "#C9492F", "#F7EAD0"
-    top = 29 - lift
-    body = (ruffled(32, top, 64, 62, pasta).replace("<path ", '<path data-part="body" ', 1)
-            + band(32, 64, 36, 3.5, sauce) + band(32, 64, 45, 3, cheese) + band(32, 64, 53, 3.5, sauce))
-    head = (ruffled(32, 16 - lift, 64, 43 - lift, pasta)
-            + band(32, 64, 16 - lift, 3.2, sauce) + band(32, 64, 16 - lift + 3.2, 1.8, cheese))
-    return body, head, lift
+class Lasagna(Pasta):
+    lift, x1, x2, color, sauce, cheese = 4, 32, 64, "#EDC36B", "#C9492F", "#F7EAD0"
+    layers = ((36, 3.5, "sauce"), (45, 3, "cheese"), (53, 3.5, "sauce"))
+
+    def decor(self, y1, y2):
+        return "".join(band(32, 64, y, h, getattr(self, c)) for y, h, c in self.layers if y1 <= y and y + h <= y2)
+
+    def torso(self, top):
+        return ruffled(32, top, 64, 62, self.color).replace("<path ", '<path data-part="body" ', 1) + self.decor(top, 62)
+
+    def head(self):
+        t = 16 - self.lift
+        return (ruffled(32, t, 64, 43 - self.lift, self.color)
+                + band(32, 64, t, 3.2, self.sauce) + band(32, 64, t + 3.2, 1.8, self.cheese))
 
 
-def pasta(name, parts):
-    body, head, lift = parts()
+NECK_JOINT = re.compile(r'<path data-part="body" data-neck="joint"[^>]*/>\s*<circle data-part="joint"[^>]*/>')
+NECK_BRIDGE = re.compile(r'<path data-part="body" data-neck="bridge" d="M35 (\d+) [^"]*"[^>]*/>\s*'
+                         r'(<path data-part="neck" d="[^"]*" fill="[^"]*" stroke="none">\s*<animate attributeName="d" values="([^"]*)" ([^/]*)/>\s*</path>)')
+_uid = [0]
 
+
+def pasta(name, p):
     def make(svg: str) -> str:
-        assert svg.count(SPROUT_BODY) == 1 and svg.count(SPROUT_HEAD) == 1
+        _uid[0] += 1
+        uid = f"{name}{_uid[0]}"
         svg = TOPPER.sub("", svg)
-        svg = svg.replace(SPROUT_BODY, body).replace(SPROUT_HEAD, head)
-        svg = svg.replace('<g data-part="face">', f'<g data-part="face" transform="translate(0 -{lift})">')
-        svg = svg.replace('id="cp-glow"', f'id="cp-glow-{name}"').replace("url(#cp-glow)", f"url(#cp-glow-{name})")
+        if NECK_JOINT.search(svg):                       # neck stretch: tilt bends at a round joint
+            svg = NECK_JOINT.sub(lambda m: p.torso(41) + p.joint(uid), svg)
+        elif (m := NECK_BRIDGE.search(svg)):              # chin tuck: the neck slants as the head slides
+            top, neck, values, timing = int(m.group(1)), m.group(2), m.group(3), m.group(4)
+            dxs = [float(v.split()[0][1:]) - 35 for v in values.split(";")]
+            neck = neck.replace('fill="#D97757"', f'fill="{p.color}"')
+            # the base neck spans x 35..61; stretch it to this noodle's width
+            fit = lambda d: re.sub(r"M([\d.]+) 37 L([\d.]+) 37 L61 45 L35 45 Z", lambda q: (
+                f"M{float(q.group(1)) - 35 + p.x1:g} 37 L{float(q.group(2)) - 61 + p.x2:g} 37 L{p.x2} 45 L{p.x1} 45 Z"), d)
+            neck = fit(neck)
+            svg = svg.replace(m.group(0), p.torso(top) + neck + p.neck_decor(dxs, timing))
+        else:
+            assert svg.count(SPROUT_BODY) == 1
+            svg = svg.replace(SPROUT_BODY, p.torso(29 - p.lift))
+        assert svg.count(SPROUT_HEAD) == 1
+        svg = svg.replace(SPROUT_HEAD, p.head())
+        svg = svg.replace('<g data-part="face">', f'<g data-part="face" transform="translate(0 -{p.lift})">')
+        svg = svg.replace('id="cp-glow"', f'id="cp-glow-{uid}"').replace("url(#cp-glow)", f"url(#cp-glow-{uid})")
         svg = svg.replace('stop-color="#FFC857"', f'stop-color="{GLOW}"')
         return svg.replace("<svg ", f'<svg data-character="{name}" ', 1)
     return make
@@ -130,10 +212,10 @@ def pasta(name, parts):
 
 # id -> (label, generator). The sprout is the hand-drawn base and stays as is.
 CHARACTERS = {
-    "rigatoni": ("Toni the Rigatoni", pasta("rigatoni", rigatoni_parts)),
-    "spaghetti": ("Sammy the Spaghetti", pasta("spaghetti", spaghetti_parts)),
-    "penne": ("Patty the Penne", pasta("penne", penne_parts)),
-    "lasagna": ("Lenny the Lasagna", pasta("lasagna", lasagna_parts)),
+    "rigatoni": ("Toni the Rigatoni", pasta("rigatoni", Rigatoni())),
+    "spaghetti": ("Sammy the Spaghetti", pasta("spaghetti", Spaghetti())),
+    "penne": ("Patty the Penne", pasta("penne", Penne())),
+    "lasagna": ("Lenny the Lasagna", pasta("lasagna", Lasagna())),
     "sprout": ("Sprout", lambda s: s),
 }
 EXTRAS = [("wave", "Wave (intro)"), ("hang", "Hang (entrance)")]  # generated for every character too
