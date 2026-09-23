@@ -143,6 +143,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             option("Quiet hours, \(c.quietHours.start) to \(c.quietHours.end)", checked: c.quietHours.enabled) {
                 self.update { $0.quietHours.enabled.toggle() }
             },
+            option("Toni walks in", checked: c.walkIn) { self.update { $0.walkIn.toggle() } },
             option("Always show steps", checked: c.expandSteps) { self.update { $0.expandSteps.toggle() } },
             option("Open at login", checked: LoginItem.isOn) { LoginItem.set(!LoginItem.isOn) },
             .separator(),

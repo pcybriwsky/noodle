@@ -21,7 +21,7 @@ Needs Xcode command line tools (`swift`) and `jq`.
 
 ## How it works
 
-- You send a prompt. If Claude is still working 15 seconds later, a card shows up.
+- You send a prompt. If Claude is still working 15 seconds later, Toni walks in along the top of your screen and the card appears where he stops. Clicks pass right through him.
 - At most one card every 20 minutes.
 - No cards while you're on a call. If any app is using your mic or camera, Toni waits. You can also have him skip busy calendar events.
 - Working late? No quiet hours by default, so you still get nudged.
@@ -32,7 +32,7 @@ Needs Xcode command line tools (`swift`) and `jq`.
 
 ## Settings
 
-Everything lives under **Settings** in the menu bar: focus, character, how long before a card shows, how often, snooze length, corner, which exercises, holding during calls or calendar events, quiet hours, always show steps, and open at login.
+Everything lives under **Settings** in the menu bar: focus, character, Toni walks in, how long before a card shows, how often, snooze length, corner, which exercises, holding during calls or calendar events, quiet hours, always show steps, and open at login.
 
 **Focus** picks the rotation: *Tech neck* leans on chin tucks, neck, and upper back. *Tight hips* (anterior pelvic tilt) leans on hip flexors and legs. *General stiffness* is all eight. The intro asks, and you can switch anytime.
 
@@ -48,6 +48,7 @@ Under the hood it's `~/.claude-posture/config.json` (Settings > Edit config file
 | `quietHours` | off, `22:00` to `07:00` | no cards in this window when `enabled` is true |
 | `enabledExercises` | all | ids from `exercises.json`, in the order you want them |
 | `character` | `rigatoni` | `rigatoni` (Toni) or `sprout` |
+| `walkIn` | `true` | Toni walks to the corner before the card appears (skipped with Reduce motion on) |
 | `expandSteps` | `false` | open How to on every card, handy while the moves are new |
 | `focus` | `all` | `neck`, `hips`, `all`, or `custom` after picking exercises by hand |
 | `holdDuringCalls` | `true` | skip cards while any app is using the mic or camera |

@@ -132,7 +132,7 @@ final class Posture {
         ]
         if let svg = figureSVG(ex.figure, character: c.character) { payload["figureSVG"] = svg }
         debug("show \(ex.id) (\(i + 1) of \(list.count))")
-        card.show(payload: payload, position: c.position, inset: CGFloat(c.inset))
+        card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), walkSVG: walkSVG(c))
 
         let timeout = ex.durationSeconds + Self.graceSeconds
         armDismiss(after: c.expandSteps ? max(timeout, Self.readingSeconds) : timeout)
@@ -145,6 +145,10 @@ final class Posture {
             .appendingPathComponent(base.lastPathComponent)
         let url = FileManager.default.fileExists(atPath: variant.path) ? variant : base
         return try? String(contentsOf: url, encoding: .utf8)
+    }
+
+    private func walkSVG(_ c: Config) -> String? {
+        c.walkIn ? figureSVG("figures/walk.svg", character: c.character) : nil
     }
 
     // MARK: Intro
@@ -160,7 +164,8 @@ final class Posture {
         if let svg = figureSVG("figures/wave.svg", character: c.character) { payload["figureSVG"] = svg }
         debug("show intro")
         welcomeShowing = true
-        card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), function: "showWelcome")
+        card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), function: "showWelcome",
+                  walkSVG: walkSVG(c))
         dismissTask?.cancel()
         dismissTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(Self.readingSeconds * 1_000_000_000))

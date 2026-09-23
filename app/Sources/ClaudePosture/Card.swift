@@ -28,8 +28,12 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
     private var pad: CGFloat = 24                            // transparent margin for the CSS shadow
     private var anchorTop = true                             // which edge stays put when the card resizes
     private var generation = 0
+    private let walker: Walker
+    private static let walkSeconds = 2.2
+    private static let walkDistance: CGFloat = 520
 
     init(resources: URL) {
+        walker = Walker(resources: resources)
         let cfg = WKWebViewConfiguration()
         webView = CardWebView(frame: .zero, configuration: cfg)
         webView.setValue(false, forKey: "drawsBackground")
@@ -52,14 +56,21 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
     }
 
     /// `function` is the card.html entry point: showCard for exercises, showWelcome for the intro.
-    func show(payload: [String: Any], position: String, inset: CGFloat, function: String = "showCard") {
+    /// With `walkSVG`, Toni walks to the card's spot first and the card fades in where he stops.
+    func show(payload: [String: Any], position: String, inset: CGFloat, function: String = "showCard",
+              walkSVG: String? = nil) {
         let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data("{}".utf8)
         let js = "window.\(function)(\(String(decoding: data, as: UTF8.self)))"
+        let tileFromTop: CGFloat = function == "showWelcome" ? 80 : 66   // figure tile center, from card top
         let run = { [weak self] in
             guard let self else { return }
             self.webView.evaluateJavaScript(js) { _, err in
-                if let err { debug("showCard failed: \(err)") }
-                self.present(position: position, inset: inset)
+                if let err { debug("\(function) failed: \(err)") }
+                if let svg = walkSVG, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+                    self.walkIn(svg: svg, position: position, inset: inset, tileFromTop: tileFromTop)
+                } else {
+                    self.present(position: position, inset: inset)
+                }
             }
         }
         isVisible = true
@@ -71,6 +82,7 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
     }
 
     func hide() {
+        walker.cancel()
         guard isVisible else { return }
         isVisible = false
         queued = nil
@@ -87,21 +99,43 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
         })
     }
 
-    private func present(position: String, inset: CGFloat) {
-        guard isVisible else { return }
-        generation += 1
-        card = baseCard
+    /// Where the card goes: the screen with the mouse, the visible frame, and the window frame.
+    private func layout(position: String, inset: CGFloat) -> (vf: NSRect, final: NSRect, top: Bool)? {
         let mouse = NSEvent.mouseLocation
         guard let screen = NSScreen.screens.first(where: { NSMouseInRect(mouse, $0.frame, false) })
-                ?? NSScreen.main ?? NSScreen.screens.first else { return }
+                ?? NSScreen.main ?? NSScreen.screens.first else { return nil }
         let vf = screen.visibleFrame
-        let size = NSSize(width: card.width + pad * 2, height: card.height + pad * 2)
+        let size = NSSize(width: baseCard.width + pad * 2, height: baseCard.height + pad * 2)
         let top = !position.hasPrefix("bottom")
+        let x = position.hasSuffix("left") ? vf.minX + inset - pad : vf.maxX - inset - baseCard.width - pad
+        let y = top ? vf.maxY - inset - baseCard.height - pad : vf.minY + inset - pad
+        return (vf, NSRect(origin: NSPoint(x: x, y: y), size: size), top)
+    }
+
+    /// Toni walks along a strip level with the card's figure tile and stops right on it,
+    /// walking toward the corner (flipped for left corners). The card then fades in over him.
+    private func walkIn(svg: String, position: String, inset: CGFloat, tileFromTop: CGFloat) {
+        guard isVisible, let l = layout(position: position, inset: inset) else { return }
+        let tileCenter = NSPoint(x: l.final.minX + pad + 14 + 52, y: l.final.minY + pad + baseCard.height - tileFromTop)
+        let strip = NSRect(x: l.vf.minX, y: tileCenter.y - 60, width: l.vf.width, height: 120)
+        let toX = tileCenter.x - l.vf.minX - 48
+        let leftward = position.hasSuffix("left")
+        let fromX = leftward ? min(toX + Self.walkDistance, l.vf.width) : max(toX - Self.walkDistance, -96)
+        walker.walk(svg: svg, strip: strip, fromX: fromX, toX: toX, flip: leftward,
+                    duration: Self.walkSeconds) { [weak self] in
+            guard let self, self.isVisible else { return }
+            self.present(position: position, inset: inset, slide: false)
+            self.walker.finish()
+        }
+    }
+
+    private func present(position: String, inset: CGFloat, slide: Bool = true) {
+        guard isVisible, let l = layout(position: position, inset: inset) else { return }
+        generation += 1
+        card = baseCard
+        let top = l.top, final = l.final
         anchorTop = top
-        let x = position.hasSuffix("left") ? vf.minX + inset - pad : vf.maxX - inset - card.width - pad
-        let y = top ? vf.maxY - inset - card.height - pad : vf.minY + inset - pad
-        let final = NSRect(origin: NSPoint(x: x, y: y), size: size)
-        panel.setFrame(final.offsetBy(dx: 0, dy: top ? 8 : -8), display: true)
+        panel.setFrame(slide ? final.offsetBy(dx: 0, dy: top ? 8 : -8) : final, display: true)
         panel.alphaValue = 0
         panel.orderFrontRegardless()
         let g = generation

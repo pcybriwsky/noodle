@@ -50,6 +50,7 @@ struct Config: Codable {
     var enabledExercises: [String]?     // nil means all, in exercises.json order
     var character = "rigatoni"          // rigatoni (Toni) or sprout, picks figures/<character>/<id>.svg
     var expandSteps = false             // open "How to" on every card, for when the moves are new
+    var walkIn = true                   // Toni walks to the corner before the card appears
     var holdDuringCalls = true          // no cards while any app is using the mic or camera
     var holdDuringCalendarEvents = false // no cards during busy calendar events (asks for calendar access)
     var focus = Focus.all.rawValue      // neck, hips, all, or "custom" once exercises are picked by hand
@@ -67,6 +68,7 @@ struct Config: Codable {
         enabledExercises = try c.decodeIfPresent([String].self, forKey: .enabledExercises)
         character = try c.decodeIfPresent(String.self, forKey: .character) ?? d.character
         expandSteps = try c.decodeIfPresent(Bool.self, forKey: .expandSteps) ?? d.expandSteps
+        walkIn = try c.decodeIfPresent(Bool.self, forKey: .walkIn) ?? d.walkIn
         holdDuringCalls = try c.decodeIfPresent(Bool.self, forKey: .holdDuringCalls) ?? d.holdDuringCalls
         holdDuringCalendarEvents = try c.decodeIfPresent(Bool.self, forKey: .holdDuringCalendarEvents) ?? d.holdDuringCalendarEvents
         focus = try c.decodeIfPresent(String.self, forKey: .focus) ?? d.focus
