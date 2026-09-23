@@ -19,68 +19,156 @@ SPROUT_BODY = '<path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A
 SPROUT_HEAD = '<circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>'
 TOPPER = re.compile(r'\s*<g data-part="topper">.*?</g>', re.S)
 
-PASTA, HOLE, RIDGE = "#EDBB5F", "#B9852E", "#CF9640"
-LIFT = 6  # rigatoni torso is taller: head and face sit this much higher than the sprout's
+# ---- The pasta cast. Each one swaps the sprout's torso and head for its own shapes. ----
+
+GLOW = "#FF7A59"  # the sprout's yellow glow disappears on pasta, so pasta glows coral
 
 
-def ridges(y1: float, y2: float) -> str:
-    return "".join(
-        f'<path d="M{x} {y1} L{x} {y2}" stroke="{RIDGE}" stroke-width="1.3" opacity="0.8"/>'
-        for x in (38.5, 43, 48, 53, 57.5)
-    )
+def lines(xs, y_top, y_bottom, color, width=1.3, wave=0.0):
+    """Vertical ridges or strands. y_top/y_bottom can be numbers or functions of x."""
+    out = []
+    for x in xs:
+        y1 = y_top(x) if callable(y_top) else y_top
+        y2 = y_bottom(x) if callable(y_bottom) else y_bottom
+        if wave:
+            d, y, flip, step = f"M{x} {y1:.1f}", y1, 1, 4.0
+            while y + step <= y2:
+                d += f" Q{x + wave * flip:.1f} {y + step / 2:.1f} {x} {y + step:.1f}"
+                y, flip = y + step, -flip
+        else:
+            d = f"M{x} {y1:.1f} L{x} {y2:.1f}"
+        out.append(f'<path d="{d}" stroke="{color}" stroke-width="{width}" opacity="0.8"/>')
+    return "".join(out)
 
 
-ZITI_BODY = (
-    f'<path data-part="body" d="M40 {29 - LIFT} L56 {29 - LIFT} Q61 {29 - LIFT} 61 {34 - LIFT} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 {34 - LIFT} Q35 {29 - LIFT} 40 {29 - LIFT} Z" fill="{PASTA}" stroke="none"/>'
-    + ridges(25, 60)
-)
-ZITI_HEAD = (
-    f'<rect x="35" y="{16 - LIFT}" width="26" height="27" rx="5" fill="{PASTA}" stroke="none"/>'
-    + ridges(21.6 - LIFT, 43 - LIFT)
-    + f'<ellipse cx="48" cy="{18.8 - LIFT}" rx="10.5" ry="2.6" fill="{HOLE}" stroke="none"/>'
-)
+def ruffled(x1, y1, x2, y2, fill, amp=1.8, step=4.5):
+    """A lasagna sheet: straight top and bottom, wavy ruffled sides."""
+    d = f"M{x1} {y1} L{x2} {y1}"
+    y, n = y1, 0
+    while y + step <= y2 + 0.01:
+        d += f" Q{x2 + amp:.1f} {y + step / 2:.1f} {x2} {y + step:.1f}"
+        y += step
+    d += f" L{x1} {y:.1f}"
+    while y - step >= y1 - 0.01:
+        d += f" Q{x1 - amp:.1f} {y - step / 2:.1f} {x1} {y - step:.1f}"
+        y -= step
+    return f'<path d="{d} Z" fill="{fill}" stroke="none"/>'
 
 
-def rigatoni(svg: str) -> str:
-    assert svg.count(SPROUT_BODY) == 1 and svg.count(SPROUT_HEAD) == 1
-    svg = TOPPER.sub("", svg)
-    svg = svg.replace(SPROUT_BODY, ZITI_BODY).replace(SPROUT_HEAD, ZITI_HEAD)
-    svg = svg.replace('<g data-part="face">', f'<g data-part="face" transform="translate(0 -{LIFT})">')
-    # Yellow glow disappears on pasta, so rigatoni glows coral. Own id so both sets can share a page.
-    svg = svg.replace('id="cp-glow"', 'id="cp-glow-rigatoni"').replace("url(#cp-glow)", "url(#cp-glow-rigatoni)")
-    svg = svg.replace('stop-color="#FFC857"', 'stop-color="#FF7A59"')
-    return svg.replace("<svg ", '<svg data-character="rigatoni" ', 1)
+def band(x1, x2, y, h, fill):
+    """A wavy layer of sauce or cheese across the sheet."""
+    d = f"M{x1} {y}"
+    for i, x in enumerate(range(x1, x2, 4)):
+        d += f" Q{x + 2} {y + (-1.2 if i % 2 else 1.2)} {x + 4} {y}"
+    d += f" L{x2} {y + h}"
+    for i, x in enumerate(range(x2, x1, -4)):
+        d += f" Q{x - 2} {y + h + (1.2 if i % 2 else -1.2)} {x - 4} {y + h}"
+    return f'<path d="{d} Z" fill="{fill}" stroke="none"/>'
 
 
-CHARACTERS = {"sprout": lambda s: s, "rigatoni": rigatoni}
-EXTRAS = ["wave"]  # non-exercise figures (onboarding), generated for every character too
+def rigatoni_parts():
+    lift, pasta, hole, ridge = 6, "#EDBB5F", "#B9852E", "#CF9640"
+    xs = (38.5, 43, 48, 53, 57.5)
+    body = (f'<path data-part="body" d="M40 {29 - lift} L56 {29 - lift} Q61 {29 - lift} 61 {34 - lift} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 {34 - lift} Q35 {29 - lift} 40 {29 - lift} Z" fill="{pasta}" stroke="none"/>'
+            + lines(xs, 25, 60, ridge))
+    head = (f'<rect x="35" y="{16 - lift}" width="26" height="27" rx="5" fill="{pasta}" stroke="none"/>'
+            + lines(xs, 21.6 - lift, 43 - lift, ridge)
+            + f'<ellipse cx="48" cy="{18.8 - lift}" rx="10.5" ry="2.6" fill="{hole}" stroke="none"/>')
+    return body, head, lift
+
+
+def spaghetti_parts():
+    lift, pasta, strand = 4, "#F2D07E", "#D5A54A"
+    xs = (39, 43.5, 48, 52.5, 57)
+    top = 29 - lift
+    body = (f'<path data-part="body" d="M35 {top} L61 {top} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="{pasta}" stroke="none"/>'
+            + lines(xs, top + 2, 60, strand, 1.2, wave=1.1))
+    dome = lambda x: top - (13 ** 2 - (x - 48) ** 2) ** 0.5 + 2.5
+    curl = f"M49 {17 - lift} C51 {8 - lift} 60 {7 - lift} 61 {12 - lift} C62 {17 - lift} 55 {18 - lift} 56 {13 - lift}"
+    head = (f'<path d="M35 {top} A13 13 0 0 1 61 {top} L61 {43 - lift} L35 {43 - lift} Z" fill="{pasta}" stroke="none"/>'
+            + lines(xs, dome, 43 - lift, strand, 1.2, wave=1.1)
+            + f'<path d="{curl}" stroke="{strand}" stroke-width="4"/><path d="{curl}" stroke="{pasta}" stroke-width="2.4"/>')
+    return body, head, lift
+
+
+def penne_parts():
+    lift, pasta, hole, ridge = 6, "#EEBF62", "#B5812B", "#CC933D"
+    xs = (38.5, 43, 48, 53, 57.5)
+    slant_top = lambda x: (18 - lift) - 8 * (x - 35) / 26          # cut from low-left to high-right
+    slant_bottom = lambda x: 65 - 7 * (x - 35) / 26
+    body = (f'<path data-part="body" d="M35 {29 - lift} L61 {29 - lift} L61 58 L35 65 Z" fill="{pasta}" stroke="none"/>'
+            + lines(xs, 29 - lift, lambda x: slant_bottom(x) - 2.5, ridge))
+    head = (f'<path d="M35 {slant_top(35)} L61 {slant_top(61)} L61 {43 - lift} L35 {43 - lift} Z" fill="{pasta}" stroke="none"/>'
+            + lines(xs, lambda x: slant_top(x) + 4, 43 - lift, ridge)
+            + f'<ellipse cx="48" cy="{slant_top(48) + 0.5:.1f}" rx="11.5" ry="2.4" fill="{hole}" stroke="none" transform="rotate(-17 48 {slant_top(48) + 0.5:.1f})"/>')
+    return body, head, lift
+
+
+def lasagna_parts():
+    lift, pasta, sauce, cheese = 4, "#EDC36B", "#C9492F", "#F7EAD0"
+    top = 29 - lift
+    body = (ruffled(32, top, 64, 62, pasta).replace("<path ", '<path data-part="body" ', 1)
+            + band(32, 64, 36, 3.5, sauce) + band(32, 64, 45, 3, cheese) + band(32, 64, 53, 3.5, sauce))
+    head = (ruffled(32, 16 - lift, 64, 43 - lift, pasta)
+            + band(32, 64, 16 - lift, 3.2, sauce) + band(32, 64, 16 - lift + 3.2, 1.8, cheese))
+    return body, head, lift
+
+
+def pasta(name, parts):
+    body, head, lift = parts()
+
+    def make(svg: str) -> str:
+        assert svg.count(SPROUT_BODY) == 1 and svg.count(SPROUT_HEAD) == 1
+        svg = TOPPER.sub("", svg)
+        svg = svg.replace(SPROUT_BODY, body).replace(SPROUT_HEAD, head)
+        svg = svg.replace('<g data-part="face">', f'<g data-part="face" transform="translate(0 -{lift})">')
+        svg = svg.replace('id="cp-glow"', f'id="cp-glow-{name}"').replace("url(#cp-glow)", f"url(#cp-glow-{name})")
+        svg = svg.replace('stop-color="#FFC857"', f'stop-color="{GLOW}"')
+        return svg.replace("<svg ", f'<svg data-character="{name}" ', 1)
+    return make
+
+
+# id -> (label, generator). The sprout is the hand-drawn base and stays as is.
+CHARACTERS = {
+    "rigatoni": ("Toni the Rigatoni", pasta("rigatoni", rigatoni_parts)),
+    "spaghetti": ("Sammy the Spaghetti", pasta("spaghetti", spaghetti_parts)),
+    "penne": ("Patty the Penne", pasta("penne", penne_parts)),
+    "lasagna": ("Lenny the Lasagna", pasta("lasagna", lasagna_parts)),
+    "sprout": ("Sprout", lambda s: s),
+}
+EXTRAS = [("wave", "Wave (intro)"), ("hang", "Hang (entrance)")]  # generated for every character too
 
 grids = {}
-for name, make in CHARACTERS.items():
+for name, (label, make) in CHARACTERS.items():
     cells = []
-    for ex in exercises:
-        base = figs / Path(ex["figure"]).name
+    items = [(Path(ex["figure"]).name, ex["name"], ex["spec"]) for ex in exercises]
+    items += [(f"{extra}.svg", title, "") for extra, title in EXTRAS]
+    for file, title, spec in items:
+        base = figs / file
         svg = make(base.read_text()) if base.exists() else '<div class="missing"></div>'
         if name != "sprout" and base.exists():
-            out = figs / name / base.name
+            out = figs / name / file
             out.parent.mkdir(exist_ok=True)
             out.write_text(svg)
         cells.append(f"""    <figure>
       <div class="tile">{svg}</div>
-      <figcaption><b>{html.escape(ex["name"])}</b><span>{html.escape(ex["spec"])}</span></figcaption>
+      <figcaption><b>{html.escape(title)}</b><span>{html.escape(spec)}</span></figcaption>
     </figure>""")
-    for extra in EXTRAS:
-        base = figs / f"{extra}.svg"
-        if name != "sprout" and base.exists():
-            (figs / name / base.name).write_text(make(base.read_text()))
     grids[name] = "\n".join(cells)
+
+first = next(iter(CHARACTERS))
+seg = "\n".join(
+    f'      <button data-character="{n}" aria-pressed="{str(n == first).lower()}">{html.escape(l)}</button>'
+    for n, (l, _) in CHARACTERS.items())
+grid_html = "\n".join(
+    f'  <div class="grid" data-grid="{n}"{"" if n == first else " hidden"}>\n{g}\n  </div>' for n, g in grids.items())
 
 page = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Posture figures</title>
+<title>Noodle figures</title>
 <style>
   :root {{
     --bg: #FFFFFF; --tile: #FBF4EF; --fg: #2B2420; --muted: #8A817B; --line: #EDE6E1; --accent: #B85A3A;
@@ -121,25 +209,19 @@ page = f"""<!doctype html>
 </head>
 <body>
 <main>
-  <div class="eyebrow">claude-posture</div>
-  <h1>Toni the Rigatoni</h1>
+  <div class="eyebrow">Noodle</div>
+  <h1>The Noodle cast</h1>
   <p class="lede">All eight moves at 96px, looping. Arrows show which way to move, the glow shows what should feel the stretch. Peak pose freezes each one at the moment that matters.</p>
   <div class="controls">
     <div class="seg" role="group" aria-label="Character">
-      <button data-character="rigatoni" aria-pressed="true">Toni the Rigatoni</button>
-      <button data-character="sprout" aria-pressed="false">Sprout</button>
+{seg}
     </div>
     <button id="theme" aria-pressed="false">Dark mode</button>
     <button id="zoom" aria-pressed="false">Zoom</button>
     <button id="pause" aria-pressed="false">Pause</button>
     <button id="peak" aria-pressed="false">Peak pose</button>
   </div>
-  <div class="grid" data-grid="rigatoni">
-{grids["rigatoni"]}
-  </div>
-  <div class="grid" data-grid="sprout" hidden>
-{grids["sprout"]}
-  </div>
+{grid_html}
 </main>
 <script>
   const root = document.documentElement, body = document.body;

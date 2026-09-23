@@ -6,13 +6,16 @@
 #   scripts/dev.sh intro    ...then replay Toni's intro
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-APP="${APP_DIR:-$HOME/Applications}/ClaudePosture.app"
+APP_DIR="${APP_DIR:-$HOME/Applications}"
+APP="$APP_DIR/Noodle.app"
+LEGACY="$APP_DIR/ClaudePosture.app"   # pre-rename install
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 
 python3 "$ROOT/scripts/build-figures.py" >/dev/null
 BUILT="$("$ROOT/scripts/build-app.sh" | tail -1)"
 pkill -x ClaudePosture 2>/dev/null || true
 
+if [[ -d "$LEGACY" ]]; then "$LSREGISTER" -u "$LEGACY" 2>/dev/null || true; rm -rf "$LEGACY"; mkdir -p "$APP"; fi
 if [[ -d "$APP" ]]; then
   rm -rf "$APP"
   ditto "$BUILT" "$APP"

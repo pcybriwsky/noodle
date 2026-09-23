@@ -28,12 +28,11 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
     private var pad: CGFloat = 24                            // transparent margin for the CSS shadow
     private var anchorTop = true                             // which edge stays put when the card resizes
     private var generation = 0
-    private let walker: Walker
-    private static let walkSeconds = 2.2
-    private static let walkDistance: CGFloat = 520
+    private let dropper: Dropper
+    private static let dropSeconds = 1.1
 
     init(resources: URL) {
-        walker = Walker(resources: resources)
+        dropper = Dropper(resources: resources)
         let cfg = WKWebViewConfiguration()
         webView = CardWebView(frame: .zero, configuration: cfg)
         webView.setValue(false, forKey: "drawsBackground")
@@ -56,9 +55,14 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
     }
 
     /// `function` is the card.html entry point: showCard for exercises, showWelcome for the intro.
-    /// With `walkSVG`, Toni walks to the card's spot first and the card fades in where he stops.
+    /// With `dropSVG` and a top corner, the character rides a noodle down from the menu bar to the
+    /// card's spot, and the card appears hanging from that noodle.
     func show(payload: [String: Any], position: String, inset: CGFloat, function: String = "showCard",
-              walkSVG: String? = nil) {
+              dropSVG: String? = nil) {
+        let top = !position.hasPrefix("bottom")
+        let dropSVG = top ? dropSVG : nil          // the noodle hangs from the menu bar, so top corners only
+        var payload = payload
+        if dropSVG != nil { payload["noodle"] = inset }
         let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data("{}".utf8)
         let js = "window.\(function)(\(String(decoding: data, as: UTF8.self)))"
         let tileFromTop: CGFloat = function == "showWelcome" ? 80 : 66   // figure tile center, from card top
@@ -66,8 +70,8 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
             guard let self else { return }
             self.webView.evaluateJavaScript(js) { _, err in
                 if let err { debug("\(function) failed: \(err)") }
-                if let svg = walkSVG, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
-                    self.walkIn(svg: svg, position: position, inset: inset, tileFromTop: tileFromTop)
+                if let svg = dropSVG, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+                    self.dropIn(svg: svg, position: position, inset: inset, tileFromTop: tileFromTop)
                 } else {
                     self.present(position: position, inset: inset)
                 }
@@ -82,7 +86,7 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
     }
 
     func hide() {
-        walker.cancel()
+        dropper.cancel()
         guard isVisible else { return }
         isVisible = false
         queued = nil
@@ -112,20 +116,18 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
         return (vf, NSRect(origin: NSPoint(x: x, y: y), size: size), top)
     }
 
-    /// Toni walks along a strip level with the card's figure tile and stops right on it,
-    /// walking toward the corner (flipped for left corners). The card then fades in over him.
-    private func walkIn(svg: String, position: String, inset: CGFloat, tileFromTop: CGFloat) {
+    /// A strip from the menu bar down past the card's figure tile, centered on the tile. The
+    /// character lands on the tile, then the card appears (no slide) and the strip fades.
+    private func dropIn(svg: String, position: String, inset: CGFloat, tileFromTop: CGFloat) {
         guard isVisible, let l = layout(position: position, inset: inset) else { return }
-        let tileCenter = NSPoint(x: l.final.minX + pad + 14 + 52, y: l.final.minY + pad + baseCard.height - tileFromTop)
-        let strip = NSRect(x: l.vf.minX, y: tileCenter.y - 60, width: l.vf.width, height: 120)
-        let toX = tileCenter.x - l.vf.minX - 48
-        let leftward = position.hasSuffix("left")
-        let fromX = leftward ? min(toX + Self.walkDistance, l.vf.width) : max(toX - Self.walkDistance, -96)
-        walker.walk(svg: svg, strip: strip, fromX: fromX, toX: toX, flip: leftward,
-                    duration: Self.walkSeconds) { [weak self] in
+        let tileCenterX = l.final.minX + pad + 14 + 52
+        let landY = inset + tileFromTop                      // tile center, measured down from the menu bar
+        let height = landY + 70
+        let strip = NSRect(x: tileCenterX - 70, y: l.vf.maxY - height, width: 140, height: height)
+        dropper.drop(svg: svg, strip: strip, landY: landY, duration: Self.dropSeconds) { [weak self] in
             guard let self, self.isVisible else { return }
             self.present(position: position, inset: inset, slide: false)
-            self.walker.finish()
+            self.dropper.finish()
         }
     }
 

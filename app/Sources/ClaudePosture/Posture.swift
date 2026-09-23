@@ -132,7 +132,7 @@ final class Posture {
         ]
         if let svg = figureSVG(ex.figure, character: c.character) { payload["figureSVG"] = svg }
         debug("show \(ex.id) (\(i + 1) of \(list.count))")
-        card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), walkSVG: walkSVG(c))
+        card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), dropSVG: dropSVG(c))
 
         let timeout = ex.durationSeconds + Self.graceSeconds
         armDismiss(after: c.expandSteps ? max(timeout, Self.readingSeconds) : timeout)
@@ -147,25 +147,27 @@ final class Posture {
         return try? String(contentsOf: url, encoding: .utf8)
     }
 
-    private func walkSVG(_ c: Config) -> String? {
-        c.walkIn ? figureSVG("figures/walk.svg", character: c.character) : nil
+    private func dropSVG(_ c: Config) -> String? {
+        c.entrance == "noodle" ? figureSVG("figures/hang.svg", character: c.character) : nil
     }
 
     // MARK: Intro
 
-    /// The one-time "hey, I'm Toni" card. Shown on first launch and from the menu.
+    /// The one-time "hey, I'm Toni" card (or whichever noodle you picked). Shown on first launch and from the menu.
     func showWelcome() {
         guard current == nil else { return }
         var s = store.state()
         s.onboarded = true
         store.save(s)
         let c = store.config()
-        var payload: [String: Any] = ["character": c.character, "focus": c.focus]
+        let cast = Cast.from(c.character)
+        var payload: [String: Any] = ["character": c.character, "focus": c.focus,
+                                      "name": cast.name, "fullName": cast.fullName]
         if let svg = figureSVG("figures/wave.svg", character: c.character) { payload["figureSVG"] = svg }
         debug("show intro")
         welcomeShowing = true
         card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), function: "showWelcome",
-                  walkSVG: walkSVG(c))
+                  dropSVG: dropSVG(c))
         dismissTask?.cancel()
         dismissTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(Self.readingSeconds * 1_000_000_000))

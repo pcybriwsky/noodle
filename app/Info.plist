@@ -11,9 +11,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>ClaudePosture</string>
+	<string>Noodle</string>
 	<key>CFBundleDisplayName</key>
-	<string>Claude Posture</string>
+	<string>Noodle</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -23,9 +23,9 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Claude Posture checks whether you're in a meeting right now so it can hold stretch cards until you're free. It never changes your calendar.</string>
+	<string>Noodle checks whether you're in a meeting right now so it can hold stretch cards until you're free. It never changes your calendar.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Claude Posture checks whether you're in a meeting right now so it can hold stretch cards until you're free. It never changes your calendar.</string>
+	<string>Noodle checks whether you're in a meeting right now so it can hold stretch cards until you're free. It never changes your calendar.</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSHighResolutionCapable</key>

@@ -1,0 +1,30 @@
+<svg data-character="penne" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext">
+  <defs><radialGradient id="cp-glow-penne"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.62;0.75;1" dur="2.8s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M42 58 Q52 60 62 61 L62 83"/>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <path d="M46 58 Q57 60 67 61 L67 83"/>
+    <ellipse cx="70" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 46 60;-22 46 60;-22 46 60;0 46 60" keyTimes="0;0.4;0.65;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>
+    <path data-part="body" d="M35 23 L61 23 L61 58 L35 65 Z" fill="#EEBF62" stroke="none"/><path d="M38.5 23.0 L38.5 61.6" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M43 23.0 L43 60.3" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M48 23.0 L48 59.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M53 23.0 L53 57.7" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M57.5 23.0 L57.5 56.4" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/>
+    <circle data-part="glow" cx="39" cy="42" r="9.35" fill="url(#cp-glow-penne)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.42;0.65;0.8;1" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M55 42 L66 27 L46 21"/>
+    <g data-part="head">
+      <path d="M35 12.0 L61 4.0 L61 37 L35 37 Z" fill="#EEBF62" stroke="none"/><path d="M38.5 14.9 L38.5 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M43 13.5 L43 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M48 12.0 L48 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M53 10.5 L53 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M57.5 9.1 L57.5 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="8.5" rx="11.5" ry="2.4" fill="#B5812B" stroke="none" transform="rotate(-17 48 8.5)"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+</svg>

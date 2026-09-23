@@ -13,6 +13,7 @@
        index, total, doneToday,          numbers
        steps, tip                        beginner walkthrough for "How to" (array of strings, string)
        expand                            bool, open "How to" right away
+       noodle                            number, the inset: the card dropped in and hangs from a noodle
      }
   window.setSubtitle(text)               Called when Claude finishes while the card is up.
   window.showWelcome({ figureSVG?, character, focus })   The first-launch intro (a few steps, then desk setup).
@@ -170,6 +171,10 @@
   .setup li svg { flex: none; width: 18px; height: 18px; margin-top: -1px; }
   .setup li b { font-weight: 650; }
 
+  .noodle { position: absolute; left: 82px; top: 0; display: none; overflow: visible; transform-origin: 8px 0; animation: sway 2.8s ease-in-out infinite; }
+  body.noodled .noodle { display: block; }
+  @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+
   @media (prefers-reduced-motion: reduce) { .howto svg { transition: none; } }
 
   /* Browser preview only */
@@ -178,6 +183,7 @@
 </style>
 </head>
 <body>
+  <svg class="noodle" id="noodle" width="16" fill="none" stroke-linecap="round" aria-hidden="true"></svg>
   <div class="card" id="card">
     <div class="main">
       <div class="fig" id="fig"><div class="missing"></div></div>
@@ -269,7 +275,22 @@
     if (open && fromUser) send({ action: "howto" });
   }
 
+  // The card hangs from the menu bar on a short noodle when it dropped in (payload.noodle = inset).
+  function setNoodle(inset) {
+    const n = $("noodle");
+    const on = typeof inset === "number" && inset > 0;
+    document.body.classList.toggle("noodled", on);
+    if (!on) return;
+    const pad = 24, h = Math.min(inset, pad) + 6;
+    n.style.top = `${pad - Math.min(inset, pad)}px`;
+    n.setAttribute("height", String(h));
+    let d = "M8 0", flip = 1;
+    for (let y = 0; y < h; y += 8) { const e = Math.min(y + 8, h); d += ` Q${8 + 3 * flip} ${(y + e) / 2} 8 ${e}`; flip = -flip; }
+    n.innerHTML = `<path d="${d}" stroke="#C99338" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
+  }
+
   window.showCard = function (p) {
+    setNoodle(p.noodle);
     card.classList.remove("stopped", "welcome", "setup-open", "pick-open");
     $("name").textContent = p.name || "";
     $("instruction").textContent = p.instruction || "";
@@ -300,7 +321,7 @@
 
   // Intro: a few short steps from Toni, ending on a desk setup checklist.
   const WELCOME = [
-    { title: "Hey, I'm Toni", text: "Toni the Rigatoni. I pop up while Claude's working and walk you through a quick stretch." },
+    { title: "Hey, I'm {name}", text: "{fullName}. While Claude's noodling on your prompt, I'll get you up and stretching." },
     { title: "Only on long waits", text: "Quick prompts never get me. If Claude's still going after 15 sec, I show up. Once every 20 min, tops." },
     { title: "You're the boss", text: "Hit Done, Snooze, or just ignore me. How to has the steps. Pause me anytime from the menu bar." },
     { title: "What bugs you?", text: "Pick one and I'll lean on the right moves. Change it anytime in Settings.", pick: true },
@@ -321,7 +342,7 @@
     ["hips", "Tight hips", "Anterior pelvic tilt, the arched low back from sitting all day. More hip and leg work."],
     ["all", "General stiffness", "A bit of everything. All eight moves."],
   ];
-  let wStep = 0, focus = "all";
+  let wStep = 0, focus = "all", who = { name: "Toni", fullName: "Toni the Rigatoni" };
 
   function renderPick() {
     $("pick").innerHTML = "";
@@ -338,8 +359,9 @@
 
   function renderWelcome() {
     const w = WELCOME[wStep], last = wStep === WELCOME.length - 1;
-    $("wTitle").textContent = w.title;
-    $("wText").textContent = w.text;
+    const fill = (t) => t.replace("{name}", who.name).replace("{fullName}", who.fullName);
+    $("wTitle").textContent = fill(w.title);
+    $("wText").textContent = fill(w.text);
     $("wDots").innerHTML = WELCOME.map((_, i) => `<i class="${i === wStep ? "on" : ""}"></i>`).join("");
     $("wNext").textContent = last ? "Try a stretch" : "Next";
     $("wSkip").textContent = last ? "Got it" : "Skip";
@@ -350,10 +372,12 @@
   }
 
   window.showWelcome = function (p) {
+    setNoodle(p && p.noodle);
     clearInterval(timer);
     card.classList.remove("stopped", "open");
     card.classList.add("welcome");
     focus = (p && ["neck", "hips", "all"].includes(p.focus)) ? p.focus : "all";
+    who = { name: (p && p.name) || "Toni", fullName: (p && p.fullName) || "Toni the Rigatoni" };
     setFigure(p || {});
     wStep = 0;
     renderWelcome();
@@ -372,7 +396,7 @@
   if (!native) {
     const bar = document.createElement("div");
     bar.className = "demo";
-    bar.innerHTML = `<button data-a="prev">Prev</button><button data-a="next">Next</button><button data-a="stop">Claude's done</button><button data-a="theme">Light / dark</button><button data-a="char">Toni / sprout</button><button data-a="intro">Intro</button>`;
+    bar.innerHTML = `<button data-a="prev">Prev</button><button data-a="next">Next</button><button data-a="stop">Claude's done</button><button data-a="theme">Light / dark</button><button data-a="char">Next noodle</button><button data-a="intro">Intro</button>`;
     document.body.appendChild(bar);
     document.body.style.overflow = "auto";
     let list = [], i = 0, character = "rigatoni";
@@ -391,7 +415,7 @@
       if (a === "prev") { i = (i + list.length - 1) % list.length; show(); }
       if (a === "stop") window.setSubtitle("Claude's done, finish your set");
       if (a === "theme") { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark"; }
-      if (a === "char") { character = character === "rigatoni" ? "sprout" : "rigatoni"; show(); }
+      if (a === "char") { const cast = ["rigatoni", "spaghetti", "penne", "lasagna", "sprout"]; character = cast[(cast.indexOf(character) + 1) % cast.length]; show(); }
       if (a === "intro") window.showWelcome({ figure: character === "sprout" ? "figures/wave.svg" : `figures/${character}/wave.svg` });
     });
     fetch("exercises.json").then((r) => r.json()).then((ex) => { list = ex; show(); });

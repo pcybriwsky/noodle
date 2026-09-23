@@ -1,0 +1,75 @@
+<!doctype html>
+<!--
+  The noodle drop. A transparent, click-through strip that hangs from the menu bar down to the
+  card's spot. Swift sizes it and calls window.drop({ svg, landY, duration }): the character rides a
+  spaghetti strand down, bounces, and lands with its 96pt box centered at landY (px from the top).
+  Then it posts "arrived" to webkit.messageHandlers.dropper.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; height: 100%; }
+  #rig { position: absolute; left: 0; right: 0; top: 0; opacity: 0; will-change: transform; }
+  #strand { position: absolute; left: 50%; margin-left: -8px; overflow: visible; }
+  #toni { position: absolute; left: 50%; margin-left: -48px; width: 96px; height: 96px; color: #2B2420; }
+  @media (prefers-color-scheme: dark) { #toni { color: #F6F1EE; } }
+  #toni svg { width: 96px; height: 96px; display: block; }
+  @keyframes drop {
+    0%   { transform: translateY(var(--from)); }
+    62%  { transform: translateY(7px); }
+    80%  { transform: translateY(-3px); }
+    92%  { transform: translateY(1px); }
+    100% { transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div id="rig">
+  <svg id="strand" width="16" fill="none" stroke-linecap="round"></svg>
+  <div id="toni"></div>
+</div>
+<script>
+  let timer = null;
+
+  // A wavy spaghetti strand from far above the strip down to y (the character's hands).
+  function strandPath(top, bottom) {
+    let d = `M8 ${top}`, flip = 1;
+    for (let y = top; y < bottom; y += 10) {
+      const next = Math.min(y + 10, bottom);
+      d += ` Q${8 + 4 * flip} ${(y + next) / 2} 8 ${next}`;
+      flip = -flip;
+    }
+    return d;
+  }
+
+  window.drop = function (p) {
+    const rig = document.getElementById("rig");
+    const toni = document.getElementById("toni");
+    const strand = document.getElementById("strand");
+    const height = window.innerHeight;
+    const toniTop = p.landY - 48;
+    const hands = toniTop + 5;
+    toni.innerHTML = p.svg || "";
+    toni.style.top = `${toniTop}px`;
+    // The strand starts a full strip-height above the top so it always reaches the menu bar mid-drop.
+    strand.style.top = `${-height}px`;
+    strand.setAttribute("height", String(height + hands));
+    const d = strandPath(0, height + hands);
+    strand.innerHTML = `<path d="${d}" stroke="#C99338" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
+
+    rig.style.animation = "none";
+    void rig.offsetWidth;
+    rig.style.setProperty("--from", `${-(toniTop + 110)}px`);
+    rig.style.opacity = "1";
+    rig.style.animation = `drop ${p.duration}s cubic-bezier(.3, .7, .4, 1) both`;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.dropper;
+      if (h) h.postMessage("arrived");
+    }, p.duration * 1000);
+  };
+</script>
+</body>
+</html>

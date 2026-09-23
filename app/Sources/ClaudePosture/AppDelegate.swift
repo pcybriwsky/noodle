@@ -68,11 +68,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func refresh() {
         guard let button = statusItem?.button else { return }
         let symbol = pausedUntil == nil ? "figure.stand" : "pause.circle"
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Claude Posture")
+        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Noodle")
         image?.isTemplate = true
         button.image = image
         button.title = " \(store.doneToday())"
-        button.toolTip = "Claude Posture, done today"
+        button.toolTip = "Noodle, stretches done today"
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
@@ -97,7 +97,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(item("Pause until tomorrow", #selector(pauseTomorrow)))
         menu.addItem(.separator())
         menu.addItem(item("Show one now", #selector(showNow)))
-        menu.addItem(item("Say hi to Toni", #selector(showWelcome)))
+        menu.addItem(item("Say hi to \(Cast.from(store.config().character).name)", #selector(showWelcome)))
         menu.addItem(.separator())
         menu.addItem(settingsMenu())
         menu.addItem(.separator())
@@ -114,7 +114,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func settingsMenu() -> NSMenuItem {
         let c = store.config()
-        let characters = [("rigatoni", "Toni the Rigatoni"), ("sprout", "Sprout")]
+        let characters = Cast.allCases.map { ($0.rawValue, $0.fullName) }
         var focusItems = Focus.allCases.map { f in
             option(f.title, checked: c.focus == f.rawValue) { self.store.apply(focus: f); self.refresh() }
         }
@@ -123,6 +123,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             submenu("Focus", focusItems),
             submenu("Character", characters.map { id, title in
                 option(title, checked: c.character == id) { self.update { $0.character = id } }
+            }),
+            submenu("Entrance", [("noodle", "Drop in on a noodle"), ("card", "Just the card")].map { id, title in
+                option(title, checked: c.entrance == id) { self.update { $0.entrance = id } }
             }),
             submenu("Show a card after", choices([10, 15, 30, 60], current: c.delaySeconds,
                                                  label: { "\(Int($0)) sec of Claude working" }) { v in self.update { $0.delaySeconds = v } }),
@@ -143,7 +146,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             option("Quiet hours, \(c.quietHours.start) to \(c.quietHours.end)", checked: c.quietHours.enabled) {
                 self.update { $0.quietHours.enabled.toggle() }
             },
-            option("Toni walks in", checked: c.walkIn) { self.update { $0.walkIn.toggle() } },
             option("Always show steps", checked: c.expandSteps) { self.update { $0.expandSteps.toggle() } },
             option("Open at login", checked: LoginItem.isOn) { LoginItem.set(!LoginItem.isOn) },
             .separator(),

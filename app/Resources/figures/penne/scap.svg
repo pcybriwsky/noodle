@@ -1,5 +1,5 @@
-<svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="scap">
-  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+<svg data-character="penne" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="scap">
+  <defs><radialGradient id="cp-glow-penne"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
   <g data-part="legs">
     <path d="M43 58 Q42 71 40 83"/>
@@ -7,8 +7,8 @@
     <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
     <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
   </g>
-  <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25.0 L38.5 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25.0 L43 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25.0 L48 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25.0 L53 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25.0 L57.5 60.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
-  <ellipse data-part="glow" cx="48" cy="45" rx="9.6" ry="10.5" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+  <path data-part="body" d="M35 23 L61 23 L61 58 L35 65 Z" fill="#EEBF62" stroke="none"/><path d="M38.5 23.0 L38.5 61.6" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M43 23.0 L43 60.3" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M48 23.0 L48 59.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M53 23.0 L53 57.7" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M57.5 23.0 L57.5 56.4" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/>
+  <ellipse data-part="glow" cx="48" cy="45" rx="9.6" ry="10.5" fill="url(#cp-glow-penne)" stroke="none" opacity="0">
     <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.2;0.35;0.7;0.85;1" dur="2.6s" repeatCount="indefinite"/>
   </ellipse>
   <path d="M42 38 Q39.5 44 42.5 50" stroke="#A9502F" stroke-width="2.2">
@@ -32,6 +32,6 @@
     <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
   </circle>
   <g data-part="head">
-    <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.6 L38.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.6 L43 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.6 L48 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.6 L53 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.6 L57.5 37.0" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+    <path d="M35 12.0 L61 4.0 L61 37 L35 37 Z" fill="#EEBF62" stroke="none"/><path d="M38.5 14.9 L38.5 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M43 13.5 L43 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M48 12.0 L48 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M53 10.5 L53 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M57.5 9.1 L57.5 37.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="8.5" rx="11.5" ry="2.4" fill="#B5812B" stroke="none" transform="rotate(-17 48 8.5)"/>
   </g>
 </svg>

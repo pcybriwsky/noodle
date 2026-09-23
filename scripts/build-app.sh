@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds app/build/ClaudePosture.app (release, ad-hoc signed). Prints the bundle path.
+# Builds app/build/Noodle.app (release, ad-hoc signed). Prints the bundle path.
 # Env: CONFIG=debug|release (default release), OUT=<dir> (default app/build)
 set -euo pipefail
 
@@ -7,7 +7,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PKG="$ROOT/app"
 CONFIG="${CONFIG:-release}"
 OUT="${OUT:-$PKG/build}"
-APP="$OUT/ClaudePosture.app"
+APP="$OUT/Noodle.app"
 
 swift build -c "$CONFIG" --package-path "$PKG" >&2
 BIN="$(swift build -c "$CONFIG" --package-path "$PKG" --show-bin-path)/ClaudePosture"

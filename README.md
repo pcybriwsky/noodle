@@ -1,9 +1,11 @@
-# claude-posture
+# Noodle
 
-![Toni doing chin tucks](docs/demo.gif)
+Stretching while Claude is noodling.
+
+![Toni the Rigatoni dropping in on a noodle](docs/demo.gif)
 <!-- GIF placeholder: record a card popping up and drop it at docs/demo.gif -->
 
-Meet Toni the Rigatoni. While Claude Code is busy on a long prompt, Toni pops up in the corner of your screen with a quick desk stretch. Quick prompts never trigger him, and he never steals focus from your terminal or editor.
+While Claude Code is busy on a long prompt, a little noodle drops in from your menu bar on a strand of spaghetti with a quick desk stretch. Pick your pasta: Toni the Rigatoni, Sammy the Spaghetti, Patty the Penne, or Lenny the Lasagna. Quick prompts never trigger a card, and it never steals focus from your terminal or editor.
 
 Works everywhere Claude Code runs hooks: the CLI, the VS Code and Cursor extensions, and the Code tab in Claude Desktop. macOS only.
 
@@ -13,15 +15,15 @@ Works everywhere Claude Code runs hooks: the CLI, the VS Code and Cursor extensi
 scripts/install.sh
 ```
 
-It builds the app, copies it to `~/Applications`, and adds two hooks to `~/.claude/settings.json`. You'll see the exact diff and get asked before anything is written, and your old file gets backed up to `settings.json.bak-<timestamp>`. Running it again is safe, it won't add the hooks twice.
+It builds `Noodle.app`, copies it to `~/Applications`, and adds two hooks to `~/.claude/settings.json`. You'll see the exact diff and get asked before anything is written, and your old file gets backed up to `settings.json.bak-<timestamp>`. Running it again is safe, it won't add the hooks twice.
 
-It also asks whether to open the app at login (you can flip that later in Settings). First launch, Toni says hi and walks you through a quick desk setup check.
+It also asks whether to open the app at login (you can flip that later in Settings). First launch, your noodle says hi and walks you through a quick desk setup check.
 
 Needs Xcode command line tools (`swift`) and `jq`.
 
 ## How it works
 
-- You send a prompt. If Claude is still working 15 seconds later, Toni walks in along the top of your screen and the card appears where he stops. Clicks pass right through him.
+- You send a prompt. If Claude is still working 15 seconds later, your noodle drops in from the menu bar and the card hangs where it lands. Clicks pass right through the drop. Prefer it plain? Settings > Entrance > Just the card.
 - At most one card every 20 minutes.
 - No cards while you're on a call. If any app is using your mic or camera, Toni waits. You can also have him skip busy calendar events.
 - Working late? No quiet hours by default, so you still get nudged.
@@ -32,7 +34,7 @@ Needs Xcode command line tools (`swift`) and `jq`.
 
 ## Settings
 
-Everything lives under **Settings** in the menu bar: focus, character, Toni walks in, how long before a card shows, how often, snooze length, corner, which exercises, holding during calls or calendar events, quiet hours, always show steps, and open at login.
+Everything lives under **Settings** in the menu bar: focus, character, entrance, how long before a card shows, how often, snooze length, corner, which exercises, holding during calls or calendar events, quiet hours, always show steps, and open at login.
 
 **Focus** picks the rotation: *Tech neck* leans on chin tucks, neck, and upper back. *Tight hips* (anterior pelvic tilt) leans on hip flexors and legs. *General stiffness* is all eight. The intro asks, and you can switch anytime.
 
@@ -47,8 +49,8 @@ Under the hood it's `~/.claude-posture/config.json` (Settings > Edit config file
 | `inset` | `16` | distance from the screen edge |
 | `quietHours` | off, `22:00` to `07:00` | no cards in this window when `enabled` is true |
 | `enabledExercises` | all | ids from `exercises.json`, in the order you want them |
-| `character` | `rigatoni` | `rigatoni` (Toni) or `sprout` |
-| `walkIn` | `true` | Toni walks to the corner before the card appears (skipped with Reduce motion on) |
+| `character` | `rigatoni` | `rigatoni` (Toni), `spaghetti` (Sammy), `penne` (Patty), `lasagna` (Lenny), or `sprout` |
+| `entrance` | `noodle` | `noodle` drops in from the menu bar (top corners, skipped with Reduce motion), `card` is just the card |
 | `expandSteps` | `false` | open How to on every card, handy while the moves are new |
 | `focus` | `all` | `neck`, `hips`, `all`, or `custom` after picking exercises by hand |
 | `holdDuringCalls` | `true` | skip cards while any app is using the mic or camera |

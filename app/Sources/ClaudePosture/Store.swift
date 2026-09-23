@@ -48,9 +48,9 @@ struct Config: Codable {
     var inset: Double = 16
     var quietHours = QuietHours()
     var enabledExercises: [String]?     // nil means all, in exercises.json order
-    var character = "rigatoni"          // rigatoni (Toni) or sprout, picks figures/<character>/<id>.svg
+    var character = "rigatoni"          // rigatoni, spaghetti, penne, lasagna, or sprout (see Cast)
     var expandSteps = false             // open "How to" on every card, for when the moves are new
-    var walkIn = true                   // Toni walks to the corner before the card appears
+    var entrance = "noodle"             // noodle (ride a strand down from the menu bar) or card (just the card)
     var holdDuringCalls = true          // no cards while any app is using the mic or camera
     var holdDuringCalendarEvents = false // no cards during busy calendar events (asks for calendar access)
     var focus = Focus.all.rawValue      // neck, hips, all, or "custom" once exercises are picked by hand
@@ -68,11 +68,30 @@ struct Config: Codable {
         enabledExercises = try c.decodeIfPresent([String].self, forKey: .enabledExercises)
         character = try c.decodeIfPresent(String.self, forKey: .character) ?? d.character
         expandSteps = try c.decodeIfPresent(Bool.self, forKey: .expandSteps) ?? d.expandSteps
-        walkIn = try c.decodeIfPresent(Bool.self, forKey: .walkIn) ?? d.walkIn
+        entrance = try c.decodeIfPresent(String.self, forKey: .entrance) ?? d.entrance
         holdDuringCalls = try c.decodeIfPresent(Bool.self, forKey: .holdDuringCalls) ?? d.holdDuringCalls
         holdDuringCalendarEvents = try c.decodeIfPresent(Bool.self, forKey: .holdDuringCalendarEvents) ?? d.holdDuringCalendarEvents
         focus = try c.decodeIfPresent(String.self, forKey: .focus) ?? d.focus
     }
+}
+
+/// The cast. Raw values match the generated figure folders, figures/<id>/.
+enum Cast: String, CaseIterable {
+    case rigatoni, spaghetti, penne, lasagna, sprout
+
+    var name: String {
+        switch self {
+        case .rigatoni: return "Toni"
+        case .spaghetti: return "Sammy"
+        case .penne: return "Patty"
+        case .lasagna: return "Lenny"
+        case .sprout: return "Sprout"
+        }
+    }
+
+    var fullName: String { self == .sprout ? "Sprout" : "\(name) the \(rawValue.capitalized)" }
+
+    static func from(_ id: String) -> Cast { Cast(rawValue: id) ?? .rigatoni }
 }
 
 /// What someone wants to work on. Picks which exercises are in the rotation.
