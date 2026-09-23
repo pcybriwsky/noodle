@@ -1,0 +1,46 @@
+<svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="walk">
+  <ellipse cx="48" cy="87" rx="18" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M20 36 L28 36 M17 45 L27 45 M20 54 L28 54" stroke-width="2.2" opacity="0.3">
+    <animate attributeName="opacity" values="0.15;0.4;0.15" dur="0.55s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M46 58 Q44 71 38 82">
+      <animate attributeName="d" values="M46 58 Q44 71 38 82;M47 58 Q50 71 55 82;M46 58 Q44 71 38 82" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="41" cy="84.5" rx="5" ry="2.6" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="41;58;41" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+    <path d="M47 58 Q50 71 55 82">
+      <animate attributeName="d" values="M47 58 Q50 71 55 82;M46 58 Q44 71 38 82;M47 58 Q50 71 55 82" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="58" cy="84.5" rx="5" ry="2.6" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="58;41;58" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -2;0 0;0 -2;0 0" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    <path d="M50 41 Q56 48 59 54">
+      <animate attributeName="d" values="M50 41 Q56 48 59 54;M50 41 Q44 48 40 53;M50 41 Q56 48 59 54" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="60" cy="55.5" r="2.8" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="60;39;60" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="55.5;54.5;55.5" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+    <g data-part="head">
+      <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+    <path d="M47 41 Q41 48 37 53">
+      <animate attributeName="d" values="M47 41 Q41 48 37 53;M47 41 Q53 48 57 54;M47 41 Q41 48 37 53" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="36" cy="54.5" r="2.8" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="36;58;36" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="54.5;55.5;54.5" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

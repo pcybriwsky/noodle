@@ -1,0 +1,37 @@
+<svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="hip-flexor">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="46" cy="87" rx="24" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M14 58 L25 58 M21 54 L25 58 L21 62" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.7;0.8;1" dur="3.2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 0;4 0" keyTimes="0;0.35;1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M45 64 L35 75 L27 83">
+      <animate attributeName="d" values="M45 64 L35 75 L27 83;M49 65 L38 76 L27 83;M49 65 L38 76 L27 83;M45 64 L35 75 L27 83" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="25" cy="84.5" rx="4.5" ry="2.4" fill="currentColor" stroke="none"/>
+    <path d="M51 64 L62 71 L62 83">
+      <animate attributeName="d" values="M51 64 L62 71 L62 83;M55 65 L65 72 L62 83;M55 65 L65 72 L62 83;M51 64 L62 71 L62 83" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 1;4 1;0 0" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    <g transform="translate(0 6)">
+      <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+      <circle data-part="glow" cx="44" cy="57" r="9.35" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+        <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M57 41 Q62 48 60.5 56"/>
+      <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+      <g data-part="head">
+        <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+        <g data-part="face" transform="translate(0 -6)">
+          <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+          <path d="M53.2 27 Q55 25.2 56.8 27" stroke="#2B2420" stroke-width="1.8"/>
+          <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

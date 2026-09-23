@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posture figures</title>
+<style>
+  :root {
+    --bg: #FFFFFF; --tile: #FBF4EF; --fg: #2B2420; --muted: #8A817B; --line: #EDE6E1; --accent: #B85A3A;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #161312; --tile: #221D1B; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161312; --tile: #221D1B; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 48px 16px 64px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: 32px; letter-spacing: -.02em; margin: 6px 0 4px; }
+  p.lede { color: var(--muted); margin: 0 0 24px; max-width: 560px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; align-items: center; }
+  .seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--tile); border: 1px solid var(--line); border-radius: 10px; margin-right: 8px; }
+  .seg button { border: 0; background: transparent; }
+  button { font: inherit; font-size: 13px; font-weight: 500; color: var(--fg); background: var(--tile); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px 20px; }
+  .grid[hidden] { display: none; }
+  figure { margin: 0; }
+  .tile { background: var(--tile); border-radius: 16px; height: 150px; display: grid; place-items: center; color: var(--fg); }
+  .tile svg { width: 96px; height: 96px; transition: transform .2s; }
+  body.zoom .tile { height: 260px; }
+  body.zoom .tile svg { transform: scale(2.2); }
+  figcaption { display: flex; flex-direction: column; margin-top: 10px; }
+  figcaption span { color: var(--muted); font-size: 13px; }
+  .missing { width: 72px; height: 72px; border-radius: 50%; border: 1.5px dashed var(--line); }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">claude-posture</div>
+  <h1>Toni the Rigatoni</h1>
+  <p class="lede">All eight moves at 96px, looping. Arrows show which way to move, the glow shows what should feel the stretch. Peak pose freezes each one at the moment that matters.</p>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Character">
+      <button data-character="rigatoni" aria-pressed="true">Toni the Rigatoni</button>
+      <button data-character="sprout" aria-pressed="false">Sprout</button>
+    </div>
+    <button id="theme" aria-pressed="false">Dark mode</button>
+    <button id="zoom" aria-pressed="false">Zoom</button>
+    <button id="pause" aria-pressed="false">Pause</button>
+    <button id="peak" aria-pressed="false">Peak pose</button>
+  </div>
+  <div class="grid" data-grid="rigatoni">
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="chin-tuck">
+  <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <g data-part="legs">
+    <path d="M45 58 Q45 71 44 83"/>
+    <path d="M51 58 Q51 71 51 83"/>
+    <ellipse cx="47" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="54" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+  <path d="M57 41 Q62 48 60.5 56"/>
+  <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+  <g data-part="head">
+    <animateTransform attributeName="transform" type="translate" values="0 0;-7 0;-7 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.4s" repeatCount="indefinite"/>
+    <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+    <g data-part="face" transform="translate(0 -6)">
+      <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+      <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+      <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+      <path d="M52 39.5 Q55 41 57.5 39" stroke="#A9502F" stroke-width="1.6" opacity="0">
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.3;0.7;1" dur="2.4s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  <path data-part="cue" d="M79 27 L68 27 M72 23 L68 27 L72 31" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;-4 0;-4 0" keyTimes="0;0.3;1" dur="2.4s" repeatCount="indefinite"/>
+  </path>
+</svg>
+</div>
+      <figcaption><b>Chin tucks</b><span>10 slow reps</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="doorway">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <path d="M81 4 L81 90" opacity="0.25"/>
+  <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <ellipse cx="47" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  <ellipse cx="54" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  <path data-part="cue" d="M18 44 L29 44 M25 40 L29 44 L25 48" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.7;0.8;1" dur="3.2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 0;4 0" keyTimes="0;0.35;1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 48 84;14 48 84;14 48 84;0 48 84" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    <g data-part="legs">
+      <path d="M45 58 Q45 71 44 83"/>
+      <path d="M51 58 Q51 71 51 83"/>
+    </g>
+    <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+    <circle data-part="glow" cx="57" cy="45" r="9.35" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
+    </circle>
+    <g data-part="head">
+      <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <path d="M53.2 27 Q55 25.2 56.8 27" stroke="#2B2420" stroke-width="1.8"/>
+        <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+  <path d="M56 41 Q67 37 77 40 L77 26">
+    <animate attributeName="d" values="M56 41 Q67 37 77 40 L77 26;M66.4 44 Q72 37 77 40 L77 26;M66.4 44 Q72 37 77 40 L77 26;M56 41 Q67 37 77 40 L77 26" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="77" cy="24.5" r="2.8" fill="currentColor" stroke="none"/>
+</svg>
+</div>
+      <figcaption><b>Doorway stretch</b><span>30 sec</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="scap">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <g data-part="legs">
+    <path d="M43 58 Q42 71 40 83"/>
+    <path d="M53 58 Q54 71 56 83"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+  <ellipse data-part="glow" cx="48" cy="45" rx="9.6" ry="10.5" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.2;0.35;0.7;0.85;1" dur="2.6s" repeatCount="indefinite"/>
+  </ellipse>
+  <path d="M42 38 Q39.5 44 42.5 50" stroke="#A9502F" stroke-width="2.2">
+    <animateTransform attributeName="transform" type="translate" values="0 0;3.5 0;3.5 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M54 38 Q56.5 44 53.5 50" stroke="#A9502F" stroke-width="2.2">
+    <animateTransform attributeName="transform" type="translate" values="0 0;-3.5 0;-3.5 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M37 42 Q26 44 26 31">
+    <animate attributeName="d" values="M37 42 Q26 44 26 31;M38 45 Q30 52 28 39;M38 45 Q30 52 28 39;M37 42 Q26 44 26 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="26" cy="29" r="2.8" fill="currentColor" stroke="none">
+    <animate attributeName="cx" values="26;28;28;26" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M59 42 Q70 44 70 31">
+    <animate attributeName="d" values="M59 42 Q70 44 70 31;M58 45 Q66 52 68 39;M58 45 Q66 52 68 39;M59 42 Q70 44 70 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="70" cy="29" r="2.8" fill="currentColor" stroke="none">
+    <animate attributeName="cx" values="70;68;68;70" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <g data-part="head">
+    <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Scap squeezes</b><span>15 reps, 2 sec hold</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="walk">
+  <ellipse cx="48" cy="87" rx="18" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M20 36 L28 36 M17 45 L27 45 M20 54 L28 54" stroke-width="2.2" opacity="0.3">
+    <animate attributeName="opacity" values="0.15;0.4;0.15" dur="0.55s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M46 58 Q44 71 38 82">
+      <animate attributeName="d" values="M46 58 Q44 71 38 82;M47 58 Q50 71 55 82;M46 58 Q44 71 38 82" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="41" cy="84.5" rx="5" ry="2.6" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="41;58;41" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+    <path d="M47 58 Q50 71 55 82">
+      <animate attributeName="d" values="M47 58 Q50 71 55 82;M46 58 Q44 71 38 82;M47 58 Q50 71 55 82" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="58" cy="84.5" rx="5" ry="2.6" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="58;41;58" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -2;0 0;0 -2;0 0" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    <path d="M50 41 Q56 48 59 54">
+      <animate attributeName="d" values="M50 41 Q56 48 59 54;M50 41 Q44 48 40 53;M50 41 Q56 48 59 54" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="60" cy="55.5" r="2.8" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="60;39;60" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="55.5;54.5;55.5" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+    <g data-part="head">
+      <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+    <path d="M47 41 Q41 48 37 53">
+      <animate attributeName="d" values="M47 41 Q41 48 37 53;M47 41 Q53 48 57 54;M47 41 Q41 48 37 53" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="36" cy="54.5" r="2.8" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="36;58;36" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="54.5;55.5;54.5" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Walkaround</b><span>2 min</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.62;0.75;1" dur="2.8s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M42 58 Q52 60 62 61 L62 83"/>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <path d="M46 58 Q57 60 67 61 L67 83"/>
+    <ellipse cx="70" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 46 60;-22 46 60;-22 46 60;0 46 60" keyTimes="0;0.4;0.65;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>
+    <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+    <circle data-part="glow" cx="39" cy="42" r="9.35" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.42;0.65;0.8;1" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M55 42 L66 27 L46 21"/>
+    <g data-part="head">
+      <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Thoracic extension</b><span>10 reps</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="hip-flexor">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="46" cy="87" rx="24" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M14 58 L25 58 M21 54 L25 58 L21 62" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.7;0.8;1" dur="3.2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 0;4 0" keyTimes="0;0.35;1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M45 64 L35 75 L27 83">
+      <animate attributeName="d" values="M45 64 L35 75 L27 83;M49 65 L38 76 L27 83;M49 65 L38 76 L27 83;M45 64 L35 75 L27 83" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="25" cy="84.5" rx="4.5" ry="2.4" fill="currentColor" stroke="none"/>
+    <path d="M51 64 L62 71 L62 83">
+      <animate attributeName="d" values="M51 64 L62 71 L62 83;M55 65 L65 72 L62 83;M55 65 L65 72 L62 83;M51 64 L62 71 L62 83" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 1;4 1;0 0" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    <g transform="translate(0 6)">
+      <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+      <circle data-part="glow" cx="44" cy="57" r="9.35" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+        <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M57 41 Q62 48 60.5 56"/>
+      <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+      <g data-part="head">
+        <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+        <g data-part="face" transform="translate(0 -6)">
+          <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+          <path d="M53.2 27 Q55 25.2 56.8 27" stroke="#2B2420" stroke-width="1.8"/>
+          <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Hip flexor stretch</b><span>30 sec each side</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="neck-side">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <g data-part="legs">
+    <path d="M43 58 Q42 71 40 83"/>
+    <path d="M53 58 Q54 71 56 83"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <path d="M37 41 Q29 47 31 57"/>
+  <circle cx="31" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
+  <path d="M59 41 Q67 47 65 57"/>
+  <circle cx="65" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
+  <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+  <circle data-part="glow" cx="56" cy="37" r="9.35" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0;0;0" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" dur="4.4s" repeatCount="indefinite"/>
+  </circle>
+  <circle data-part="glow" cx="40" cy="37" r="9.35" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+    <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" dur="4.4s" repeatCount="indefinite"/>
+  </circle>
+  <g data-part="head">
+    <animateTransform attributeName="transform" type="rotate" values="0 48 41;-26 48 41;-26 48 41;0 48 41;26 48 41;26 48 41;0 48 41" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="4.4s" repeatCount="indefinite"/>
+    <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+    <g data-part="face" transform="translate(0 -6)">
+      <circle cx="40" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+      <circle cx="56" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+      <path d="M42.2 28 Q44 26.2 45.8 28 M50.2 28 Q52 26.2 53.8 28" stroke="#2B2420" stroke-width="1.8"/>
+      <path d="M45.5 33.5 Q48 36 50.5 33.5" stroke="#2B2420" stroke-width="1.8"/>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Neck side stretch</b><span>20 sec each side</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="calf-raise">
+  <defs><radialGradient id="cp-glow-rigatoni"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08">
+    <animate attributeName="rx" values="15;11;11;15" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+  </ellipse>
+  <path data-part="cue" d="M72 74 L72 62 M68 66 L72 62 L76 66" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.55;0.7;1" dur="1.8s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 -5" keyTimes="0;0.4;1" dur="1.8s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M44 84 L51.5 84.5" stroke-width="5">
+      <animate attributeName="d" values="M44 84 L51.5 84.5;M45 77 L51.5 84.5;M45 77 L51.5 84.5;M44 84 L51.5 84.5" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M50 84 L57.5 84.5" stroke-width="5">
+      <animate attributeName="d" values="M50 84 L57.5 84.5;M51 77 L57.5 84.5;M51 77 L57.5 84.5;M50 84 L57.5 84.5" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -7;0 -7;0 0" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+    <ellipse data-part="glow" cx="48" cy="74" rx="10.4" ry="10.5" fill="url(#cp-glow-rigatoni)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.6;0.75;1" dur="1.8s" repeatCount="indefinite"/>
+    </ellipse>
+    <path d="M45 58 Q45 71 45 83"/>
+    <path d="M51 58 Q51 71 51 83"/>
+    <path data-part="body" d="M40 23 L56 23 Q61 23 61 28 L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 28 Q35 23 40 23 Z" fill="#EDBB5F" stroke="none"/><path d="M38.5 25 L38.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 25 L43 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 25 L48 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 25 L53 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 25 L57.5 60" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/>
+    <path d="M57 41 Q62 48 60.5 56"/>
+    <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+    <g data-part="head">
+      <rect x="35" y="10" width="26" height="27" rx="5" fill="#EDBB5F" stroke="none"/><path d="M38.5 15.600000000000001 L38.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M43 15.600000000000001 L43 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M48 15.600000000000001 L48 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M53 15.600000000000001 L53 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><path d="M57.5 15.600000000000001 L57.5 37" stroke="#CF9640" stroke-width="1.3" opacity="0.8"/><ellipse cx="48" cy="12.8" rx="10.5" ry="2.6" fill="#B9852E" stroke="none"/>
+      <g data-part="face" transform="translate(0 -6)">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Calf raises</b><span>20 reps</span></figcaption>
+    </figure>
+  </div>
+  <div class="grid" data-grid="sprout" hidden>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="chin-tuck">
+  <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <g data-part="legs">
+    <path d="M45 58 Q45 71 44 83"/>
+    <path d="M51 58 Q51 71 51 83"/>
+    <ellipse cx="47" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="54" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+  <path d="M57 41 Q62 48 60.5 56"/>
+  <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+  <g data-part="head">
+    <animateTransform attributeName="transform" type="translate" values="0 0;-7 0;-7 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.4s" repeatCount="indefinite"/>
+    <g data-part="topper">
+      <animateTransform attributeName="transform" type="rotate" values="0 48 17;10 48 17;3 48 17;3 48 17;-6 48 17;0 48 17" keyTimes="0;0.3;0.45;0.7;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="2.4s" repeatCount="indefinite"/>
+      <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+      <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+      <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+    </g>
+    <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+    <g data-part="face">
+      <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+      <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+      <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+      <path d="M52 39.5 Q55 41 57.5 39" stroke="#A9502F" stroke-width="1.6" opacity="0">
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.3;0.7;1" dur="2.4s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  <path data-part="cue" d="M79 27 L68 27 M72 23 L68 27 L72 31" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;-4 0;-4 0" keyTimes="0;0.3;1" dur="2.4s" repeatCount="indefinite"/>
+  </path>
+</svg>
+</div>
+      <figcaption><b>Chin tucks</b><span>10 slow reps</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="doorway">
+  <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+  <path d="M81 4 L81 90" opacity="0.25"/>
+  <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <ellipse cx="47" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  <ellipse cx="54" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  <path data-part="cue" d="M18 44 L29 44 M25 40 L29 44 L25 48" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.7;0.8;1" dur="3.2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 0;4 0" keyTimes="0;0.35;1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 48 84;14 48 84;14 48 84;0 48 84" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    <g data-part="legs">
+      <path d="M45 58 Q45 71 44 83"/>
+      <path d="M51 58 Q51 71 51 83"/>
+    </g>
+    <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+    <circle data-part="glow" cx="57" cy="45" r="9.35" fill="url(#cp-glow)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
+    </circle>
+    <g data-part="head">
+      <g data-part="topper">
+        <animateTransform attributeName="transform" type="rotate" values="0 48 17;-12 48 17;-3 48 17;-3 48 17;8 48 17;0 48 17" keyTimes="0;0.3;0.45;0.75;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+        <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+        <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+        <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+      </g>
+      <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+      <g data-part="face">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <path d="M53.2 27 Q55 25.2 56.8 27" stroke="#2B2420" stroke-width="1.8"/>
+        <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+  <path d="M56 41 Q67 37 77 40 L77 26">
+    <animate attributeName="d" values="M56 41 Q67 37 77 40 L77 26;M66.4 44 Q72 37 77 40 L77 26;M66.4 44 Q72 37 77 40 L77 26;M56 41 Q67 37 77 40 L77 26" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="77" cy="24.5" r="2.8" fill="currentColor" stroke="none"/>
+</svg>
+</div>
+      <figcaption><b>Doorway stretch</b><span>30 sec</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="scap">
+  <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <g data-part="legs">
+    <path d="M43 58 Q42 71 40 83"/>
+    <path d="M53 58 Q54 71 56 83"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+  <ellipse data-part="glow" cx="48" cy="45" rx="9.6" ry="10.5" fill="url(#cp-glow)" stroke="none" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.2;0.35;0.7;0.85;1" dur="2.6s" repeatCount="indefinite"/>
+  </ellipse>
+  <path d="M42 38 Q39.5 44 42.5 50" stroke="#A9502F" stroke-width="2.2">
+    <animateTransform attributeName="transform" type="translate" values="0 0;3.5 0;3.5 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M54 38 Q56.5 44 53.5 50" stroke="#A9502F" stroke-width="2.2">
+    <animateTransform attributeName="transform" type="translate" values="0 0;-3.5 0;-3.5 0;0 0" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M37 42 Q26 44 26 31">
+    <animate attributeName="d" values="M37 42 Q26 44 26 31;M38 45 Q30 52 28 39;M38 45 Q30 52 28 39;M37 42 Q26 44 26 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="26" cy="29" r="2.8" fill="currentColor" stroke="none">
+    <animate attributeName="cx" values="26;28;28;26" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M59 42 Q70 44 70 31">
+    <animate attributeName="d" values="M59 42 Q70 44 70 31;M58 45 Q66 52 68 39;M58 45 Q66 52 68 39;M59 42 Q70 44 70 31" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="70" cy="29" r="2.8" fill="currentColor" stroke="none">
+    <animate attributeName="cx" values="70;68;68;70" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="29;37;37;29" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <g data-part="head">
+    <g data-part="topper">
+      <animateTransform attributeName="transform" type="rotate" values="0 48 17;-6 48 17;5 48 17;-2 48 17;0 48 17" keyTimes="0;0.3;0.55;0.8;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="2.6s" repeatCount="indefinite"/>
+      <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+      <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+      <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+    </g>
+    <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Scap squeezes</b><span>15 reps, 2 sec hold</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="walk">
+  <ellipse cx="48" cy="87" rx="18" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M20 36 L28 36 M17 45 L27 45 M20 54 L28 54" stroke-width="2.2" opacity="0.3">
+    <animate attributeName="opacity" values="0.15;0.4;0.15" dur="0.55s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M46 58 Q44 71 38 82">
+      <animate attributeName="d" values="M46 58 Q44 71 38 82;M47 58 Q50 71 55 82;M46 58 Q44 71 38 82" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="41" cy="84.5" rx="5" ry="2.6" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="41;58;41" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+    <path d="M47 58 Q50 71 55 82">
+      <animate attributeName="d" values="M47 58 Q50 71 55 82;M46 58 Q44 71 38 82;M47 58 Q50 71 55 82" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="58" cy="84.5" rx="5" ry="2.6" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="58;41;58" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -2;0 0;0 -2;0 0" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    <path d="M50 41 Q56 48 59 54">
+      <animate attributeName="d" values="M50 41 Q56 48 59 54;M50 41 Q44 48 40 53;M50 41 Q56 48 59 54" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="60" cy="55.5" r="2.8" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="60;39;60" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="55.5;54.5;55.5" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+    <g data-part="head">
+      <g data-part="topper">
+        <animateTransform attributeName="transform" type="rotate" values="-4 48 17;6 48 17;-4 48 17;6 48 17;-4 48 17" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+        <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+        <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+        <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+      </g>
+      <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+      <g data-part="face">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+    <path d="M47 41 Q41 48 37 53">
+      <animate attributeName="d" values="M47 41 Q41 48 37 53;M47 41 Q53 48 57 54;M47 41 Q41 48 37 53" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="36" cy="54.5" r="2.8" fill="currentColor" stroke="none">
+      <animate attributeName="cx" values="36;58;36" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="54.5;55.5;54.5" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Walkaround</b><span>2 min</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext">
+  <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.62;0.75;1" dur="2.8s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M42 58 Q52 60 62 61 L62 83"/>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+    <path d="M46 58 Q57 60 67 61 L67 83"/>
+    <ellipse cx="70" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 46 60;-22 46 60;-22 46 60;0 46 60" keyTimes="0;0.4;0.65;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>
+    <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+    <circle data-part="glow" cx="39" cy="42" r="9.35" fill="url(#cp-glow)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.42;0.65;0.8;1" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M55 42 L66 27 L46 21"/>
+    <g data-part="head">
+      <g data-part="topper">
+        <animateTransform attributeName="transform" type="rotate" values="0 48 17;12 48 17;4 48 17;4 48 17;-7 48 17;0 48 17" keyTimes="0;0.35;0.5;0.65;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="2.8s" repeatCount="indefinite"/>
+        <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+        <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+        <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+      </g>
+      <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+      <g data-part="face">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Thoracic extension</b><span>10 reps</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="hip-flexor">
+  <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="46" cy="87" rx="24" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <path data-part="cue" d="M14 58 L25 58 M21 54 L25 58 L21 62" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.7;0.8;1" dur="3.2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 0;4 0" keyTimes="0;0.35;1" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M45 64 L35 75 L27 83">
+      <animate attributeName="d" values="M45 64 L35 75 L27 83;M49 65 L38 76 L27 83;M49 65 L38 76 L27 83;M45 64 L35 75 L27 83" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="25" cy="84.5" rx="4.5" ry="2.4" fill="currentColor" stroke="none"/>
+    <path d="M51 64 L62 71 L62 83">
+      <animate attributeName="d" values="M51 64 L62 71 L62 83;M55 65 L65 72 L62 83;M55 65 L65 72 L62 83;M51 64 L62 71 L62 83" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    </path>
+    <ellipse cx="65" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;4 1;4 1;0 0" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+    <g transform="translate(0 6)">
+      <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+      <circle data-part="glow" cx="44" cy="57" r="9.35" fill="url(#cp-glow)" stroke="none" opacity="0">
+        <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M57 41 Q62 48 60.5 56"/>
+      <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+      <g data-part="head">
+        <g data-part="topper">
+          <animateTransform attributeName="transform" type="rotate" values="0 48 17;-9 48 17;-2 48 17;-2 48 17;6 48 17;0 48 17" keyTimes="0;0.3;0.45;0.75;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
+          <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+          <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+          <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+        </g>
+        <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+        <g data-part="face">
+          <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+          <path d="M53.2 27 Q55 25.2 56.8 27" stroke="#2B2420" stroke-width="1.8"/>
+          <path d="M55 32.5 Q57.5 34.5 59.5 32" stroke="#2B2420" stroke-width="1.8"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Hip flexor stretch</b><span>30 sec each side</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="neck-side">
+  <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="48" cy="87" rx="17" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
+  <g data-part="legs">
+    <path d="M43 58 Q42 71 40 83"/>
+    <path d="M53 58 Q54 71 56 83"/>
+    <ellipse cx="38" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+    <ellipse cx="58" cy="85" rx="4.5" ry="2.6" fill="currentColor" stroke="none"/>
+  </g>
+  <path d="M37 41 Q29 47 31 57"/>
+  <circle cx="31" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
+  <path d="M59 41 Q67 47 65 57"/>
+  <circle cx="65" cy="58.5" r="2.8" fill="currentColor" stroke="none"/>
+  <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+  <circle data-part="glow" cx="56" cy="37" r="9.35" fill="url(#cp-glow)" stroke="none" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0;0;0" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" dur="4.4s" repeatCount="indefinite"/>
+  </circle>
+  <circle data-part="glow" cx="40" cy="37" r="9.35" fill="url(#cp-glow)" stroke="none" opacity="0">
+    <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" dur="4.4s" repeatCount="indefinite"/>
+  </circle>
+  <g data-part="head">
+    <animateTransform attributeName="transform" type="rotate" values="0 48 41;-26 48 41;-26 48 41;0 48 41;26 48 41;26 48 41;0 48 41" keyTimes="0;0.15;0.4;0.5;0.65;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="4.4s" repeatCount="indefinite"/>
+    <g data-part="topper">
+      <animateTransform attributeName="transform" type="rotate" values="0 48 17;10 48 17;-2 48 17;-2 48 17;0 48 17;-10 48 17;2 48 17;2 48 17;0 48 17" keyTimes="0;0.2;0.3;0.4;0.5;0.7;0.8;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="4.4s" repeatCount="indefinite"/>
+      <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+      <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+      <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+    </g>
+    <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+    <g data-part="face">
+      <circle cx="40" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+      <circle cx="56" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+      <path d="M42.2 28 Q44 26.2 45.8 28 M50.2 28 Q52 26.2 53.8 28" stroke="#2B2420" stroke-width="1.8"/>
+      <path d="M45.5 33.5 Q48 36 50.5 33.5" stroke="#2B2420" stroke-width="1.8"/>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Neck side stretch</b><span>20 sec each side</span></figcaption>
+    </figure>
+    <figure>
+      <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="calf-raise">
+  <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="49" cy="87" rx="15" ry="2.6" fill="currentColor" stroke="none" opacity="0.08">
+    <animate attributeName="rx" values="15;11;11;15" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+  </ellipse>
+  <path data-part="cue" d="M72 74 L72 62 M68 66 L72 62 L76 66" stroke="#C4623F" stroke-width="2.4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.55;0.7;1" dur="1.8s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 -5" keyTimes="0;0.4;1" dur="1.8s" repeatCount="indefinite"/>
+  </path>
+  <g data-part="legs">
+    <path d="M44 84 L51.5 84.5" stroke-width="5">
+      <animate attributeName="d" values="M44 84 L51.5 84.5;M45 77 L51.5 84.5;M45 77 L51.5 84.5;M44 84 L51.5 84.5" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M50 84 L57.5 84.5" stroke-width="5">
+      <animate attributeName="d" values="M50 84 L57.5 84.5;M51 77 L57.5 84.5;M51 77 L57.5 84.5;M50 84 L57.5 84.5" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -7;0 -7;0 0" keyTimes="0;0.4;0.6;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+    <ellipse data-part="glow" cx="48" cy="74" rx="10.4" ry="10.5" fill="url(#cp-glow)" stroke="none" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.6;0.75;1" dur="1.8s" repeatCount="indefinite"/>
+    </ellipse>
+    <path d="M45 58 Q45 71 45 83"/>
+    <path d="M51 58 Q51 71 51 83"/>
+    <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+    <path d="M57 41 Q62 48 60.5 56"/>
+    <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>
+    <g data-part="head">
+      <g data-part="topper">
+        <animateTransform attributeName="transform" type="rotate" values="0 48 17;-6 48 17;4 48 17;8 48 17;-3 48 17;0 48 17" keyTimes="0;0.3;0.5;0.7;0.9;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" dur="1.8s" repeatCount="indefinite"/>
+        <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+        <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+        <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+      </g>
+      <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+      <g data-part="face">
+        <circle cx="53" cy="32.5" r="2.4" fill="#F2A58A" stroke="none"/>
+        <ellipse cx="55" cy="27" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M54.5 32 Q57.5 35.5 60 31.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+</svg>
+</div>
+      <figcaption><b>Calf raises</b><span>20 reps</span></figcaption>
+    </figure>
+  </div>
+</main>
+<script>
+  const root = document.documentElement, body = document.body;
+  const svgs = () => document.querySelectorAll(".tile svg");
+  const toggle = (id, fn) => {
+    const b = document.getElementById(id);
+    b.addEventListener("click", () => { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); fn(on); });
+  };
+  const darkNow = matchMedia("(prefers-color-scheme: dark)").matches;
+  document.getElementById("theme").setAttribute("aria-pressed", darkNow);
+  toggle("theme", (on) => root.dataset.theme = on ? "dark" : "light");
+  toggle("zoom", (on) => body.classList.toggle("zoom", on));
+  toggle("pause", (on) => svgs().forEach((s) => on ? s.pauseAnimations() : s.unpauseAnimations()));
+  const peaks = { "chin-tuck": 1.2, "doorway": 1.8, "scap": 1.3, "walk": 0.3, "t-ext": 1.5, "hip-flexor": 1.8, "neck-side": 1.2, "calf-raise": 0.9 };
+  toggle("peak", (on) => svgs().forEach((s) => {
+    if (on) { s.pauseAnimations(); s.setCurrentTime(peaks[s.dataset.figure] || 1); } else { s.setCurrentTime(0); s.unpauseAnimations(); }
+  }));
+  const pick = (name) => {
+    document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.character === name));
+    document.querySelectorAll("[data-grid]").forEach((g) => g.hidden = g.dataset.grid !== name);
+    try { localStorage.setItem("character", name); } catch (e) {}
+  };
+  document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => pick(b.dataset.character)));
+  try { const saved = localStorage.getItem("character"); if (saved && document.querySelector(`[data-grid="${saved}"]`)) pick(saved); } catch (e) {}
+</script>
+</body>
+</html>

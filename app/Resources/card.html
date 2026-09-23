@@ -1,0 +1,364 @@
+<!doctype html>
+<!--
+  Card UI. Contract (Swift <-> JS)
+  --------------------------------
+  window.CARD = { width, height, pad }   Compact card size in pt plus the transparent margin around it
+                                         (room for the shadow). Swift reads it once after load.
+  window.showCard(payload)               Called each time a card is shown. Resets all state.
+     payload = {
+       id, name, instruction, spec,      strings
+       durationSeconds,                  number, drives the progress bar and time left
+       figure, figureSVG?,               path, and the SVG markup when the file exists
+       subtitle,                         string, why the card is showing
+       index, total, doneToday,          numbers
+       steps, tip                        beginner walkthrough for "How to" (array of strings, string)
+       expand                            bool, open "How to" right away
+     }
+  window.setSubtitle(text)               Called when Claude finishes while the card is up.
+  window.showWelcome({ figureSVG?, character })   The first-launch intro (a few steps, then desk setup).
+
+  JS -> Swift: webkit.messageHandlers.posture.postMessage(
+     { action: "done" | "snooze" }       finish the card
+     { action: "howto" }                 someone opened the steps, Swift pushes auto dismiss out
+     { action: "resize", height }        new card height in pt, Swift grows the window
+     { action: "welcome-close" }         intro dismissed
+     { action: "welcome-try" }           intro dismissed, show a stretch now
+  )
+
+  html/body stay transparent so the shadow shows, the card surface is opaque. Swift handles the
+  window fade + slide, the fade out and the auto dismiss timer. Open in a browser for a demo.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --fg: #2B2420;
+    --muted: #6B625C;
+    --faint: #9A918A;
+    --tile: #FBF3E6;
+    --accent: #B7552F;
+    --btn: #F3EEEA;
+    --btn-hover: #EBE4DF;
+    --primary: #2B2420;
+    --on-primary: #FFFFFF;
+    --line: rgba(43, 36, 32, 0.09);
+    --track: rgba(217, 119, 87, 0.14);
+    --bar: #D97757;
+    --ok: #3E9B5B;
+    --shadow: 0 10px 30px rgba(43, 36, 32, 0.14), 0 0 0 0.5px rgba(43, 36, 32, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #221E1C; --fg: #F6F1EE; --muted: #BDB4AE; --faint: #8F8680; --tile: #2E2825;
+      --accent: #F0A07F; --btn: #37302D; --btn-hover: #413935; --primary: #F6F1EE; --on-primary: #221E1C;
+      --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16); --bar: #E08A67; --ok: #6CCB8A;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #221E1C; --fg: #F6F1EE; --muted: #BDB4AE; --faint: #8F8680; --tile: #2E2825;
+    --accent: #F0A07F; --btn: #37302D; --btn-hover: #413935; --primary: #F6F1EE; --on-primary: #221E1C;
+    --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16); --bar: #E08A67; --ok: #6CCB8A;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  body {
+    padding: 24px;
+    font: 12px/16px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none; user-select: none;
+    cursor: default;
+  }
+  .card {
+    position: relative; width: 340px; background: var(--bg); border-radius: 14px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .main { display: flex; gap: 14px; padding: 14px; height: 132px; }
+  .fig {
+    flex: none; width: 104px; height: 104px; border-radius: 11px; background: var(--tile);
+    color: var(--fg); display: grid; place-items: center;
+  }
+  .fig svg { width: 96px; height: 96px; display: block; }
+  .fig .missing { width: 64px; height: 64px; border-radius: 50%; border: 1.5px dashed var(--faint); opacity: .5; }
+
+  .body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .name { font-size: 15px; line-height: 19px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta { flex: none; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .line {
+    margin-top: 3px; color: var(--muted); height: 32px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .status { margin-top: 3px; height: 32px; display: none; align-items: center; gap: 7px; color: var(--fg); font-weight: 510; }
+  .status i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+  .card.stopped .line { display: none; }
+  .card.stopped .status { display: flex; }
+
+  .specrow { margin-top: 3px; display: flex; align-items: center; justify-content: space-between; height: 18px; }
+  .spec { font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .howto {
+    font: inherit; font-weight: 510; color: var(--muted); background: none; border: 0; padding: 1px 0 1px 6px;
+    display: inline-flex; align-items: center; gap: 3px; cursor: pointer; border-radius: 5px;
+  }
+  .howto:hover { color: var(--fg); }
+  .howto svg { width: 10px; height: 10px; transition: transform .18s ease; }
+  .card.open .howto svg { transform: rotate(180deg); }
+
+  .actions { margin-top: auto; display: flex; align-items: center; gap: 6px; }
+  button.b {
+    font: inherit; font-weight: 590; height: 24px; padding: 0 12px; border: 0; border-radius: 7px;
+    background: var(--btn); color: var(--fg); cursor: pointer;
+  }
+  button.b:hover { background: var(--btn-hover); }
+  button.b.primary { background: var(--primary); color: var(--on-primary); }
+  button.b.primary:hover { opacity: .88; }
+  button:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
+  .left { margin-left: auto; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+  .steps { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
+  .card.open .steps { display: block; }
+  .steps h2 { margin: 0 0 8px; font-size: 11px; line-height: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+  .steps ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .steps li { display: flex; gap: 10px; font-size: 12.5px; line-height: 17px; color: var(--fg); }
+  .steps li b {
+    flex: none; width: 18px; height: 18px; margin-top: -1px; border-radius: 50%; background: var(--tile);
+    color: var(--accent); font-size: 11px; font-weight: 700; display: grid; place-items: center;
+  }
+  .tip { margin-top: 12px; padding: 9px 11px; border-radius: 9px; background: var(--tile); font-size: 12px; line-height: 16px; color: var(--fg); }
+  .tip strong { font-weight: 650; color: var(--accent); }
+  .safety { margin-top: 10px; font-size: 11px; line-height: 15px; color: var(--faint); }
+
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--track); }
+  .progress > div { height: 100%; background: var(--bar); transform-origin: left; }
+
+  .ex { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .wbody { flex: 1; min-height: 0; display: none; flex-direction: column; }
+  .card.welcome .ex, .card.welcome .progress, .card.welcome .steps { display: none; }
+  .card.welcome .wbody { display: flex; }
+  .dots { flex: none; display: flex; gap: 4px; align-self: center; }
+  .dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--line); }
+  .dots i.on { background: var(--bar); }
+  .card.welcome .main { height: 160px; }
+  .card.welcome .fig { align-self: center; }
+  .wtext { margin-top: 5px; color: var(--muted); line-height: 17px; }
+  .wbody .actions { padding-top: 12px; }
+  .setup { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
+  .card.welcome.setup-open .setup { display: block; }
+  .setup h2 { margin: 0 0 8px; font-size: 11px; line-height: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+  .setup ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .setup li { display: flex; gap: 10px; font-size: 12.5px; line-height: 17px; }
+  .setup li svg { flex: none; width: 18px; height: 18px; margin-top: -1px; }
+  .setup li b { font-weight: 650; }
+
+  @media (prefers-reduced-motion: reduce) { .howto svg { transition: none; } }
+
+  /* Browser preview only */
+  .demo { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; width: 340px; }
+  .demo button { font: 11px/1 -apple-system, sans-serif; padding: 6px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="main">
+      <div class="fig" id="fig"><div class="missing"></div></div>
+      <div class="body">
+        <div class="ex">
+        <div class="top"><span class="name" id="name"></span><span class="meta" id="meta"></span></div>
+        <div class="line" id="instruction"></div>
+        <div class="status" id="status"><i></i><span id="statusText"></span></div>
+        <div class="specrow">
+          <span class="spec" id="spec"></span>
+          <button class="howto" id="howto" aria-expanded="false" aria-controls="steps">
+            <span id="howtoLabel">How to</span>
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4 L5 6.5 L7.5 4"/></svg>
+          </button>
+        </div>
+        <div class="actions">
+          <button class="b primary" id="done">Done</button>
+          <button class="b" id="snooze">Snooze</button>
+          <span class="left" id="left"></span>
+        </div>
+        </div>
+        <div class="wbody">
+          <div class="top"><span class="name" id="wTitle"></span><span class="dots" id="wDots"></span></div>
+          <div class="wtext" id="wText"></div>
+          <div class="actions">
+            <button class="b primary" id="wNext">Next</button>
+            <button class="b" id="wSkip">Skip</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="setup" aria-label="Desk setup">
+      <h2>Worth a minute, once</h2>
+      <ul id="setupList"></ul>
+    </section>
+    <section class="steps" id="steps" aria-label="How to do it">
+      <h2>How to do it</h2>
+      <ol id="stepList"></ol>
+      <div class="tip" id="tip"><strong>Watch out.</strong> <span id="tipText"></span></div>
+      <div class="safety">Keep it gentle. Stop if anything hurts, tingles, or feels sharp.</div>
+    </section>
+    <div class="progress"><div id="bar"></div></div>
+  </div>
+<script>
+  window.CARD = { width: 340, height: 132, pad: 24 };
+
+  const $ = (id) => document.getElementById(id);
+  const card = $("card");
+  const native = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.posture;
+  const send = (msg) => native ? native.postMessage(msg) : console.log("card ->", msg);
+  let timer = null, endsAt = 0;
+
+  function setFigure(p) {
+    const fig = $("fig");
+    const missing = () => { fig.innerHTML = '<div class="missing"></div>'; };
+    if (p.figureSVG) { fig.innerHTML = p.figureSVG; return; }
+    missing();
+    if (!native && p.figure) {
+      fetch(p.figure).then((r) => r.ok ? r.text() : Promise.reject()).then((t) => { fig.innerHTML = t; }).catch(missing);
+    }
+  }
+
+  function fmt(s) { s = Math.max(0, Math.ceil(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+
+  function startClock(seconds) {
+    const bar = $("bar");
+    clearInterval(timer);
+    endsAt = Date.now() + seconds * 1000;
+    bar.style.transition = "none";
+    bar.style.transform = "scaleX(1)";
+    void bar.offsetWidth;
+    bar.style.transition = `transform ${Math.max(0, seconds)}s linear`;
+    bar.style.transform = "scaleX(0)";
+    const tick = () => { const s = (endsAt - Date.now()) / 1000; $("left").textContent = s > 0 ? fmt(s) + " left" : "Nice work"; };
+    tick();
+    timer = setInterval(tick, 500);
+  }
+
+  function reportHeight() {
+    send({ action: "resize", height: Math.ceil(card.getBoundingClientRect().height) });
+  }
+
+  function setOpen(open, fromUser) {
+    card.classList.toggle("open", open);
+    $("howto").setAttribute("aria-expanded", open);
+    $("howtoLabel").textContent = open ? "Hide steps" : "How to";
+    reportHeight();
+    if (open && fromUser) send({ action: "howto" });
+  }
+
+  window.showCard = function (p) {
+    card.classList.remove("stopped", "welcome", "setup-open");
+    $("name").textContent = p.name || "";
+    $("instruction").textContent = p.instruction || "";
+    $("spec").textContent = p.spec || "";
+    const done = p.doneToday || 0;
+    $("meta").textContent = done ? `${done} today` : (p.total ? `${p.index} of ${p.total}` : "");
+    $("meta").title = p.total ? `${p.index} of ${p.total} in the rotation` : "";
+    const steps = p.steps || [];
+    $("stepList").innerHTML = "";
+    steps.forEach((s, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<b>${i + 1}</b><span></span>`;
+      li.querySelector("span").textContent = s;
+      $("stepList").appendChild(li);
+    });
+    $("tipText").textContent = p.tip || "";
+    $("tip").style.display = p.tip ? "" : "none";
+    $("howto").style.visibility = steps.length ? "visible" : "hidden";
+    setFigure(p);
+    startClock(p.durationSeconds || 0);
+    setOpen(!!p.expand && steps.length > 0, false);
+  };
+
+  window.setSubtitle = function (text) {
+    $("statusText").textContent = "Claude's done. Finish your set.";
+    card.classList.add("stopped");
+  };
+
+  // Intro: a few short steps from Toni, ending on a desk setup checklist.
+  const WELCOME = [
+    { title: "Hey, I'm Toni", text: "Toni the Rigatoni. I pop up while Claude's working and walk you through a quick stretch." },
+    { title: "Only on long waits", text: "Quick prompts never get me. If Claude's still going after 15 sec, I show up. Once every 20 min, tops." },
+    { title: "You're the boss", text: "Hit Done, Snooze, or just ignore me. How to has the steps. Pause me anytime from the menu bar." },
+    { title: "Quick desk check", text: "Stretching helps, a good setup helps more. Here's the short version.", setup: true },
+  ];
+  const SETUP = [
+    ["Screen at eye level.", "The top of the screen at or a bit below your eyes, about an arm's length away."],
+    ["Raise the laptop.", "Put it on a stand or some books and use a separate keyboard and mouse."],
+    ["Elbows at 90.", "Shoulders relaxed, forearms level, wrists straight while you type."],
+    ["Feet flat.", "On the floor or a footrest, with your knees about level with your hips."],
+    ["Sit all the way back.", "Let the chair hold up your lower back. A small cushion works if it doesn't."],
+    ["Light from the side.", "A window behind your screen or behind you means glare and squinting."],
+  ];
+  const CHECK = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--tile)"/><path d="M5.5 9.2 L7.8 11.4 L12.5 6.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  $("setupList").innerHTML = SETUP.map(([b, t]) => `<li>${CHECK}<span><b>${b}</b> ${t}</span></li>`).join("");
+  let wStep = 0;
+
+  function renderWelcome() {
+    const w = WELCOME[wStep], last = wStep === WELCOME.length - 1;
+    $("wTitle").textContent = w.title;
+    $("wText").textContent = w.text;
+    $("wDots").innerHTML = WELCOME.map((_, i) => `<i class="${i === wStep ? "on" : ""}"></i>`).join("");
+    $("wNext").textContent = last ? "Try a stretch" : "Next";
+    $("wSkip").textContent = last ? "Got it" : "Skip";
+    card.classList.toggle("setup-open", !!w.setup);
+    reportHeight();
+  }
+
+  window.showWelcome = function (p) {
+    clearInterval(timer);
+    card.classList.remove("stopped", "open");
+    card.classList.add("welcome");
+    setFigure(p || {});
+    wStep = 0;
+    renderWelcome();
+  };
+
+  $("wNext").addEventListener("click", () => {
+    if (wStep < WELCOME.length - 1) { wStep++; renderWelcome(); } else send({ action: "welcome-try" });
+  });
+  $("wSkip").addEventListener("click", () => send({ action: "welcome-close" }));
+
+  $("done").addEventListener("click", () => send({ action: "done" }));
+  $("snooze").addEventListener("click", () => send({ action: "snooze" }));
+  $("howto").addEventListener("click", () => setOpen(!card.classList.contains("open"), true));
+
+  // Browser preview: cycle through every exercise with the chosen character.
+  if (!native) {
+    const bar = document.createElement("div");
+    bar.className = "demo";
+    bar.innerHTML = `<button data-a="prev">Prev</button><button data-a="next">Next</button><button data-a="stop">Claude's done</button><button data-a="theme">Light / dark</button><button data-a="char">Toni / sprout</button><button data-a="intro">Intro</button>`;
+    document.body.appendChild(bar);
+    document.body.style.overflow = "auto";
+    let list = [], i = 0, character = "rigatoni";
+    const show = () => {
+      const ex = list[i];
+      const file = ex.figure.split("/").pop();
+      window.showCard(Object.assign({}, ex, {
+        figure: character === "sprout" ? ex.figure : `figures/${character}/${file}`,
+        index: i + 1, total: list.length, doneToday: 2,
+        subtitle: "Claude's on it. Good time for a quick one.",
+      }));
+    };
+    bar.addEventListener("click", (e) => {
+      const a = e.target.dataset.a;
+      if (a === "next") { i = (i + 1) % list.length; show(); }
+      if (a === "prev") { i = (i + list.length - 1) % list.length; show(); }
+      if (a === "stop") window.setSubtitle("Claude's done, finish your set");
+      if (a === "theme") { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark"; }
+      if (a === "char") { character = character === "rigatoni" ? "sprout" : "rigatoni"; show(); }
+      if (a === "intro") window.showWelcome({ figure: character === "sprout" ? "figures/wave.svg" : `figures/${character}/wave.svg` });
+    });
+    fetch("exercises.json").then((r) => r.json()).then((ex) => { list = ex; show(); });
+  }
+</script>
+</body>
+</html>

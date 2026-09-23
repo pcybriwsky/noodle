@@ -1,0 +1,121 @@
+[
+  {
+    "id": "chin-tuck",
+    "name": "Chin tucks",
+    "instruction": "Slide your head straight back, like a double chin.",
+    "spec": "10 slow reps",
+    "durationSeconds": 45,
+    "figure": "figures/chin-tuck.svg",
+    "steps": [
+      "Sit or stand tall with your shoulders relaxed and your eyes looking straight ahead.",
+      "Without tipping your head up or down, glide your chin straight back. Yes, it gives you a double chin.",
+      "Hold for 2 or 3 seconds. You should feel a gentle stretch where your skull meets your neck.",
+      "Let your head glide forward to neutral. That's one rep."
+    ],
+    "tip": "Keep your eyes level the whole time. If you're nodding down, you're doing a different move."
+  },
+  {
+    "id": "doorway",
+    "name": "Doorway stretch",
+    "instruction": "Forearms on a door frame, lean through gently.",
+    "spec": "30 sec",
+    "durationSeconds": 30,
+    "figure": "figures/doorway.svg",
+    "steps": [
+      "Stand in an open doorway. Raise your arms so your elbows are at shoulder height and bent to about 90 degrees.",
+      "Rest your forearms flat on each side of the frame, palms facing forward.",
+      "Step one foot through and slowly lean forward until you feel a stretch across your chest and the front of your shoulders.",
+      "Hold for 30 seconds and breathe normally. Step back to release."
+    ],
+    "tip": "Aim for a gentle stretch, not a strain, and don't let your lower back arch. No doorway nearby? Do one arm at a time against a wall corner."
+  },
+  {
+    "id": "scap",
+    "name": "Scap squeezes",
+    "instruction": "Pinch your shoulder blades back and down, then let go.",
+    "spec": "15 reps, 2 sec hold",
+    "durationSeconds": 50,
+    "figure": "figures/scap.svg",
+    "steps": [
+      "Sit or stand tall. Let your arms hang, or bend your elbows to about 90 degrees if that's easier.",
+      "Squeeze your shoulder blades back and slightly down, like you're pinching a pencil between them.",
+      "Hold for 2 seconds.",
+      "Relax completely, then repeat. Do 15."
+    ],
+    "tip": "Don't shrug your shoulders up toward your ears or push your ribs forward. The move is small and happens in your upper back."
+  },
+  {
+    "id": "walk",
+    "name": "Walkaround",
+    "instruction": "Get up and walk. Refill your water, rest your eyes.",
+    "spec": "2 min",
+    "durationSeconds": 120,
+    "figure": "figures/walk.svg",
+    "steps": [
+      "Stand up and walk anywhere for 2 minutes. A lap around the room or a water refill both count.",
+      "Let your arms swing and your shoulders drop.",
+      "On the way, look at something at least 20 feet away for about 20 seconds to give your eyes a break."
+    ],
+    "tip": "Leave your phone at the desk. This one only works if your eyes get a break too."
+  },
+  {
+    "id": "t-ext",
+    "name": "Thoracic extension",
+    "instruction": "Hands behind your head, arch back over your chair.",
+    "spec": "10 reps",
+    "durationSeconds": 40,
+    "figure": "figures/t-ext.svg",
+    "steps": [
+      "Sit all the way back so the top of your chair's backrest touches your mid back, just below your shoulder blades.",
+      "Lace your fingers behind your head with your elbows pointing forward. Your hands support your neck, they don't pull it.",
+      "Gently lean back over the backrest, lifting your chest toward the ceiling.",
+      "Pause for a breath, then sit back up. Do 10."
+    ],
+    "tip": "Bend from your upper back, not your lower back or neck. If your chair reclines or rolls, brace it against something first or skip this one."
+  },
+  {
+    "id": "hip-flexor",
+    "name": "Hip flexor stretch",
+    "instruction": "Split stance, tuck your hips and push them forward.",
+    "spec": "30 sec each side",
+    "durationSeconds": 60,
+    "figure": "figures/hip-flexor.svg",
+    "steps": [
+      "Stand with one foot a big step in front of the other, both feet pointing forward. Hold your desk if you want.",
+      "Bend your front knee a little and keep your back leg long.",
+      "Tuck your tailbone under by squeezing the glute on your back leg, then gently shift your hips forward.",
+      "You should feel it at the front of your back hip. Hold 30 seconds, then switch legs."
+    ],
+    "tip": "Keep your chest tall. Arching your lower back to go deeper just moves the stretch somewhere it doesn't help."
+  },
+  {
+    "id": "neck-side",
+    "name": "Neck side stretch",
+    "instruction": "Ear toward shoulder, other shoulder stays down.",
+    "spec": "20 sec each side",
+    "durationSeconds": 40,
+    "figure": "figures/neck-side.svg",
+    "steps": [
+      "Sit or stand tall with your shoulders relaxed.",
+      "Slowly tilt your head to bring your right ear toward your right shoulder. Keep looking forward.",
+      "Keep your left shoulder down. For a little more, reach your left hand toward the floor.",
+      "Hold for 20 seconds, come back to center slowly, then do the other side."
+    ],
+    "tip": "Don't lift your shoulder up to meet your ear, and don't pull on your head with your hand."
+  },
+  {
+    "id": "calf-raise",
+    "name": "Calf raises",
+    "instruction": "Rise up onto your toes, lower slowly.",
+    "spec": "20 reps",
+    "durationSeconds": 40,
+    "figure": "figures/calf-raise.svg",
+    "steps": [
+      "Stand tall with your feet hip-width apart. Rest a hand on your desk or a wall for balance.",
+      "Press through the balls of your feet and rise up as high as you can onto your toes.",
+      "Pause for a second at the top.",
+      "Lower slowly, taking about 2 seconds, until your heels touch down. Do 20."
+    ],
+    "tip": "Keep your weight over your big toes so your ankles don't roll outward."
+  }
+]
