@@ -6,9 +6,9 @@
     <ellipse cx="47" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
     <ellipse cx="54" cy="85" rx="5" ry="2.6" fill="currentColor" stroke="none"/>
   </g>
-  <path data-part="body" data-neck="bridge" d="M35 45 L61 45 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 Z" fill="#D97757" stroke="none"/>
-  <path data-part="neck" d="M35 37 L61 37 L61 45 L35 45 Z" fill="#D97757" stroke="none">
-    <animate attributeName="d" values="M35 37 L61 37 L61 45 L35 45 Z;M28 37 L54 37 L61 45 L35 45 Z;M28 37 L54 37 L61 45 L35 45 Z;M35 37 L61 37 L61 45 L35 45 Z" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.4s" repeatCount="indefinite"/>
+  <path data-part="body" data-neck="bridge" d="M35 47 L61 47 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 Z" fill="#D97757" stroke="none"/>
+  <path data-part="neck" d="M35 37 C35 42 35 42 35 47 L61 47 C61 42 61 42 61 37 Z" fill="#D97757" stroke="none">
+    <animate attributeName="d" values="M35 37 C35 42 35 42 35 47 L61 47 C61 42 61 42 61 37 Z;M28 37 C28 42 35 42 35 47 L61 47 C61 42 54 42 54 37 Z;M28 37 C28 42 35 42 35 47 L61 47 C61 42 54 42 54 37 Z;M35 37 C35 42 35 42 35 47 L61 47 C61 42 61 42 61 37 Z" keyTimes="0;0.3;0.7;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="2.4s" repeatCount="indefinite"/>
   </path>
   <path d="M57 41 Q62 48 60.5 56"/>
   <circle cx="60.5" cy="57.5" r="2.8" fill="currentColor" stroke="none"/>

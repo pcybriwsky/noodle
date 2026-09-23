@@ -7,6 +7,7 @@ character shares the same motions. Variants land in app/Resources/figures/<chara
 """
 import html
 import json
+import math
 import re
 from pathlib import Path
 
@@ -66,6 +67,17 @@ def band(x1, x2, y, h, fill):
     return f'<path d="{d} Z" fill="{fill}" stroke="none"/>'
 
 
+def bend_curve(x, top_y, angle, pivot=(48, 41), bottom_y=47, k=4.5):
+    """A line that leaves the torso straight up at (x, bottom_y) and arrives at the head's line end
+    (x, top_y), rotated `angle` degrees around the neck pivot, along the head's own axis."""
+    th = math.radians(angle)
+    px, py = pivot
+    dx, dy = x - px, top_y - py
+    tx, ty = px + dx * math.cos(th) - dy * math.sin(th), py + dx * math.sin(th) + dy * math.cos(th)
+    ux, uy = math.sin(th), -math.cos(th)          # the head's "up" after tilting
+    return (f"M{x:g} {bottom_y} C{x:g} {bottom_y - k:.2f} {tx - ux * k:.2f} {ty - uy * k:.2f} {tx:.2f} {ty:.2f}")
+
+
 class Pasta:
     """One noodle's shapes. torso(top) draws the body from `top` down to the hips, decor(y1, y2)
     its texture between two heights. Head moves use joint() (tilts) and neck() (slides)."""
@@ -73,34 +85,66 @@ class Pasta:
     x1, x2 = 35, 61
     color = "#EDBB5F"
 
-    def torso(self, top): raise NotImplementedError
+    def torso(self, top, decor_from=None): raise NotImplementedError
     def decor(self, y1, y2): return ""
     def head(self): raise NotImplementedError
 
-    def joint(self, uid):
+    def joint(self, uid, angles, timing):
         r = (self.x2 - self.x1) / 2
-        return (f'<clipPath id="j{uid}"><circle cx="48" cy="41" r="{r}"/></clipPath>'
-                f'<circle cx="48" cy="41" r="{r}" fill="{self.color}" stroke="none"/>'
-                f'<g clip-path="url(#j{uid})">{self.decor(41 - r, 41 + r)}</g>')
+        disc = f'<circle cx="48" cy="41" r="{r}" fill="{self.color}" stroke="none"/>'
+        bent = self.bent_lines(angles, timing)
+        if bent:
+            return disc + bent
+        return (f'<clipPath id="j{uid}"><circle cx="48" cy="41" r="{r}"/></clipPath>' + disc
+                + f'<g clip-path="url(#j{uid})">{self.decor(41 - r, 41 + r)}</g>')
 
-    def neck_decor(self, values, timing):
-        return ""
+    def bent_lines(self, angles, timing):
+        """Ridges or strands that curve from the upright torso into the tilted head, per frame."""
+        xs = getattr(self, "xs", None)
+        if not xs:
+            return ""
+        top_y = 43 - self.lift - 0.5            # where the head's lines end
+        out = []
+        for x in xs:
+            frames = [bend_curve(x, top_y, a) for a in angles]
+            out.append(f'<path d="{frames[0]}" stroke="{self.line_color}" stroke-width="{self.line_width}" opacity="0.8">'
+                       f'<animate attributeName="d" values="{";".join(frames)}" {timing}/></path>')
+        return "".join(out)
+
+    def neck_path(self, dx):
+        a, b = self.x1 + dx, self.x2 + dx
+        return f"M{a:g} 37 C{a:g} 42 {self.x1} 42 {self.x1} 47 L{self.x2} 47 C{self.x2} 42 {b:g} 42 {b:g} 37 Z"
+
+    def neck_decor(self, dxs, timing):
+        xs = getattr(self, "xs", None)
+        if not xs:
+            return ""
+        out = []
+        for x in xs:
+            frames = [f"M{x + dx:g} 37 C{x + dx:g} 42 {x} 42 {x} 47" for dx in dxs]
+            out.append(f'<path d="{frames[0]}" stroke="{self.line_color}" stroke-width="{self.line_width}" opacity="0.8">'
+                       f'<animate attributeName="d" values="{";".join(frames)}" {timing}/></path>')
+        return "".join(out)
 
 
 class Rigatoni(Pasta):
     lift, color, hole, ridge = 6, "#EDBB5F", "#B9852E", "#CF9640"
+    line_width = 1.3
+
+    @property
+    def line_color(self): return self.ridge
     xs = (38.5, 43, 48, 53, 57.5)
 
     def decor(self, y1, y2): return lines(self.xs, y1, y2, self.ridge)
 
-    def torso(self, top):
+    def torso(self, top, decor_from=None):
         if top <= 29 - self.lift:   # standing: soft shoulders, hidden under the head anyway
             t = top
             shape = f"M40 {t} L56 {t} Q61 {t} 61 {t + 5} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 L35 {t + 5} Q35 {t} 40 {t} Z"
         else:
             shape = f"M35 {top} L61 {top} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z"
         return (f'<path data-part="body" d="{shape}" fill="{self.color}" stroke="none"/>'
-                + self.decor(max(top, 25), 60))
+                + self.decor(max(decor_from or top, 25), 60))
 
     def head(self):
         l = self.lift
@@ -109,25 +153,21 @@ class Rigatoni(Pasta):
                 + self.decor(21.6 - l, 43 - l)
                 + f'<ellipse cx="48" cy="{18.8 - l}" rx="10.5" ry="2.6" fill="{self.hole}" stroke="none"/>')
 
-    def neck_decor(self, values, timing):
-        # ridges that lean with the neck: top ends follow the head, bottom ends stay on the torso
-        out = []
-        for x in self.xs:
-            ds = ";".join(f"M{x + dx} 37 L{x} 45" for dx in values)
-            out.append(f'<path d="M{x} 37 L{x} 45" stroke="{self.ridge}" stroke-width="1.3" opacity="0.8">'
-                       f'<animate attributeName="d" values="{ds}" {timing}/></path>')
-        return "".join(out)
 
 
 class Spaghetti(Pasta):
     lift, color, strand = 4, "#F2D07E", "#D5A54A"
+    line_width = 1.2
+
+    @property
+    def line_color(self): return self.strand
     xs = (39, 43.5, 48, 52.5, 57)
 
     def decor(self, y1, y2): return lines(self.xs, y1, y2, self.strand, 1.2, wave=1.1)
 
-    def torso(self, top):
+    def torso(self, top, decor_from=None):
         return (f'<path data-part="body" d="M35 {top} L61 {top} L61 57 Q61 62 56 62 L40 62 Q35 62 35 57 Z" fill="{self.color}" stroke="none"/>'
-                + self.decor(top + 2, 60))
+                + self.decor((decor_from or top) + 2, 60))
 
     def head(self):
         top = 29 - self.lift
@@ -140,6 +180,10 @@ class Spaghetti(Pasta):
 
 class Penne(Pasta):
     lift, color, hole, ridge = 6, "#EEBF62", "#B5812B", "#CC933D"
+    line_width = 1.3
+
+    @property
+    def line_color(self): return self.ridge
     xs = (38.5, 43, 48, 53, 57.5)
 
     def slant_top(self, x): return (18 - self.lift) - 8 * (x - 35) / 26   # cut from low-left to high-right
@@ -147,9 +191,9 @@ class Penne(Pasta):
 
     def decor(self, y1, y2): return lines(self.xs, y1, lambda x: min(y2, self.slant_bottom(x) - 2.5), self.ridge)
 
-    def torso(self, top):
+    def torso(self, top, decor_from=None):
         return (f'<path data-part="body" d="M35 {top} L61 {top} L61 58 L35 65 Z" fill="{self.color}" stroke="none"/>'
-                + self.decor(top, 70))
+                + self.decor(decor_from or top, 70))
 
     def head(self):
         st = self.slant_top
@@ -157,7 +201,6 @@ class Penne(Pasta):
                 + lines(self.xs, lambda x: st(x) + 4, 43 - self.lift, self.ridge)
                 + f'<ellipse cx="48" cy="{st(48) + 0.5:.1f}" rx="11.5" ry="2.4" fill="{self.hole}" stroke="none" transform="rotate(-17 48 {st(48) + 0.5:.1f})"/>')
 
-    neck_decor = Rigatoni.neck_decor
 
 
 class Lasagna(Pasta):
@@ -167,8 +210,8 @@ class Lasagna(Pasta):
     def decor(self, y1, y2):
         return "".join(band(32, 64, y, h, getattr(self, c)) for y, h, c in self.layers if y1 <= y and y + h <= y2)
 
-    def torso(self, top):
-        return ruffled(32, top, 64, 62, self.color).replace("<path ", '<path data-part="body" ', 1) + self.decor(top, 62)
+    def torso(self, top, decor_from=None):
+        return ruffled(32, top, 64, 62, self.color).replace("<path ", '<path data-part="body" ', 1) + self.decor(decor_from or top, 62)
 
     def head(self):
         t = 16 - self.lift
@@ -178,7 +221,8 @@ class Lasagna(Pasta):
 
 NECK_JOINT = re.compile(r'<path data-part="body" data-neck="joint"[^>]*/>\s*<circle data-part="joint"[^>]*/>')
 NECK_BRIDGE = re.compile(r'<path data-part="body" data-neck="bridge" d="M35 (\d+) [^"]*"[^>]*/>\s*'
-                         r'(<path data-part="neck" d="[^"]*" fill="[^"]*" stroke="none">\s*<animate attributeName="d" values="([^"]*)" ([^/]*)/>\s*</path>)')
+                         r'<path data-part="neck" d="[^"]*" fill="[^"]*" stroke="none">\s*<animate attributeName="d" values="([^"]*)" ([^/]*)/>\s*</path>')
+HEAD_TILT = re.compile(r'<g data-part="head">\s*<animateTransform attributeName="transform" type="rotate" values="([^"]*)" ([^/]*)/>')
 _uid = [0]
 
 
@@ -188,15 +232,15 @@ def pasta(name, p):
         uid = f"{name}{_uid[0]}"
         svg = TOPPER.sub("", svg)
         if NECK_JOINT.search(svg):                       # neck stretch: tilt bends at a round joint
-            svg = NECK_JOINT.sub(lambda m: p.torso(41) + p.joint(uid), svg)
-        elif (m := NECK_BRIDGE.search(svg)):              # chin tuck: the neck slants as the head slides
-            top, neck, values, timing = int(m.group(1)), m.group(2), m.group(3), m.group(4)
+            tilt = HEAD_TILT.search(svg)
+            angles = [float(v.split()[0]) for v in tilt.group(1).split(";")]
+            svg = NECK_JOINT.sub(lambda m: p.torso(41, decor_from=47 if p.bent_lines([0], '') else None) + p.joint(uid, angles, tilt.group(2)), svg)
+        elif (m := NECK_BRIDGE.search(svg)):              # chin tuck: the neck curves as the head slides
+            top, values, timing = int(m.group(1)), m.group(2), m.group(3)
             dxs = [float(v.split()[0][1:]) - 35 for v in values.split(";")]
-            neck = neck.replace('fill="#D97757"', f'fill="{p.color}"')
-            # the base neck spans x 35..61; stretch it to this noodle's width
-            fit = lambda d: re.sub(r"M([\d.]+) 37 L([\d.]+) 37 L61 45 L35 45 Z", lambda q: (
-                f"M{float(q.group(1)) - 35 + p.x1:g} 37 L{float(q.group(2)) - 61 + p.x2:g} 37 L{p.x2} 45 L{p.x1} 45 Z"), d)
-            neck = fit(neck)
+            frames = ";".join(p.neck_path(dx) for dx in dxs)
+            neck = (f'<path data-part="neck" d="{p.neck_path(dxs[0])}" fill="{p.color}" stroke="none">'
+                    f'<animate attributeName="d" values="{frames}" {timing}/></path>')
             svg = svg.replace(m.group(0), p.torso(top) + neck + p.neck_decor(dxs, timing))
         else:
             assert svg.count(SPROUT_BODY) == 1
