@@ -50,6 +50,9 @@ struct Config: Codable {
     var enabledExercises: [String]?     // nil means all, in exercises.json order
     var character = "rigatoni"          // rigatoni (Toni) or sprout, picks figures/<character>/<id>.svg
     var expandSteps = false             // open "How to" on every card, for when the moves are new
+    var holdDuringCalls = true          // no cards while any app is using the mic or camera
+    var holdDuringCalendarEvents = false // no cards during busy calendar events (asks for calendar access)
+    var focus = Focus.all.rawValue      // neck, hips, all, or "custom" once exercises are picked by hand
 
     init() {}
     init(from decoder: Decoder) throws {
@@ -64,6 +67,31 @@ struct Config: Codable {
         enabledExercises = try c.decodeIfPresent([String].self, forKey: .enabledExercises)
         character = try c.decodeIfPresent(String.self, forKey: .character) ?? d.character
         expandSteps = try c.decodeIfPresent(Bool.self, forKey: .expandSteps) ?? d.expandSteps
+        holdDuringCalls = try c.decodeIfPresent(Bool.self, forKey: .holdDuringCalls) ?? d.holdDuringCalls
+        holdDuringCalendarEvents = try c.decodeIfPresent(Bool.self, forKey: .holdDuringCalendarEvents) ?? d.holdDuringCalendarEvents
+        focus = try c.decodeIfPresent(String.self, forKey: .focus) ?? d.focus
+    }
+}
+
+/// What someone wants to work on. Picks which exercises are in the rotation.
+enum Focus: String, CaseIterable {
+    case neck, hips, all
+
+    var title: String {
+        switch self {
+        case .neck: return "Tech neck"
+        case .hips: return "Tight hips"
+        case .all: return "General stiffness"
+        }
+    }
+
+    /// Exercise ids for this focus, or nil for all of them.
+    var exerciseIDs: Set<String>? {
+        switch self {
+        case .neck: return ["chin-tuck", "neck-side", "scap", "doorway", "t-ext", "walk"]
+        case .hips: return ["hip-flexor", "calf-raise", "walk", "t-ext"]
+        case .all: return nil
+        }
     }
 }
 
@@ -128,6 +156,15 @@ final class Store {
             debug("config.json unreadable, using last good config: \(error)")
         }
         return lastGoodConfig
+    }
+
+    /// Sets the focus and the exercise rotation that goes with it.
+    func apply(focus: Focus) {
+        var c = config()
+        let all = exercises.map(\.id)
+        c.focus = focus.rawValue
+        c.enabledExercises = focus.exerciseIDs.map { ids in all.filter(ids.contains) } ?? all
+        save(c)
     }
 
     func enabledExercises(_ c: Config) -> [Exercise] {

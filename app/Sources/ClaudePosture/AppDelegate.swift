@@ -89,6 +89,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         } else if store.config().quietHours.contains(Date()) {
             menu.addItem(info("Quiet hours"))
             menu.addItem(.separator())
+        } else if let reason = posture.blockedReason(), ["on a call", "calendar event"].contains(reason) {
+            menu.addItem(info(reason == "on a call" ? "Holding cards: you're on a call" : "Holding cards: you're in a meeting"))
+            menu.addItem(.separator())
         }
         menu.addItem(item("Pause for 1 hour", #selector(pauseHour)))
         menu.addItem(item("Pause until tomorrow", #selector(pauseTomorrow)))
@@ -112,7 +115,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func settingsMenu() -> NSMenuItem {
         let c = store.config()
         let characters = [("rigatoni", "Toni the Rigatoni"), ("sprout", "Sprout")]
+        var focusItems = Focus.allCases.map { f in
+            option(f.title, checked: c.focus == f.rawValue) { self.store.apply(focus: f); self.refresh() }
+        }
+        if Focus(rawValue: c.focus) == nil { focusItems.append(info("Custom (picked by hand)")); focusItems.last?.state = .on }
         var items: [NSMenuItem] = [
+            submenu("Focus", focusItems),
             submenu("Character", characters.map { id, title in
                 option(title, checked: c.character == id) { self.update { $0.character = id } }
             }),
@@ -128,6 +136,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }),
             submenu("Exercises", exerciseItems(c)),
             .separator(),
+            option("Hold during calls (mic or camera on)", checked: c.holdDuringCalls) {
+                self.update { $0.holdDuringCalls.toggle() }
+            },
+            option("Hold during calendar events", checked: c.holdDuringCalendarEvents) { self.toggleCalendarHold() },
             option("Quiet hours, \(c.quietHours.start) to \(c.quietHours.end)", checked: c.quietHours.enabled) {
                 self.update { $0.quietHours.enabled.toggle() }
             },
@@ -149,7 +161,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 var next = on
                 if isOn { next.remove(ex.id) } else { next.insert(ex.id) }
                 guard !next.isEmpty else { return }
-                self.update { $0.enabledExercises = all.filter(next.contains) }
+                self.update { $0.enabledExercises = all.filter(next.contains); $0.focus = "custom" }
             }
             if isOn && on.count == 1 { i.isEnabled = false }
             return i
@@ -162,6 +174,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         var values = presets
         if !values.contains(current) { values.append(current); values.sort() }
         return values.map { v in option(label(v), checked: v == current) { set(v) } }
+    }
+
+    /// Turning it on asks for calendar access first, and stays off if that's declined.
+    private func toggleCalendarHold() {
+        if store.config().holdDuringCalendarEvents { return update { $0.holdDuringCalendarEvents = false } }
+        let cal = posture.calendar
+        if cal.hasAccess { return update { $0.holdDuringCalendarEvents = true } }
+        cal.requestAccess { [weak self] granted in
+            if granted { self?.update { $0.holdDuringCalendarEvents = true } }
+            else { debug("calendar access declined, leaving calendar hold off") }
+        }
     }
 
     private func update(_ change: (inout Config) -> Void) {

@@ -12,6 +12,7 @@ final class Posture {
 
     let store: Store
     let card: CardController
+    let calendar = CalendarWatch()
     var onChange: (() -> Void)?
 
     private var delayTask: Task<Void, Never>?
@@ -29,6 +30,11 @@ final class Posture {
             case "snooze": self?.finish("snoozed")
             case "howto": self?.extendForReading()
             case "welcome-close": self?.closeWelcome()
+            case let a where a.hasPrefix("focus:"):
+                if let self, let f = Focus(rawValue: String(a.dropFirst(6))) {
+                    self.store.apply(focus: f)
+                    debug("focus \(f.rawValue)")
+                }
             case "welcome-try":
                 self?.closeWelcome()
                 self?.showNow()
@@ -94,6 +100,8 @@ final class Posture {
         if let p = s.pausedUntil, p > now { return "paused" }
         if c.quietHours.contains(now) { return "quiet hours" }
         if let n = s.nextAllowed, n > now { return "cooldown" }
+        if c.holdDuringCalls && Calls.inProgress() { return "on a call" }
+        if c.holdDuringCalendarEvents && calendar.busyNow(at: now) { return "calendar event" }
         if store.enabledExercises(c).isEmpty { return "no exercises enabled" }
         return nil
     }
@@ -148,7 +156,7 @@ final class Posture {
         s.onboarded = true
         store.save(s)
         let c = store.config()
-        var payload: [String: Any] = ["character": c.character]
+        var payload: [String: Any] = ["character": c.character, "focus": c.focus]
         if let svg = figureSVG("figures/wave.svg", character: c.character) { payload["figureSVG"] = svg }
         debug("show intro")
         welcomeShowing = true

@@ -23,6 +23,8 @@ Needs Xcode command line tools (`swift`) and `jq`.
 
 - You send a prompt. If Claude is still working 15 seconds later, a card shows up.
 - At most one card every 20 minutes.
+- No cards while you're on a call. If any app is using your mic or camera, Toni waits. You can also have him skip busy calendar events.
+- Working late? No quiet hours by default, so you still get nudged.
 - Done logs it, Snooze pushes the next one back 10 minutes, and ignoring it is fine too.
 - **How to** opens beginner steps for the move, plus the most common mistake to avoid.
 - If Claude finishes while a card is up, it says so, and you can finish your set.
@@ -30,7 +32,9 @@ Needs Xcode command line tools (`swift`) and `jq`.
 
 ## Settings
 
-Everything lives under **Settings** in the menu bar: character, how long before a card shows, how often, snooze length, corner, which exercises, quiet hours, always show steps, and open at login.
+Everything lives under **Settings** in the menu bar: focus, character, how long before a card shows, how often, snooze length, corner, which exercises, holding during calls or calendar events, quiet hours, always show steps, and open at login.
+
+**Focus** picks the rotation: *Tech neck* leans on chin tucks, neck, and upper back. *Tight hips* (anterior pelvic tilt) leans on hip flexors and legs. *General stiffness* is all eight. The intro asks, and you can switch anytime.
 
 Under the hood it's `~/.claude-posture/config.json` (Settings > Edit config file…). Changes apply on the next card, no restart needed.
 
@@ -45,6 +49,9 @@ Under the hood it's `~/.claude-posture/config.json` (Settings > Edit config file
 | `enabledExercises` | all | ids from `exercises.json`, in the order you want them |
 | `character` | `rigatoni` | `rigatoni` (Toni) or `sprout` |
 | `expandSteps` | `false` | open How to on every card, handy while the moves are new |
+| `focus` | `all` | `neck`, `hips`, `all`, or `custom` after picking exercises by hand |
+| `holdDuringCalls` | `true` | skip cards while any app is using the mic or camera |
+| `holdDuringCalendarEvents` | `false` | skip cards during busy calendar events (asks for calendar access) |
 
 State lives next to it in `state.json`, and every card gets a line in `log.jsonl`.
 

@@ -22,6 +22,10 @@
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Claude Posture checks whether you're in a meeting right now so it can hold stretch cards until you're free. It never changes your calendar.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Claude Posture checks whether you're in a meeting right now so it can hold stretch cards until you're free. It never changes your calendar.</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSHighResolutionCapable</key>

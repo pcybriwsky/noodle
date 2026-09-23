@@ -161,6 +161,10 @@ final class CardController: NSObject, WKScriptMessageHandler, WKNavigationDelega
             if let h = body?["height"] as? Double { resize(height: CGFloat(h)) }
             return
         }
+        if action == "focus", let value = body?["value"] as? String {
+            onAction?("focus:\(value)")
+            return
+        }
         if let action { onAction?(action) }
     }
 }

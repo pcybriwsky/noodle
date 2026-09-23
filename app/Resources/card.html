@@ -15,7 +15,7 @@
        expand                            bool, open "How to" right away
      }
   window.setSubtitle(text)               Called when Claude finishes while the card is up.
-  window.showWelcome({ figureSVG?, character })   The first-launch intro (a few steps, then desk setup).
+  window.showWelcome({ figureSVG?, character, focus })   The first-launch intro (a few steps, then desk setup).
 
   JS -> Swift: webkit.messageHandlers.posture.postMessage(
      { action: "done" | "snooze" }       finish the card
@@ -23,6 +23,7 @@
      { action: "resize", height }        new card height in pt, Swift grows the window
      { action: "welcome-close" }         intro dismissed
      { action: "welcome-try" }           intro dismissed, show a stretch now
+     { action: "focus", value }          picked neck, hips, or all in the intro
   )
 
   html/body stay transparent so the shadow shows, the card surface is opaque. Swift handles the
@@ -150,6 +151,19 @@
   .wbody .actions { padding-top: 12px; }
   .setup { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
   .card.welcome.setup-open .setup { display: block; }
+  .pick { display: none; border-top: 1px solid var(--line); padding: 12px 14px 14px; }
+  .card.welcome.pick-open .pick { display: flex; flex-direction: column; gap: 6px; }
+  .pick button {
+    font: inherit; text-align: left; display: flex; gap: 10px; align-items: flex-start; width: 100%;
+    padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer;
+  }
+  .pick button:hover { background: var(--tile); }
+  .pick button[aria-pressed="true"] { background: var(--tile); border-color: var(--bar); }
+  .pick .radio { flex: none; width: 14px; height: 14px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--faint); display: grid; place-items: center; }
+  .pick button[aria-pressed="true"] .radio { border-color: var(--bar); }
+  .pick button[aria-pressed="true"] .radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bar); }
+  .pick b { display: block; font-size: 12.5px; line-height: 17px; font-weight: 650; }
+  .pick span { display: block; font-size: 12px; line-height: 16px; color: var(--muted); }
   .setup h2 { margin: 0 0 8px; font-size: 11px; line-height: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
   .setup ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   .setup li { display: flex; gap: 10px; font-size: 12.5px; line-height: 17px; }
@@ -195,6 +209,7 @@
         </div>
       </div>
     </div>
+    <section class="pick" id="pick" aria-label="What to work on"></section>
     <section class="setup" aria-label="Desk setup">
       <h2>Worth a minute, once</h2>
       <ul id="setupList"></ul>
@@ -255,7 +270,7 @@
   }
 
   window.showCard = function (p) {
-    card.classList.remove("stopped", "welcome", "setup-open");
+    card.classList.remove("stopped", "welcome", "setup-open", "pick-open");
     $("name").textContent = p.name || "";
     $("instruction").textContent = p.instruction || "";
     $("spec").textContent = p.spec || "";
@@ -288,6 +303,7 @@
     { title: "Hey, I'm Toni", text: "Toni the Rigatoni. I pop up while Claude's working and walk you through a quick stretch." },
     { title: "Only on long waits", text: "Quick prompts never get me. If Claude's still going after 15 sec, I show up. Once every 20 min, tops." },
     { title: "You're the boss", text: "Hit Done, Snooze, or just ignore me. How to has the steps. Pause me anytime from the menu bar." },
+    { title: "What bugs you?", text: "Pick one and I'll lean on the right moves. Change it anytime in Settings.", pick: true },
     { title: "Quick desk check", text: "Stretching helps, a good setup helps more. Here's the short version.", setup: true },
   ];
   const SETUP = [
@@ -300,7 +316,25 @@
   ];
   const CHECK = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--tile)"/><path d="M5.5 9.2 L7.8 11.4 L12.5 6.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   $("setupList").innerHTML = SETUP.map(([b, t]) => `<li>${CHECK}<span><b>${b}</b> ${t}</span></li>`).join("");
-  let wStep = 0;
+  const FOCUS = [
+    ["neck", "Tech neck", "Head drifting forward, shoulders rounding in. More chin tucks, neck and upper back."],
+    ["hips", "Tight hips", "Anterior pelvic tilt, the arched low back from sitting all day. More hip and leg work."],
+    ["all", "General stiffness", "A bit of everything. All eight moves."],
+  ];
+  let wStep = 0, focus = "all";
+
+  function renderPick() {
+    $("pick").innerHTML = "";
+    FOCUS.forEach(([id, title, desc]) => {
+      const b = document.createElement("button");
+      b.setAttribute("aria-pressed", id === focus);
+      b.innerHTML = `<i class="radio"></i><div><b></b><span></span></div>`;
+      b.querySelector("b").textContent = title;
+      b.querySelector("span").textContent = desc;
+      b.addEventListener("click", () => { focus = id; renderPick(); send({ action: "focus", value: id }); });
+      $("pick").appendChild(b);
+    });
+  }
 
   function renderWelcome() {
     const w = WELCOME[wStep], last = wStep === WELCOME.length - 1;
@@ -310,6 +344,8 @@
     $("wNext").textContent = last ? "Try a stretch" : "Next";
     $("wSkip").textContent = last ? "Got it" : "Skip";
     card.classList.toggle("setup-open", !!w.setup);
+    card.classList.toggle("pick-open", !!w.pick);
+    if (w.pick) renderPick();
     reportHeight();
   }
 
@@ -317,6 +353,7 @@
     clearInterval(timer);
     card.classList.remove("stopped", "open");
     card.classList.add("welcome");
+    focus = (p && ["neck", "hips", "all"].includes(p.focus)) ? p.focus : "all";
     setFigure(p || {});
     wStep = 0;
     renderWelcome();
