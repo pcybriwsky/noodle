@@ -256,7 +256,8 @@ def pasta(name, p):
 
 INK = "#2B2420"
 FLOOR = re.compile(r'<ellipse cx="4\d" cy="8\d" rx="[\d.]+" ry="2.6" fill="currentColor" stroke="none" opacity="0.08">(?:\s*<animate[^>]*/>\s*</ellipse>)?|<ellipse cx="4\d" cy="8\d" rx="[\d.]+" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>')
-EXTRAS_OUT = re.compile(r'<(circle|ellipse|path) data-part="(?:glow|cue)"[^>]*?(?:/>|>.*?</\1>)', re.S)
+# Glows, motion arrows and props (door frame, chair) aren't part of the sticker, so they get no paper edge.
+EXTRAS_OUT = re.compile(r'<(circle|ellipse|path) data-part="(?:glow|cue|prop)"[^>]*?(?:/>|>.*?</\1>)', re.S)
 
 
 def paper(svg: str, uid: str) -> str:
@@ -265,10 +266,11 @@ def paper(svg: str, uid: str) -> str:
     the whole silhouette); the full figure draws on top. Limbs stay ink: it's printed on paper."""
     head, inner = re.match(r"(<svg[^>]*>)(.*)</svg>", svg.strip(), re.S).groups()
     inner = FLOOR.sub("", inner).replace("currentColor", INK)
+    inner = inner.replace('data-part="prop" ', 'data-part="prop" stroke="currentColor" ')   # props follow light/dark
     base = EXTRAS_OUT.sub("", inner)
     base = re.sub(r'id="([^"]+)"', r'id="\1-b"', base)
     base = re.sub(r"url\(#([^)]+)\)", r"url(#\1-b)", base)
-    head = head.replace("<svg ", '<svg overflow="visible" ', 1)
+    head = head.replace("<svg ", '<svg overflow="visible" ', 1).replace('stroke="currentColor"', f'stroke="{INK}"')
     defs = (f'<defs><filter id="paper-{uid}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">'
             '<feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/>'
             '<feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/>'
@@ -335,16 +337,16 @@ page = f"""<!doctype html>
 <title>Noodle figures</title>
 <style>
   :root {{
-    --bg: #F4EDE2; --tile: #EADCC5; --fg: #2B2420; --muted: #8A817B; --line: #EDE6E1; --accent: #B85A3A;
+    --bg: #FFFFFF; --tile: #FBF4EF; --fg: #2B2420; --muted: #8A817B; --line: #EDE6E1; --accent: #B85A3A;
     color-scheme: light;
   }}
   :root[data-theme="dark"] {{
-    --bg: #221D1B; --tile: #433831; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
+    --bg: #161312; --tile: #221D1B; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
     color-scheme: dark;
   }}
   @media (prefers-color-scheme: dark) {{
     :root:not([data-theme="light"]) {{
-      --bg: #221D1B; --tile: #433831; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
+      --bg: #161312; --tile: #221D1B; --fg: #F6F1EE; --muted: #A39A94; --line: #2E2825; --accent: #EE9A7A;
       color-scheme: dark;
     }}
   }}

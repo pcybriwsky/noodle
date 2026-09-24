@@ -1,6 +1,6 @@
-<svg overflow="visible" data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext"><defs><filter id="paper-p5" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p5)">
+<svg overflow="visible" data-character="rigatoni" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="#2B2420" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext"><defs><filter id="paper-p5" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p5)">
   <defs><radialGradient id="cp-glow-rigatoni5-b"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
-  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  
   <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="#2B2420" stroke="none" opacity="0.08"/>
   
   <g data-part="legs">
@@ -25,7 +25,7 @@
   </g>
 </g>
   <defs><radialGradient id="cp-glow-rigatoni5"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
-  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  <path data-part="prop" stroke="currentColor" d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
   <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="#2B2420" stroke="none" opacity="0.08"/>
   <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
     <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.62;0.75;1" dur="2.8s" repeatCount="indefinite"/>

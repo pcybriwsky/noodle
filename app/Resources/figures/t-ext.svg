@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="t-ext">
   <defs><radialGradient id="cp-glow"><stop offset="0" stop-color="#FFC857"/><stop offset="0.55" stop-color="#FFC857" stop-opacity="0.75"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
-  <path d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
+  <path data-part="prop" d="M28 34 L32 62 M31 62 L64 62 M35 62 L35 86 M60 62 L60 86" opacity="0.25"/>
   <ellipse cx="51" cy="88" rx="20" ry="2.6" fill="currentColor" stroke="none" opacity="0.08"/>
   <path data-part="cue" d="M36 6 Q24 7 19 18 M18 12.5 L19 18 L24.5 17" stroke="#C4623F" stroke-width="2.4" opacity="0">
     <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.62;0.75;1" dur="2.8s" repeatCount="indefinite"/>
