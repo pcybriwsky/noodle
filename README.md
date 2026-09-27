@@ -83,3 +83,7 @@ scripts/uninstall.sh
 ```
 
 Removes the app and takes out only the two hooks it added, leaving the rest of `settings.json` alone. `~/.claude-posture` stays unless you delete it.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
