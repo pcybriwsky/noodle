@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="peek">
+  <g data-part="lift">
+    <path d="M38 50 Q34 45 36 41"/>
+    <path d="M58 50 Q62 45 60 41"/>
+    <path data-part="body" d="M43 29 L53 29 A8 8 0 0 1 61 37 L61 49 A13 13 0 0 1 48 62 A13 13 0 0 1 35 49 L35 37 A8 8 0 0 1 43 29 Z" fill="#D97757" stroke="none"/>
+    <g data-part="head">
+      <g data-part="topper">
+        <path d="M48 17 Q47.5 11 50 7" stroke="#6E8B4E" stroke-width="2.2"/>
+        <path d="M50 8.5 C51 3.5 56.5 1.5 61.5 3 C60.5 7.5 55 10.5 50 8.5 Z" fill="#8DAA63" stroke="none"/>
+        <path d="M49 10.5 C47.5 6.5 42.5 5 38.5 6.5 C40 10.5 45 12.5 49 10.5 Z" fill="#7C9A55" stroke="none"/>
+      </g>
+      <circle cx="48" cy="29" r="13" fill="#D97757" stroke="none"/>
+      <g data-part="face">
+        <circle cx="40" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+        <circle cx="56" cy="33" r="2.6" fill="#F2A58A" stroke="none"/>
+        <ellipse data-part="eye" cx="44" cy="28" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <ellipse data-part="eye" cx="52" cy="28" rx="1.8" ry="2.4" fill="#2B2420" stroke="none"/>
+        <path d="M45.5 33.5 Q48 36 50.5 33.5" stroke="#2B2420" stroke-width="1.8"/>
+      </g>
+    </g>
+  </g>
+  <g data-part="hands">
+    <circle data-part="hand-l" cx="34.5" cy="40.5" r="3.2" fill="currentColor" stroke="none"/>
+    <circle data-part="hand-r" cx="61.5" cy="40.5" r="3.2" fill="currentColor" stroke="none"/>
+  </g>
+</svg>

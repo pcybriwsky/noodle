@@ -50,7 +50,7 @@ struct Config: Codable {
     var enabledExercises: [String]?     // nil means all, in exercises.json order
     var character = "rigatoni"          // rigatoni, spaghetti, penne, lasagna, or sprout (see Cast)
     var expandSteps = false             // open "How to" on every card, for when the moves are new
-    var entrance = "noodle"             // noodle (ride a strand down from the menu bar) or card (just the card)
+    var entrance = "card"               // card (slides in from the screen edge) or noodle (rides a strand down from the menu bar)
     var holdDuringCalls = true          // no cards while any app is using the mic or camera
     var holdDuringCalendarEvents = false // no cards during busy calendar events (asks for calendar access)
     var focus = Focus.all.rawValue      // neck, hips, all, or "custom" once exercises are picked by hand

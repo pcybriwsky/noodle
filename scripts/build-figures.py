@@ -250,6 +250,8 @@ def pasta(name, p):
         svg = svg.replace('<g data-part="face">', f'<g data-part="face" transform="translate(0 -{p.lift})">')
         svg = svg.replace('id="cp-glow"', f'id="cp-glow-{uid}"').replace("url(#cp-glow)", f"url(#cp-glow-{uid})")
         svg = svg.replace('stop-color="#FFC857"', f'stop-color="{GLOW}"')
+        # The peek hangs its eyes just over the card's edge, so taller heads sit lower to line up.
+        svg = svg.replace('<g data-part="lift">', f'<g data-part="lift" transform="translate(0 {p.lift})">', 1)
         return svg.replace("<svg ", f'<svg data-character="{name}" ', 1)
     return make
 
@@ -302,7 +304,7 @@ CHARACTERS = {
     "sprout": ("Sprout", lambda s: s),
 }
 CHARACTERS = {k: (label, papered(make)) for k, (label, make) in CHARACTERS.items()}
-EXTRAS = [("wave", "Wave (intro)"), ("hang", "Hang (entrance)")]  # generated for every character too
+EXTRAS = [("wave", "Wave (intro)"), ("hang", "Hang (entrance)"), ("peek", "Peek (nudge)")]  # generated for every character too
 
 grids = {}
 for name, (label, make) in CHARACTERS.items():

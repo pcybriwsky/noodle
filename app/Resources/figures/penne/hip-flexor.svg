@@ -1,5 +1,5 @@
-<svg overflow="visible" data-character="penne" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="#2B2420" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="hip-flexor"><defs><filter id="paper-p26" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p26)">
-  <defs><radialGradient id="cp-glow-penne26-b"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+<svg overflow="visible" data-character="penne" xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="#2B2420" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-figure="hip-flexor"><defs><filter id="paper-p28" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="o"/><feFlood flood-color="#3A2A20"/><feComposite in2="o" operator="in" result="outline"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.2" result="d"/><feFlood flood-color="#FFFFFF"/><feComposite in2="d" operator="in" result="edge"/><feOffset in="d" dx="1.8" dy="2.8" result="so"/><feFlood flood-color="#3A2A20" flood-opacity="0.26"/><feComposite in2="so" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="edge"/><feMergeNode in="outline"/></feMerge></filter></defs><g data-part="paper" filter="url(#paper-p28)">
+  <defs><radialGradient id="cp-glow-penne28-b"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   
   
   <g data-part="legs">
@@ -30,7 +30,7 @@
     </g>
   </g>
 </g>
-  <defs><radialGradient id="cp-glow-penne26"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
+  <defs><radialGradient id="cp-glow-penne28"><stop offset="0" stop-color="#FF7A59"/><stop offset="0.55" stop-color="#FF7A59" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7A59" stop-opacity="0"/></radialGradient></defs>
   
   <path data-part="cue" d="M14 58 L25 58 M21 54 L25 58 L21 62" stroke="#C4623F" stroke-width="2.4" opacity="0">
     <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.15;0.7;0.8;1" dur="3.2s" repeatCount="indefinite"/>
@@ -50,7 +50,7 @@
     <animateTransform attributeName="transform" type="translate" values="0 0;4 1;4 1;0 0" keyTimes="0;0.35;0.75;1" calcMode="spline" keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" dur="3.2s" repeatCount="indefinite"/>
     <g transform="translate(0 6)">
       <path data-part="body" d="M35 23 L61 23 L61 58 L35 65 Z" fill="#EEBF62" stroke="none"/><path d="M38.5 23.0 L38.5 61.6" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M43 23.0 L43 60.3" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M48 23.0 L48 59.0" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M53 23.0 L53 57.7" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/><path d="M57.5 23.0 L57.5 56.4" stroke="#CC933D" stroke-width="1.3" opacity="0.8"/>
-      <circle data-part="glow" cx="44" cy="57" r="9.35" fill="url(#cp-glow-penne26)" stroke="none" opacity="0">
+      <circle data-part="glow" cx="44" cy="57" r="9.35" fill="url(#cp-glow-penne28)" stroke="none" opacity="0">
         <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.4;0.72;0.85;1" dur="3.2s" repeatCount="indefinite"/>
       </circle>
       <path d="M57 41 Q62 48 60.5 56"/>

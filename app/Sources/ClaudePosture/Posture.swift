@@ -4,8 +4,9 @@ import AppKit
 /// just send events here and can never produce two cards.
 @MainActor
 final class Posture {
-    static let graceSeconds: Double = 30
-    static let readingSeconds: Double = 180
+    static let waitSeconds: Double = 60        // an untouched card bows out after this
+    static let readingSeconds: Double = 180    // How to open, or the intro
+    static let setGraceSeconds: Double = 20    // a started set finishes itself; this is only a backstop
     static let workingSubtitle = "Claude's on it. Good time for a quick one."
     static let manualSubtitle = "Quick one while you're here."
     static let stoppedSubtitle = "Claude's done, finish your set"
@@ -19,25 +20,37 @@ final class Posture {
     private var dismissTask: Task<Void, Never>?
     private var current: Exercise?
     private var stopped = false
+    private var started = false
     private var welcomeShowing = false
+    private var hovering = false
+    private var dismissDeadline: Date?
+    private var dismissOutcome = "ignored"
 
     init(store: Store, card: CardController) {
         self.store = store
         self.card = card
         card.onAction = { [weak self] action in
             switch action {
+            case "start": self?.startSet()
             case "done": self?.finish("done")
             case "snooze": self?.finish("snoozed")
+            case "stop": self?.finish("stopped")
             case "howto": self?.extendForReading()
+            case "hover:on": self?.hover(true)
+            case "hover:off": self?.hover(false)
             case "welcome-close": self?.closeWelcome()
             case let a where a.hasPrefix("focus:"):
                 if let self, let f = Focus(rawValue: String(a.dropFirst(6))) {
                     self.store.apply(focus: f)
                     debug("focus \(f.rawValue)")
                 }
-            case "welcome-try":
-                self?.closeWelcome()
-                self?.showNow()
+            case "welcome-try":   // the intro card turns into a stretch in place
+                guard let self, self.welcomeShowing else { return }
+                self.welcomeShowing = false
+                self.dismissTask?.cancel()
+                self.dismissDeadline = nil
+                self.showNow()
+                if self.current == nil { self.card.hide(reason: "closed") }   // nothing enabled, just close up
             default: debug("unknown card action \(action)")
             }
         }
@@ -124,18 +137,21 @@ final class Posture {
 
         current = ex
         stopped = false
+        started = false
+        hovering = false
         var payload: [String: Any] = [
             "id": ex.id, "name": ex.name, "instruction": ex.instruction, "spec": ex.spec,
             "durationSeconds": ex.durationSeconds, "figure": ex.figure, "subtitle": subtitle,
             "index": i + 1, "total": list.count, "doneToday": store.doneToday(),
             "steps": ex.steps ?? [], "tip": ex.tip ?? "", "expand": c.expandSteps,
+            "snoozeMinutes": c.snoozeMinutes,
         ]
         if let svg = figureSVG(ex.figure, character: c.character) { payload["figureSVG"] = svg }
+        if let svg = figureSVG("figures/wave.svg", character: c.character) { payload["waveSVG"] = svg }
+        if let svg = figureSVG("figures/peek.svg", character: c.character) { payload["peekSVG"] = svg }
         debug("show \(ex.id) (\(i + 1) of \(list.count))")
         card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), dropSVG: dropSVG(c))
-
-        let timeout = ex.durationSeconds + Self.graceSeconds
-        armDismiss(after: c.expandSteps ? max(timeout, Self.readingSeconds) : timeout)
+        armDismiss(after: c.expandSteps ? Self.readingSeconds : Self.waitSeconds)
     }
 
     /// Character variants live in figures/<character>/; the base files are the sprout.
@@ -166,14 +182,10 @@ final class Posture {
         if let svg = figureSVG("figures/wave.svg", character: c.character) { payload["figureSVG"] = svg }
         debug("show intro")
         welcomeShowing = true
+        hovering = false
         card.show(payload: payload, position: c.position, inset: CGFloat(c.inset), function: "showWelcome",
                   dropSVG: dropSVG(c))
-        dismissTask?.cancel()
-        dismissTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: UInt64(Self.readingSeconds * 1_000_000_000))
-            guard !Task.isCancelled else { return }
-            self?.closeWelcome()
-        }
+        armDismiss(after: Self.readingSeconds, outcome: "intro")
     }
 
     private func closeWelcome() {
@@ -181,33 +193,69 @@ final class Posture {
         welcomeShowing = false
         dismissTask?.cancel()
         dismissTask = nil
-        card.hide()
+        dismissDeadline = nil
+        card.hide(reason: "closed")
     }
 
-    private func armDismiss(after seconds: Double) {
-        dismissTask?.cancel()
+    // MARK: Auto dismiss
+
+    /// Untouched cards bow out on their own. The pointer resting on the card holds them, like a
+    /// notification banner, and the clock picks back up (with a few seconds' grace) when it leaves.
+    private func armDismiss(after seconds: Double, outcome: String = "ignored") {
+        dismissDeadline = Date().addingTimeInterval(seconds)
+        dismissOutcome = outcome
         debug("auto dismiss in \(Int(seconds))s")
+        scheduleDismiss()
+    }
+
+    private func scheduleDismiss() {
+        dismissTask?.cancel()
+        dismissTask = nil
+        guard let deadline = dismissDeadline else { return }
+        if hovering && dismissOutcome != "done" { return debug("auto dismiss held, pointer on the card") }
+        let seconds = max(0, deadline.timeIntervalSinceNow)
         dismissTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, let self else { return }
             debug("auto dismiss fired")
-            self?.finish("ignored")
+            self.dismissDeadline = nil
+            if self.dismissOutcome == "intro" { self.closeWelcome() } else { self.finish(self.dismissOutcome) }
         }
+    }
+
+    private func hover(_ on: Bool) {
+        guard hovering != on else { return }
+        hovering = on
+        if !on, let d = dismissDeadline, d.timeIntervalSinceNow < 6 {
+            dismissDeadline = Date().addingTimeInterval(6)
+        }
+        scheduleDismiss()
+    }
+
+    /// Start pressed: the page runs the timer and reports done itself. This only catches a page
+    /// that never does.
+    private func startSet() {
+        guard let ex = current, !started else { return }
+        started = true
+        debug("set started, \(Int(ex.durationSeconds))s")
+        armDismiss(after: ex.durationSeconds + Self.setGraceSeconds, outcome: "done")
     }
 
     /// Opening "How to" means someone is reading, so give them a fresh window before auto dismiss.
     private func extendForReading() {
-        guard let ex = current else { return }
-        let seconds = max(ex.durationSeconds + Self.graceSeconds, Self.readingSeconds)
-        debug("how to opened, auto dismiss in \(Int(seconds))s")
-        armDismiss(after: seconds)
+        guard current != nil, !started else { return }
+        debug("how to opened")
+        armDismiss(after: Self.readingSeconds)
     }
 
     private func finish(_ outcome: String) {
         guard let ex = current else { return }
         current = nil
+        started = false
+        hovering = false
         dismissTask?.cancel()
         dismissTask = nil
+        dismissDeadline = nil
         store.log(exercise: ex.id, outcome: outcome)
         if outcome == "snoozed" {
             var s = store.state()
@@ -215,7 +263,7 @@ final class Posture {
             s.nextAllowed = max(s.nextAllowed ?? Date(), Date()).addingTimeInterval(snooze)
             store.save(s)
         }
-        card.hide()
+        card.hide(reason: outcome)
         onChange?()
     }
 

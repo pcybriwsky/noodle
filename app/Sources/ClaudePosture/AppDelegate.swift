@@ -124,7 +124,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             submenu("Character", characters.map { id, title in
                 option(title, checked: c.character == id) { self.update { $0.character = id } }
             }),
-            submenu("Entrance", [("noodle", "Drop in on a noodle"), ("card", "Just the card")].map { id, title in
+            submenu("Entrance", [("card", "Slide in"), ("noodle", "Drop in on a noodle")].map { id, title in
                 option(title, checked: c.entrance == id) { self.update { $0.entrance = id } }
             }),
             submenu("Show a card after", choices([10, 15, 30, 60], current: c.delaySeconds,

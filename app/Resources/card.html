@@ -2,33 +2,45 @@
 <!--
   Card UI. Contract (Swift <-> JS)
   --------------------------------
-  window.CARD = { width, height, pad }   Compact card size in pt plus the transparent margin around it
-                                         (room for the shadow). Swift reads it once after load.
-  window.showCard(payload)               Called each time a card is shown. Resets all state.
+  window.CARD = { width, height, pad }   Compact card size in pt plus the default transparent margin
+                                         around it. Swift reads it once after load.
+  window.showCard(payload)               Shows an exercise. If a card is already up (the intro), the
+                                         content swaps in place, otherwise the card enters.
      payload = {
        id, name, instruction, spec,      strings
-       durationSeconds,                  number, drives the progress bar and time left
+       durationSeconds,                  number, the timer once Start is pressed
        figure, figureSVG?,               path, and the SVG markup when the file exists
-       subtitle,                         string, why the card is showing
-       index, total, doneToday,          numbers
+       waveSVG?, peekSVG?                the goodbye wave (Snooze) and the over-the-edge peek (nudge)
+       subtitle, index, total, doneToday
        steps, tip                        beginner walkthrough for "How to" (array of strings, string)
        expand                            bool, open "How to" right away
-       noodle                            number, the inset: the card dropped in and hangs from a noodle
+       snoozeMinutes                     for "See you in 10 min"
+       layout: { t, r, b, l,             transparent margin on each side of the card, in pt
+                 edge, anchor }          "right" | "left" screen edge, "top" | "bottom" edge that stays put
+       entrance                          "slide" (default), "fade" (Reduce motion), or "hold" (the noodle
+                                         drop is running, wait for enter("bloom"))
+       noodle                            number, the inset: the card hangs from a noodle
      }
-  window.setSubtitle(text)               Called when Claude finishes while the card is up.
-  window.showWelcome({ figureSVG?, character, focus })   The first-launch intro (a few steps, then desk setup).
+  window.showWelcome(payload)            The first-launch intro, same layout and entrance fields.
+  window.enter(style)                    Plays a held entrance, "bloom" grows the card out of the figure tile.
+  window.setSubtitle(text)               Claude finished while the card is up.
+  window.leave(reason)                   done | snoozed | stopped | ignored | closed. Finishes any
+                                         celebration, plays the exit, then posts "gone".
+  window.resized(id)                     Swift's ack for a resize, height changes animate once there's room.
 
   JS -> Swift: webkit.messageHandlers.posture.postMessage(
-     { action: "done" | "snooze" }       finish the card
-     { action: "howto" }                 someone opened the steps, Swift pushes auto dismiss out
-     { action: "resize", height }        new card height in pt, Swift grows the window
-     { action: "welcome-close" }         intro dismissed
-     { action: "welcome-try" }           intro dismissed, show a stretch now
+     { action: "start" }                 the set started, Swift holds off auto dismiss
+     { action: "done" | "snooze" | "stop" }
+     { action: "howto" }                 steps opened, Swift pushes auto dismiss out
+     { action: "hover", value }          pointer on the card or not, auto dismiss waits while it's there
+     { action: "resize", height, id }    card height in pt, Swift resizes the window and acks
+     { action: "gone" }                  exit finished, Swift orders the window out
+     { action: "welcome-close" | "welcome-try" }
      { action: "focus", value }          picked neck, hips, or all in the intro
   )
 
-  html/body stay transparent so the shadow shows, the card surface is opaque. Swift handles the
-  window fade + slide, the fade out and the auto dismiss timer. Open in a browser for a demo.
+  All motion happens in here on one clock. The window sits still (sized to the card plus margin) and
+  html/body stay transparent. Open in a browser for a demo.
 -->
 <html>
 <head>
@@ -43,32 +55,37 @@
     --tile: #FBF3E6;
     --accent: #B7552F;
     --btn: #F3EEEA;
-    --btn-hover: #EBE4DF;
+    --btn-hover: #EAE3DE;
     --primary: #2B2420;
+    --primary-hover: #3D332D;
     --on-primary: #FFFFFF;
     --line: rgba(43, 36, 32, 0.09);
     --track: rgba(217, 119, 87, 0.14);
     --bar: #D97757;
     --ok: #3E9B5B;
-    --shadow: 0 10px 30px rgba(43, 36, 32, 0.14), 0 0 0 0.5px rgba(43, 36, 32, 0.12);
+    --shadow: 0 12px 28px rgba(43, 36, 32, 0.13), 0 2px 6px rgba(43, 36, 32, 0.06), 0 0 0 0.5px rgba(43, 36, 32, 0.12);
+    --pop-ease: cubic-bezier(.3, 1.45, .5, 1);   /* replaced with a real spring by the script */
+    --pop-dur: .4s;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #221E1C; --fg: #F6F1EE; --muted: #BDB4AE; --faint: #8F8680; --tile: #2E2825;
-      --accent: #F0A07F; --btn: #37302D; --btn-hover: #413935; --primary: #F6F1EE; --on-primary: #221E1C;
-      --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16); --bar: #E08A67; --ok: #6CCB8A;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+      --accent: #F0A07F; --btn: #37302D; --btn-hover: #433A36; --primary: #F6F1EE; --primary-hover: #FFFFFF;
+      --on-primary: #221E1C; --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16);
+      --bar: #E08A67; --ok: #6CCB8A;
+      --shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
     }
   }
   :root[data-theme="dark"] {
     --bg: #221E1C; --fg: #F6F1EE; --muted: #BDB4AE; --faint: #8F8680; --tile: #2E2825;
-    --accent: #F0A07F; --btn: #37302D; --btn-hover: #413935; --primary: #F6F1EE; --on-primary: #221E1C;
-    --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16); --bar: #E08A67; --ok: #6CCB8A;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    --accent: #F0A07F; --btn: #37302D; --btn-hover: #433A36; --primary: #F6F1EE; --primary-hover: #FFFFFF;
+    --on-primary: #221E1C; --line: rgba(255, 255, 255, 0.08); --track: rgba(240, 160, 127, 0.16);
+    --bar: #E08A67; --ok: #6CCB8A;
+    --shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
   }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: transparent; overflow: hidden; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
   body {
     padding: 24px;
     font: 12px/16px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
@@ -77,51 +94,65 @@
     -webkit-user-select: none; user-select: none;
     cursor: default;
   }
+  body.bottom { display: flex; flex-direction: column; justify-content: flex-end; }   /* bottom corners grow up */
+
+  .stage { position: relative; width: 340px; flex: none; }
+  .stage.idle { opacity: 0; }
   .card {
-    position: relative; width: 340px; background: var(--bg); border-radius: 14px;
+    position: relative; z-index: 1; width: 340px; background: var(--bg); border-radius: 18px;
     box-shadow: var(--shadow); overflow: hidden;
   }
   .main { display: flex; gap: 14px; padding: 14px; height: 132px; }
   .fig {
-    flex: none; width: 104px; height: 104px; border-radius: 11px; background: var(--tile);
+    flex: none; width: 104px; height: 104px; border-radius: 12px; background: var(--tile);
     color: var(--fg); display: grid; place-items: center;
   }
-  .fig svg { width: 90px; height: 90px; display: block; overflow: visible; }   /* room for the sticker edge */
+  .fig svg { width: 90px; height: 90px; display: block; overflow: visible; transform-origin: 50% 90%; }   /* room for the sticker edge, feet as the pivot */
   .fig .missing { width: 64px; height: 64px; border-radius: 50%; border: 1.5px dashed var(--faint); opacity: .5; }
 
   .body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
   .name { font-size: 15px; line-height: 19px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .meta { flex: none; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
-  .line {
-    margin-top: 3px; color: var(--muted); height: 32px;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .status { margin-top: 3px; height: 32px; display: none; align-items: center; gap: 7px; color: var(--fg); font-weight: 510; }
-  .status i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
-  .card.stopped .line { display: none; }
-  .card.stopped .status { display: flex; }
+  .meta { flex: none; height: 16px; overflow: hidden; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .meta span { display: inline-block; }
+  .slot { margin-top: 3px; height: 32px; display: grid; }
+  .slot > * { grid-area: 1 / 1; }
+  .line { color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .status { display: flex; align-items: center; gap: 8px; color: var(--fg); font-weight: 510; visibility: hidden; }
+  .card.stopped .line { visibility: hidden; }
+  .card.stopped .status { visibility: visible; }
+  .dot { position: relative; flex: none; width: 7px; height: 7px; }
+  .dot i { position: absolute; inset: 0; border-radius: 50%; background: var(--ok); }
+  .dot i + i { opacity: 0; }
 
   .specrow { margin-top: 3px; display: flex; align-items: center; justify-content: space-between; height: 18px; }
   .spec { font-weight: 600; color: var(--accent); white-space: nowrap; }
   .howto {
     font: inherit; font-weight: 510; color: var(--muted); background: none; border: 0; padding: 1px 0 1px 6px;
-    display: inline-flex; align-items: center; gap: 3px; cursor: pointer; border-radius: 5px;
+    display: inline-flex; align-items: center; gap: 3px; border-radius: 5px; transition: color .15s ease;
   }
   .howto:hover { color: var(--fg); }
-  .howto svg { width: 10px; height: 10px; transition: transform .18s ease; }
+  .howto span { display: inline-block; }
+  .howto svg { width: 10px; height: 10px; transition: transform var(--pop-dur) var(--pop-ease); }
   .card.open .howto svg { transform: rotate(180deg); }
 
-  .actions { margin-top: auto; display: flex; align-items: center; gap: 6px; }
+  .actions { margin-top: auto; display: grid; }
+  .actions > * { grid-area: 1 / 1; }
+  .controls { display: flex; align-items: center; gap: 6px; }
   button.b {
-    font: inherit; font-weight: 590; height: 24px; padding: 0 12px; border: 0; border-radius: 7px;
-    background: var(--btn); color: var(--fg); cursor: pointer;
+    font: inherit; font-weight: 590; height: 24px; padding: 0 12px; border: 0; border-radius: 999px;
+    background: var(--btn); color: var(--fg); white-space: nowrap; overflow: hidden;
+    transition: background-color .15s ease, transform .16s var(--pop-ease);
   }
+  button.b span { display: inline-block; }
   button.b:hover { background: var(--btn-hover); }
+  button.b:active { transform: scale(.94); transition: background-color .15s ease, transform .07s ease-out; }
   button.b.primary { background: var(--primary); color: var(--on-primary); }
-  button.b.primary:hover { opacity: .88; }
+  button.b.primary:hover { background: var(--primary-hover); }
   button:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
   .left { margin-left: auto; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .note { display: flex; align-items: center; gap: 8px; height: 24px; font-weight: 600; visibility: hidden; pointer-events: none; }
+  .note svg { flex: none; width: 18px; height: 18px; display: block; }
 
   .steps { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
   .card.open .steps { display: block; }
@@ -132,37 +163,41 @@
     flex: none; width: 18px; height: 18px; margin-top: -1px; border-radius: 50%; background: var(--tile);
     color: var(--accent); font-size: 11px; font-weight: 700; display: grid; place-items: center;
   }
-  .tip { margin-top: 12px; padding: 9px 11px; border-radius: 9px; background: var(--tile); font-size: 12px; line-height: 16px; color: var(--fg); }
+  .tip { margin-top: 12px; padding: 9px 11px; border-radius: 10px; background: var(--tile); font-size: 12px; line-height: 16px; color: var(--fg); }
   .tip strong { font-weight: 650; color: var(--accent); }
   .safety { margin-top: 10px; font-size: 11px; line-height: 15px; color: var(--faint); }
 
-  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--track); }
-  .progress > div { height: 100%; background: var(--bar); transform-origin: left; }
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--track); opacity: 0; }
+  .progress > div { height: 100%; background: var(--bar); transform-origin: left; transform: scaleX(0); transition: background-color .3s ease; }
+  .card.finished .progress > div { background: var(--ok); }
 
   .ex { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .wbody { flex: 1; min-height: 0; display: none; flex-direction: column; }
   .card.welcome .ex, .card.welcome .progress, .card.welcome .steps { display: none; }
   .card.welcome .wbody { display: flex; }
   .dots { flex: none; display: flex; gap: 4px; align-self: center; }
-  .dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--line); }
-  .dots i.on { background: var(--bar); }
+  .dots i { width: 5px; height: 5px; border-radius: 3px; background: var(--line); transition: width var(--pop-dur) var(--pop-ease), background-color .2s ease; }
+  .dots i.on { width: 14px; background: var(--bar); }
   .card.welcome .main { height: 160px; }
   .card.welcome .fig { align-self: center; }
   .wtext { margin-top: 5px; color: var(--muted); line-height: 17px; }
-  .wbody .actions { padding-top: 12px; }
+  .wbody .controls { margin-top: auto; padding-top: 12px; }
   .setup { display: none; border-top: 1px solid var(--line); padding: 12px 16px 16px 14px; }
   .card.welcome.setup-open .setup { display: block; }
   .pick { display: none; border-top: 1px solid var(--line); padding: 12px 14px 14px; }
   .card.welcome.pick-open .pick { display: flex; flex-direction: column; gap: 6px; }
   .pick button {
     font: inherit; text-align: left; display: flex; gap: 10px; align-items: flex-start; width: 100%;
-    padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer;
+    padding: 9px 11px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+    transition: background-color .15s ease, border-color .2s ease, transform .16s var(--pop-ease);
   }
   .pick button:hover { background: var(--tile); }
+  .pick button:active { transform: scale(.98); transition-duration: .07s; }
   .pick button[aria-pressed="true"] { background: var(--tile); border-color: var(--bar); }
-  .pick .radio { flex: none; width: 14px; height: 14px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--faint); display: grid; place-items: center; }
+  .pick .radio { flex: none; width: 14px; height: 14px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--faint); display: grid; place-items: center; transition: border-color .2s ease; }
+  .pick .radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bar); transform: scale(0); transition: transform var(--pop-dur) var(--pop-ease); }
   .pick button[aria-pressed="true"] .radio { border-color: var(--bar); }
-  .pick button[aria-pressed="true"] .radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bar); }
+  .pick button[aria-pressed="true"] .radio::after { transform: scale(1); }
   .pick b { display: block; font-size: 12.5px; line-height: 17px; font-weight: 650; }
   .pick span { display: block; font-size: 12px; line-height: 16px; color: var(--muted); }
   .setup h2 { margin: 0 0 8px; font-size: 11px; line-height: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
@@ -171,71 +206,414 @@
   .setup li svg { flex: none; width: 18px; height: 18px; margin-top: -1px; }
   .setup li b { font-weight: 650; }
 
-  .noodle { position: absolute; left: 82px; top: 0; display: none; overflow: visible; transform-origin: 8px 0; animation: sway 2.8s ease-in-out infinite; }
-  body.noodled .noodle { display: block; }
+  /* The noodle entrance: the card hangs from a strand that runs up under the menu bar. */
+  .noodle { position: absolute; left: 58px; z-index: 0; display: none; overflow: visible; transform-origin: 8px 0; animation: sway 2.8s ease-in-out infinite; }
   @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
 
-  @media (prefers-reduced-motion: reduce) { .howto svg { transition: none; } }
+  /* The nudge: Toni climbs out of his tile and peeks over the card's top edge. His head sits
+     behind the card, his hands in front of it, so he's holding on. */
+  .peek { position: absolute; left: 21px; top: -37.5px; width: 90px; height: 90px; visibility: hidden; pointer-events: none; color: var(--fg); }
+  .peek svg { width: 90px; height: 90px; display: block; overflow: visible; }
+  .peek.back { z-index: 0; }
+  .peek.front { z-index: 2; }
+  .peek.back [data-part="hands"] { display: none; }
+  .peek.front [data-part="lift"], .peek.front [data-part="paper"] { display: none; }
+  /* The paper edge squares off on shapes this small, so the hands get a round die-cut edge instead. */
+  .peek.front [data-part="hands"] circle { stroke: #FFFFFF; stroke-width: 2.6; paint-order: stroke; }
+  .peek [data-part="eye"] { transform-box: fill-box; transform-origin: center; }
 
-  /* Browser preview only */
-  .demo { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; width: 340px; }
-  .demo button { font: 11px/1 -apple-system, sans-serif; padding: 6px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { .noodle { animation: none; } }
+
+  /* Browser preview only: the body plays the part of the panel. */
+  html.demo-page { background: #ECE7E3; }
+  html.demo-page[data-theme="dark"] { background: #141110; }
+  @media (prefers-color-scheme: dark) { html.demo-page:not([data-theme="light"]) { background: #141110; } }
+  body.demo { width: 388px; height: 600px; margin: 24px auto 0; outline: 1px dashed rgba(127, 127, 127, .35); border-radius: 12px; }
+  .demo-bar { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: min(720px, calc(100vw - 32px)); }
+  .demo-bar button { font: 11px/1 -apple-system, sans-serif; padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
 </style>
 </head>
 <body>
-  <svg class="noodle" id="noodle" width="16" fill="none" stroke-linecap="round" aria-hidden="true"></svg>
-  <div class="card" id="card">
-    <div class="main">
-      <div class="fig" id="fig"><div class="missing"></div></div>
-      <div class="body">
-        <div class="ex">
-        <div class="top"><span class="name" id="name"></span><span class="meta" id="meta"></span></div>
-        <div class="line" id="instruction"></div>
-        <div class="status" id="status"><i></i><span id="statusText"></span></div>
-        <div class="specrow">
-          <span class="spec" id="spec"></span>
-          <button class="howto" id="howto" aria-expanded="false" aria-controls="steps">
-            <span id="howtoLabel">How to</span>
-            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4 L5 6.5 L7.5 4"/></svg>
-          </button>
-        </div>
-        <div class="actions">
-          <button class="b primary" id="done">Done</button>
-          <button class="b" id="snooze">Snooze</button>
-          <span class="left" id="left"></span>
-        </div>
-        </div>
-        <div class="wbody">
-          <div class="top"><span class="name" id="wTitle"></span><span class="dots" id="wDots"></span></div>
-          <div class="wtext" id="wText"></div>
-          <div class="actions">
-            <button class="b primary" id="wNext">Next</button>
-            <button class="b" id="wSkip">Skip</button>
+  <div class="stage idle" id="stage">
+    <div class="peek back" id="peekBack" aria-hidden="true"></div>
+    <svg class="noodle" id="noodle" width="16" fill="none" stroke-linecap="round" aria-hidden="true"></svg>
+    <div class="card" id="card">
+      <div id="content">
+        <div class="main">
+          <div class="fig" id="fig"><div class="missing"></div></div>
+          <div class="body">
+            <div class="ex">
+              <div class="top"><span class="name" id="name"></span><span class="meta" id="meta"><span id="metaText"></span></span></div>
+              <div class="slot">
+                <div class="line" id="instruction"></div>
+                <div class="status" id="status"><span class="dot"><i id="dot"></i><i id="ring"></i></span><span id="statusText"></span></div>
+              </div>
+              <div class="specrow">
+                <span class="spec" id="spec"></span>
+                <button class="howto" id="howto" aria-expanded="false" aria-controls="steps">
+                  <span id="howtoLabel">How to</span>
+                  <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4 L5 6.5 L7.5 4"/></svg>
+                </button>
+              </div>
+              <div class="actions">
+                <div class="controls" id="controls">
+                  <button class="b primary" id="primary"><span id="primaryLabel">Start</span></button>
+                  <button class="b" id="secondary"><span id="secondaryLabel">Snooze</span></button>
+                  <span class="left" id="left"></span>
+                </div>
+                <div class="note" id="note" aria-live="polite"><span id="noteIcon"></span><span id="noteText"></span></div>
+              </div>
+            </div>
+            <div class="wbody">
+              <div id="wCopy">
+                <div class="top"><span class="name" id="wTitle"></span><span class="dots" id="wDots"></span></div>
+                <div class="wtext" id="wText"></div>
+              </div>
+              <div class="controls">
+                <button class="b primary" id="wNext"><span id="wNextLabel">Next</span></button>
+                <button class="b" id="wSkip"><span id="wSkipLabel">Skip</span></button>
+              </div>
+            </div>
           </div>
         </div>
+        <section class="pick" id="pick" aria-label="What to work on"></section>
+        <section class="setup" id="setup" aria-label="Desk setup">
+          <h2>Worth a minute, once</h2>
+          <ul id="setupList"></ul>
+        </section>
+        <section class="steps" id="steps" aria-label="How to do it">
+          <h2>How to do it</h2>
+          <ol id="stepList"></ol>
+          <div class="tip" id="tip"><strong>Watch out.</strong> <span id="tipText"></span></div>
+          <div class="safety">Keep it gentle. Stop if anything hurts, tingles, or feels sharp.</div>
+        </section>
       </div>
+      <div class="progress" id="progress"><div id="bar"></div></div>
     </div>
-    <section class="pick" id="pick" aria-label="What to work on"></section>
-    <section class="setup" aria-label="Desk setup">
-      <h2>Worth a minute, once</h2>
-      <ul id="setupList"></ul>
-    </section>
-    <section class="steps" id="steps" aria-label="How to do it">
-      <h2>How to do it</h2>
-      <ol id="stepList"></ol>
-      <div class="tip" id="tip"><strong>Watch out.</strong> <span id="tipText"></span></div>
-      <div class="safety">Keep it gentle. Stop if anything hurts, tingles, or feels sharp.</div>
-    </section>
-    <div class="progress"><div id="bar"></div></div>
+    <div class="peek front" id="peekFront" aria-hidden="true"></div>
   </div>
 <script>
   window.CARD = { width: 340, height: 132, pad: 24 };
 
   const $ = (id) => document.getElementById(id);
-  const card = $("card");
+  const stage = $("stage"), card = $("card");
   const native = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.posture;
-  const send = (msg) => native ? native.postMessage(msg) : console.log("card ->", msg);
-  let timer = null, endsAt = 0;
+  const send = (msg) => native ? native.postMessage(msg) : demo.receive(msg);
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const reduced = () => reduceMotion.matches || document.documentElement.dataset.motion === "reduce";
+
+  // ---- Motion ----
+  // Springs described like SwiftUI's (duration, bounce), baked into CSS linear() easings.
+  const LINEAR_OK = !!(window.CSS && CSS.supports && CSS.supports("transition-timing-function", "linear(0, 1)"));
+  function spring(duration, bounce, fallback) {
+    if (!LINEAR_OK) return { ease: fallback, dur: duration };
+    const k = (2 * Math.PI / duration) ** 2, c = 4 * Math.PI * (1 - bounce) / duration, dt = 1 / 240;
+    let x = 0, v = 0, end = 0;
+    const pts = [0];
+    for (let i = 1; i <= 180; i++) {            // 60 samples a second, up to 3 seconds
+      for (let j = 0; j < 4; j++) { v += (-k * (x - 1) - c * v) * dt; x += v * dt; }
+      pts.push(Math.round(x * 1000) / 1000);
+      if (Math.abs(x - 1) > 0.002 || Math.abs(v) > 0.05) end = i;
+    }
+    return { ease: `linear(${pts.slice(0, end + 1).concat(1).join(", ")})`, dur: (end + 1) / 60 };
+  }
+  const M = {
+    enter: spring(0.5, 0.2, "cubic-bezier(.2, 1, .3, 1)"),       // arrivals: quick, one small overshoot
+    morph: spring(0.42, 0.08, "cubic-bezier(.25, .9, .3, 1)"),   // height changes
+    pop: spring(0.34, 0.42, "cubic-bezier(.3, 1.45, .5, 1)"),    // little things landing
+    fade: { ease: "cubic-bezier(.2, .8, .2, 1)", dur: 0.18 },
+    out: { ease: "cubic-bezier(.4, 0, .9, .4)", dur: 0.3 },      // exits speed up as they go
+  };
+  document.documentElement.style.setProperty("--pop-ease", M.pop.ease);
+  document.documentElement.style.setProperty("--pop-dur", `${M.pop.dur}s`);
+
+  // One running animation per element and key. Later calls replace earlier ones, and fills stick
+  // around so the end state holds until something else takes over.
+  function anim(el, frames, m, o = {}) {
+    if (!el) return Promise.resolve(false);
+    const key = o.key || "main";
+    const map = el._anims || (el._anims = {});
+    if (map[key]) map[key].cancel();
+    const a = el.animate(frames, { duration: (o.dur ?? m.dur) * 1000, easing: m.ease, delay: (o.delay || 0) * 1000, fill: o.fill || "both" });
+    if (o.id) a.id = o.id;
+    map[key] = a;
+    return a.finished.then(() => true, () => false);
+  }
+  const set = (el, props, key) => anim(el, [props, props], M.fade, { key, dur: 0 });
+  const now = (el, prop) => getComputedStyle(el)[prop];   // current value, mid-animation included
+  function stopAnim(el, key) {
+    const a = el && el._anims && el._anims[key];
+    if (a) { a.cancel(); delete el._anims[key]; }
+  }
+  // Drops every leftover animation inside the card (fills from the last card), except the swap fade.
+  function clearCard() {
+    card.getAnimations({ subtree: true }).forEach((a) => { if (a.id !== "swap") a.cancel(); });
+    for (const el of card.querySelectorAll("*")) if (el._anims) el._anims = {};
+    card._anims = {};
+  }
+
+  // ---- State ----
+  let phase = "out";          // out, held, entering, in, leaving
+  let flow = 0;               // bumped whenever a newer entrance, swap, or exit takes over
+  let mode = "card";          // card or welcome
+  let L = { t: 24, r: 24, b: 24, l: 24, edge: "right", anchor: "top" };
+  let noodled = false;
+  let ex = { state: "ready", duration: 0, doneToday: 0, snooze: 10, wave: "", peek: false };
+  let celebrating = null, waving = null;
+  let clock = null, endsAt = 0;
+  let nudgeTimer = null, nudged = false, interacted = false, hovering = false;
+  const NUDGE_AFTER = 20000;
+
+  function applyLayout(lay) {
+    if (!lay) return;
+    L = Object.assign({ t: 24, r: 24, b: 24, l: 24, edge: "right", anchor: "top" }, lay);
+    document.body.style.padding = `${L.t}px ${L.r}px ${L.b}px ${L.l}px`;
+    document.body.classList.toggle("bottom", L.anchor === "bottom");
+  }
+  // How far the card travels to be fully past the screen edge, shadow included.
+  const slideDistance = () => L.edge === "left" ? -(L.l + 340 + 40) : document.body.clientWidth - L.l + 40;
+  const cardHeight = () => card.offsetHeight;   // layout height, so the bloom's scale doesn't count
+  function tileOrigin() {
+    const f = $("fig");
+    return `${f.offsetLeft + f.offsetWidth / 2}px ${f.offsetTop + f.offsetHeight / 2}px`;
+  }
+
+  // ---- Talking to the window ----
+  let resizeId = 0;
+  const resizeWaiters = {};
+  function requestHeight(h) {
+    const id = ++resizeId;
+    return new Promise((resolve) => {
+      resizeWaiters[id] = resolve;
+      send({ action: "resize", height: Math.ceil(h), id });
+      setTimeout(() => window.resized(id), native ? 150 : 0);
+    });
+  }
+  window.resized = function (id) {
+    const r = resizeWaiters[id];
+    if (r) { delete resizeWaiters[id]; r(); }
+  };
+
+  // Changes the card's contents with `mutate`, then springs the card to its new height. The window
+  // grows first when there's more to show, and shrinks after when there's less.
+  let morphSeq = 0;
+  async function morphHeight(mutate) {
+    const my = ++morphSeq;
+    const h0 = cardHeight();
+    stopAnim(card, "h");
+    mutate();
+    const h1 = cardHeight();
+    if (Math.abs(h1 - h0) < 0.5) return;
+    if (h1 > h0) {
+      set(card, { height: `${h0}px` }, "h");
+      await requestHeight(h1);
+      if (my !== morphSeq) return;
+    }
+    if (reduced()) { stopAnim(card, "h"); if (h1 < h0) requestHeight(h1); return; }
+    await anim(card, [{ height: `${h0}px` }, { height: `${h1}px` }], M.morph, { key: "h" });
+    if (my !== morphSeq) return;
+    stopAnim(card, "h");
+    if (h1 < h0) requestHeight(h1);
+  }
+
+  // ---- Entrances and exits ----
+  function startPose(style) {
+    stage.classList.remove("idle");
+    stopAnim(card, "bloom");
+    if (style === "hold" || style === "bloom") {    // the card, not the stage, so the noodle stays put
+      card.style.transformOrigin = tileOrigin();
+      set(stage, { opacity: 0 }, "o");
+      set(stage, { transform: "none" }, "t");
+      set(card, { transform: "scale(0.3)" }, "bloom");
+    } else if (style === "fade" || reduced()) {
+      set(stage, { opacity: 0 }, "o");
+      set(stage, { transform: "none" }, "t");
+    } else {
+      set(stage, { opacity: 1 }, "o");
+      set(stage, { transform: `translateX(${slideDistance()}px)` }, "t");
+    }
+  }
+
+  async function present(style) {
+    const my = ++flow;
+    startPose(style);
+    phase = style === "hold" ? "held" : "entering";
+    await requestHeight(cardHeight());
+    if (my !== flow || style === "hold") return;
+    window.enter(style);
+  }
+
+  window.enter = async function (style) {
+    const my = ++flow;
+    if (reduced()) style = "fade";
+    phase = "entering";
+    let settled;
+    if (style === "bloom") {        // the noodle landed: the card grows out of Toni's tile
+      card.style.transformOrigin = tileOrigin();
+      set(stage, { transform: "none" }, "t");
+      anim(stage, [{ opacity: 0 }, { opacity: 1 }], M.fade, { key: "o", dur: 0.14 });
+      settled = anim(card, [{ transform: "scale(0.3)" }, { transform: "none" }], M.enter, { key: "bloom" });
+    } else if (style === "fade") {
+      stopAnim(card, "bloom");
+      set(stage, { transform: "none" }, "t");
+      settled = anim(stage, [{ opacity: 0 }, { opacity: 1 }], M.fade, { key: "o", dur: 0.24 });
+    } else {                        // slides in from the screen edge like a notification
+      set(stage, { opacity: 1 }, "o");
+      settled = anim(stage, [{ transform: `translateX(${slideDistance()}px)` }, { transform: "none" }], M.enter, { key: "t" });
+      lean(0.13);
+    }
+    await settled;
+    if (my !== flow) return;
+    phase = "in";
+    armNudge();
+  };
+
+  window.leave = async function (reason) {
+    if (phase === "out") return;
+    const my = ++flow;
+    phase = "leaving";
+    stopClock();
+    clearTimeout(nudgeTimer);
+    if (reason === "done") await (celebrating || (celebrating = celebrate()));
+    if (reason === "snoozed") await (waving || (waving = sayBye()));
+    if (my !== flow) return;
+    let gone;
+    const from = { transform: now(stage, "transform") };
+    if (reduced()) {
+      gone = anim(stage, [{ opacity: now(stage, "opacity") }, { opacity: 0 }], M.fade, { key: "o", dur: 0.22 });
+    } else if (reason === "ignored") {  // no fuss: it just drifts off
+      const drift = noodled ? "translateY(-10px)" : `translateX(${L.edge === "left" ? -16 : 16}px)`;
+      const soft = { ease: "cubic-bezier(.4, 0, .6, 1)", dur: 0.5 };
+      anim(stage, [from, { transform: drift }], soft, { key: "t" });
+      gone = anim(stage, [{ opacity: now(stage, "opacity") }, { opacity: 0 }], soft, { key: "o" });
+    } else if (noodled) {               // reeled back up under the menu bar
+      gone = anim(stage, [from, { transform: `translateY(${-(L.t + cardHeight() + 60)}px)` }], M.out, { key: "t", dur: 0.34 });
+    } else {                            // back out the way it came
+      gone = anim(stage, [from, { transform: `translateX(${slideDistance()}px)` }], M.out, { key: "t" });
+    }
+    await gone;
+    if (my !== flow) return;
+    phase = "out";
+    send({ action: "gone" });
+  };
+
+  // A card is already up (the intro, or a card on its way out): swap what's inside in place.
+  async function swap(apply) {
+    const my = ++flow;
+    phase = "entering";
+    anim(stage, [{ transform: now(stage, "transform") }, { transform: "none" }], M.enter, { key: "t" });
+    anim(stage, [{ opacity: now(stage, "opacity") }, { opacity: 1 }], M.fade, { key: "o" });
+    const content = $("content");
+    await anim(content, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(.98)" }], M.fade, { key: "swap", id: "swap", dur: 0.12 });
+    if (my !== flow) return;
+    await morphHeight(apply);
+    anim(content, [{ opacity: 0, transform: "scale(.98)" }, { opacity: 1, transform: "none" }], M.pop, { key: "swap", id: "swap" });
+    if (my !== flow) return;
+    phase = "in";
+    armNudge();
+  }
+
+  function show(apply, p) {
+    applyLayout(p.layout);
+    noodled = typeof p.noodle === "number" && p.noodle > 0;
+    if (phase === "entering" || phase === "in" || phase === "leaving") return swap(apply);
+    apply();
+    drawNoodle();
+    present(p.entrance || "slide");
+  }
+
+  // ---- Figure moments ----
+  function figSVG() { return $("fig").querySelector("svg"); }
+
+  // Carried in from the edge, Toni leans into the stop and rocks back.
+  function lean(delay) {
+    if (reduced()) return;
+    const s = L.edge === "left" ? 1 : -1;
+    anim(figSVG(), [
+      { transform: "none" },
+      { transform: `rotate(${5 * s}deg)`, offset: 0.35 },
+      { transform: `rotate(${-2 * s}deg)`, offset: 0.68 },
+      { transform: "none" }], { ease: "ease-in-out", dur: 0.75 }, { key: "t", delay });
+  }
+
+  function hop() {
+    if (reduced()) return;
+    anim(figSVG(), [
+      { transform: "none", easing: "ease-out" },
+      { transform: "translateY(1px) scale(1.07, .9)", offset: 0.16, easing: "cubic-bezier(.2, .9, .3, 1)" },
+      { transform: "translateY(-12px) scale(.95, 1.06)", offset: 0.48, easing: "cubic-bezier(.6, 0, .9, .4)" },
+      { transform: "translateY(0) scale(1.06, .93)", offset: 0.76, easing: "ease-out" },
+      { transform: "none" }], { ease: "linear", dur: 0.62 }, { key: "t", delay: 0.04 });
+  }
+
+  async function swapFigure(markup) {
+    const old = figSVG();
+    if (old && !reduced()) await anim(old, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(.8)" }], M.fade, { key: "t", dur: 0.12 });
+    $("fig").innerHTML = markup;
+    anim(figSVG(), [{ opacity: 0, transform: "scale(.8)" }, { opacity: 1, transform: "none" }], M.pop, { key: "t" });
+  }
+
+  // ---- The nudge: one peek over the top edge if the card sits untouched ----
+  function armNudge() {
+    clearTimeout(nudgeTimer);
+    if (mode !== "card" || nudged || !ex.peek) return;
+    nudgeTimer = setTimeout(() => {
+      if (phase === "in" && ex.state === "ready" && !hovering && !interacted) peek();
+    }, NUDGE_AFTER);
+  }
+
+  async function peek() {
+    if (nudged || reduced() || !ex.peek) return;
+    nudged = true;
+    const my = flow;   // a new card or an exit takes over mid-peek: stop there
+    const back = $("peekBack"), front = $("peekFront"), fig = figSVG();
+    back.style.visibility = front.style.visibility = "visible";
+    // Hops up out of his tile...
+    anim(fig, [
+      { transform: "none", opacity: 1 },
+      { transform: "translateY(2px) scale(1.06, .92)", opacity: 1, offset: 0.35 },
+      { transform: "translateY(-18px) scale(.94, 1.06)", opacity: 0 }], { ease: "cubic-bezier(.4, 0, .6, 1)", dur: 0.3 }, { key: "t" });
+    await wait(170);
+    if (my !== flow) return;
+    // ...and pops up over the edge, hands on the card.
+    anim(back, [{ transform: "translateY(34px)" }, { transform: "none" }], M.pop, { key: "t" });
+    anim(front, [{ opacity: 0, transform: "translateY(5px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "t", delay: 0.07 });
+    back.querySelectorAll('[data-part="eye"]').forEach((e) => anim(e, [
+      { transform: "none" }, { transform: "scaleY(.15)", offset: 0.5 }, { transform: "none" }], { ease: "ease-in-out", dur: 0.18 }, { key: "b", delay: 0.75 }));
+    await wait(620);
+    if (my !== flow) return;
+    front.querySelectorAll('[data-part="hand-r"]').forEach((h) => anim(h, [
+      { transform: "none" },
+      { transform: "translate(3px, -10px)", offset: 0.2 },
+      { transform: "translate(7px, -9px)", offset: 0.4 },
+      { transform: "translate(1px, -10px)", offset: 0.6 },
+      { transform: "translate(6px, -9px)", offset: 0.8 },
+      { transform: "none" }], { ease: "ease-in-out", dur: 1.05 }, { key: "t" }));
+    await wait(1250);
+    if (my !== flow) return;
+    // Ducks back down and lands in his tile again.
+    anim(front, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(4px)" }], M.fade, { key: "t", dur: 0.12 });
+    await anim(back, [{ transform: "none" }, { transform: "translateY(34px)" }], { ease: "cubic-bezier(.5, 0, .9, .5)", dur: 0.22 }, { key: "t" });
+    back.style.visibility = front.style.visibility = "hidden";
+    anim(figSVG(), [
+      { transform: "translateY(-18px)", opacity: 0 },
+      { transform: "translateY(2px) scale(1.05, .94)", opacity: 1, offset: 0.55 },
+      { transform: "none", opacity: 1 }], { ease: "cubic-bezier(.3, .7, .4, 1)", dur: 0.42 }, { key: "t" });
+  }
+
+  function setPeek(markup) {
+    ex.peek = !!markup;
+    const back = $("peekBack"), front = $("peekFront");
+    back.style.visibility = front.style.visibility = "hidden";
+    back.innerHTML = markup || "";
+    // Same drawing twice (head behind, hands in front), so the copy gets its own ids.
+    front.innerHTML = (markup || "").replace(/id="([^"]+)"/g, 'id="$1-f"').replace(/url\(#([^)]+)\)/g, "url(#$1-f)");
+  }
+
+  // ---- Exercise card ----
+  const CHECK = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--ok)"/><path class="tick" d="M5.2 9.3 L7.8 11.8 L12.8 6.6" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="11" stroke-dashoffset="11"/></svg>';
+  const CLOCK = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--tile)"/><path d="M9 5.2 V9.2 L11.6 10.8" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function setFigure(p) {
     const fig = $("fig");
@@ -247,57 +625,30 @@
     }
   }
 
-  function fmt(s) { s = Math.max(0, Math.ceil(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+  const fmt = (s) => { s = Math.max(0, Math.ceil(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+  // "45 sec" next to Start, unless the spec already says how long.
+  const lengthLabel = (s, spec) => /\b(sec|min)\b/.test(spec || "") || !s ? "" : s >= 60 && s % 60 === 0 ? `${s / 60} min` : `${s} sec`;
 
-  function startClock(seconds) {
-    const bar = $("bar");
-    clearInterval(timer);
-    endsAt = Date.now() + seconds * 1000;
-    bar.style.transition = "none";
-    bar.style.transform = "scaleX(1)";
-    void bar.offsetWidth;
-    bar.style.transition = `transform ${Math.max(0, seconds)}s linear`;
-    bar.style.transform = "scaleX(0)";
-    const tick = () => { const s = (endsAt - Date.now()) / 1000; $("left").textContent = s > 0 ? fmt(s) + " left" : "Nice work"; };
-    tick();
-    timer = setInterval(tick, 500);
-  }
-
-  function reportHeight() {
-    send({ action: "resize", height: Math.ceil(card.getBoundingClientRect().height) });
-  }
-
-  function setOpen(open, fromUser) {
-    card.classList.toggle("open", open);
-    $("howto").setAttribute("aria-expanded", open);
-    $("howtoLabel").textContent = open ? "Hide steps" : "How to";
-    reportHeight();
-    if (open && fromUser) send({ action: "howto" });
-  }
-
-  // The card hangs from the menu bar on a short noodle when it dropped in (payload.noodle = inset).
-  function setNoodle(inset) {
-    const n = $("noodle");
-    const on = typeof inset === "number" && inset > 0;
-    document.body.classList.toggle("noodled", on);
-    if (!on) return;
-    const pad = 24, h = Math.min(inset, pad) + 6;
-    n.style.top = `${pad - Math.min(inset, pad)}px`;
-    n.setAttribute("height", String(h));
-    let d = "M8 0", flip = 1;
-    for (let y = 0; y < h; y += 8) { const e = Math.min(y + 8, h); d += ` Q${8 + 3 * flip} ${(y + e) / 2} 8 ${e}`; flip = -flip; }
-    n.innerHTML = `<path d="${d}" stroke="#C99338" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
-  }
-
-  window.showCard = function (p) {
-    setNoodle(p.noodle);
-    card.classList.remove("stopped", "welcome", "setup-open", "pick-open");
+  function fillExercise(p) {
+    mode = "card";
+    clearCard();
+    stopClock();
+    clearTimeout(nudgeTimer);
+    celebrating = waving = null;
+    nudged = interacted = hovering = false;
+    ex = { state: "ready", duration: p.durationSeconds || 0, doneToday: p.doneToday || 0,
+           snooze: p.snoozeMinutes || 10, wave: p.waveSVG || "", peek: false };
+    card.classList.remove("stopped", "welcome", "setup-open", "pick-open", "running", "finished", "open");
     $("name").textContent = p.name || "";
     $("instruction").textContent = p.instruction || "";
     $("spec").textContent = p.spec || "";
-    const done = p.doneToday || 0;
-    $("meta").textContent = done ? `${done} today` : (p.total ? `${p.index} of ${p.total}` : "");
+    $("metaText").textContent = ex.doneToday ? `${ex.doneToday} today` : (p.total ? `${p.index} of ${p.total}` : "");
     $("meta").title = p.total ? `${p.index} of ${p.total} in the rotation` : "";
+    $("primaryLabel").textContent = "Start";
+    $("secondaryLabel").textContent = "Snooze";
+    $("left").textContent = lengthLabel(ex.duration, p.spec);
+    $("controls").style.pointerEvents = "";
+    $("note").style.visibility = "";
     const steps = p.steps || [];
     $("stepList").innerHTML = "";
     steps.forEach((s, i) => {
@@ -309,21 +660,176 @@
     $("tipText").textContent = p.tip || "";
     $("tip").style.display = p.tip ? "" : "none";
     $("howto").style.visibility = steps.length ? "visible" : "hidden";
+    $("howtoLabel").textContent = "How to";
+    const open = !!p.expand && steps.length > 0;
+    card.classList.toggle("open", open);
+    $("howto").setAttribute("aria-expanded", open);
+    if (open) $("howtoLabel").textContent = "Hide steps";
     setFigure(p);
-    startClock(p.durationSeconds || 0);
-    setOpen(!!p.expand && steps.length > 0, false);
-  };
+    setPeek(p.peekSVG);
+  }
 
-  window.setSubtitle = function (text) {
-    $("statusText").textContent = "Claude's done. Finish your set.";
+  window.showCard = (p) => show(() => fillExercise(p), p);
+
+  function startClock(seconds, onEnd) {
+    stopClock();
+    endsAt = Date.now() + seconds * 1000;
+    const tick = () => {
+      const s = (endsAt - Date.now()) / 1000;
+      if (s <= 0) { stopClock(); onEnd(); return; }
+      $("left").textContent = `${fmt(s)} left`;
+    };
+    tick();
+    clock = setInterval(tick, 250);
+  }
+  function stopClock() { clearInterval(clock); clock = null; }
+
+  async function morphLabel(span, text, btn) {
+    if (span.textContent === text) return;
+    if (reduced()) { span.textContent = text; return; }
+    const w0 = btn && btn.getBoundingClientRect().width;
+    await anim(span, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-6px)" }], { ease: "cubic-bezier(.4, 0, 1, 1)", dur: 0.1 }, { key: "t" });
+    span.textContent = text;
+    if (btn) anim(btn, [{ width: `${w0}px` }, { width: `${btn.getBoundingClientRect().width}px` }], M.pop, { key: "w", fill: "none" });
+    anim(span, [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "t" });
+  }
+
+  function startSet() {
+    if (mode !== "card" || ex.state !== "ready" || phase === "leaving") return;
+    ex.state = "running";
+    interacted = true;
+    clearTimeout(nudgeTimer);
+    card.classList.add("running");
+    send({ action: "start" });
+    morphLabel($("primaryLabel"), "Done", $("primary"));
+    morphLabel($("secondaryLabel"), "Stop", $("secondary"));
+    if (card.classList.contains("stopped")) $("statusText").textContent = "Claude's done. Finish your set.";
+    anim($("progress"), [{ opacity: 0 }, { opacity: 1 }], M.fade, { key: "o", dur: 0.3 });
+    anim($("bar"), [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { ease: "linear", dur: ex.duration }, { key: "fill" });
+    startClock(ex.duration, finishSet);
+  }
+
+  // Done early, or the timer ran out.
+  function finishSet() {
+    if (ex.state === "finished" || phase === "leaving") return;
+    ex.state = "finished";
+    stopClock();
+    celebrating = celebrate();
+    send({ action: "done" });
+  }
+
+  function showNote(icon, text) {
+    const note = $("note"), controls = $("controls");
+    $("noteIcon").innerHTML = icon;
+    $("noteText").textContent = text;
+    controls.style.pointerEvents = "none";
+    note.style.visibility = "visible";
+    anim(controls, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-6px)" }], M.fade, { key: "o", dur: 0.14 });
+    anim(note, [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "o", delay: 0.05 });
+    const svg = $("noteIcon").firstElementChild;
+    anim(svg, [{ transform: "scale(.3)" }, { transform: "none" }], M.pop, { key: "s", delay: 0.08 });
+    const tick = svg && svg.querySelector(".tick");
+    if (tick) anim(tick, [{ strokeDashoffset: 11 }, { strokeDashoffset: 0 }], { ease: "cubic-bezier(.5, 0, .2, 1)", dur: 0.32 }, { key: "d", delay: 0.2 });
+  }
+
+  function rollMeta(text) {
+    const m = $("metaText");
+    if (m.textContent === text) return;
+    anim(m, [{ transform: "none", opacity: 1 }, { transform: "translateY(-10px)", opacity: 0 }], M.fade, { key: "t", dur: 0.14 }).then(() => {
+      m.textContent = text;
+      anim(m, [{ transform: "translateY(10px)", opacity: 0 }, { transform: "none", opacity: 1 }], M.pop, { key: "t" });
+    });
+  }
+
+  async function celebrate() {
+    card.classList.add("finished");
+    card.classList.remove("running");
+    const bar = $("bar"), progress = $("progress");
+    anim(bar, [{ transform: now(bar, "transform") }, { transform: "scaleX(1)" }], M.morph, { key: "fill" });
+    anim(progress, [{ opacity: now(progress, "opacity") }, { opacity: 1 }], M.fade, { key: "o" });
+    const n = ex.doneToday + 1;
+    showNote(CHECK, n === 1 ? "Nice! First one today." : `Nice! That's ${n} today.`);
+    rollMeta(`${n} today`);
+    hop();
+    await wait(1250);
+  }
+
+  async function sayBye() {
+    showNote(CLOCK, `See you in ${Math.round(ex.snooze)} min.`);
+    if (ex.wave) swapFigure(ex.wave);
+    await wait(950);
+  }
+
+  function snooze() {
+    if (phase === "leaving" || ex.state === "finished") return;
+    interacted = true;
+    stopClock();
+    waving = sayBye();
+    send({ action: "snooze" });
+  }
+
+  window.setSubtitle = function () {
+    if (mode !== "card") return;
+    $("statusText").textContent = ex.state === "running" ? "Claude's done. Finish your set." : "Claude's done. Still time for this one.";
+    if (card.classList.contains("stopped")) return;
     card.classList.add("stopped");
+    if (reduced()) return;
+    const line = $("instruction"), status = $("status");
+    line.style.visibility = "visible";
+    anim(line, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-6px)" }], M.fade, { key: "o", dur: 0.16 }).then(() => { line.style.visibility = ""; });
+    anim(status, [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "o", delay: 0.08 });
+    anim($("dot"), [{ transform: "scale(0)" }, { transform: "none" }], M.pop, { key: "t", delay: 0.16 });
+    anim($("ring"), [{ transform: "scale(1)", opacity: 0.55 }, { transform: "scale(3.2)", opacity: 0 }], { ease: "cubic-bezier(.2, .8, .2, 1)", dur: 0.9 }, { key: "t", delay: 0.3 });
   };
 
-  // Intro: a few short steps from Toni, ending on a desk setup checklist.
+  async function setOpen(open, fromUser) {
+    if (card.classList.contains("open") === open) return;
+    $("howto").setAttribute("aria-expanded", open);
+    morphLabel($("howtoLabel"), open ? "Hide steps" : "How to");
+    if (fromUser) { interacted = true; clearTimeout(nudgeTimer); }
+    if (open && fromUser) send({ action: "howto" });
+    const items = [...$("stepList").children, $("tip"), $("steps").querySelector(".safety")];
+    if (open) {
+      stopAnim($("steps"), "o");
+      if (!reduced()) items.forEach((el, i) => anim(el, [{ opacity: 0, transform: "translateY(5px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "o", delay: 0.05 + i * 0.035 }));
+      await morphHeight(() => card.classList.add("open"));
+      return;
+    }
+    // Keep the steps on screen while the card closes up over them, then drop them.
+    const seq = ++morphSeq;
+    const h0 = cardHeight();
+    stopAnim(card, "h");
+    card.classList.remove("open");
+    const h1 = cardHeight();
+    if (reduced()) { requestHeight(h1); return; }
+    card.classList.add("open");
+    anim($("steps"), [{ opacity: 1 }, { opacity: 0 }], M.fade, { key: "o", dur: 0.14 });
+    await anim(card, [{ height: `${h0}px` }, { height: `${h1}px` }], M.morph, { key: "h" });
+    if (seq !== morphSeq) return;
+    card.classList.remove("open");
+    stopAnim(card, "h");
+    stopAnim($("steps"), "o");
+    requestHeight(h1);
+  }
+
+  // ---- Noodle strand (noodle entrance) ----
+  function drawNoodle() {
+    const n = $("noodle");
+    n.style.display = noodled ? "block" : "none";
+    if (!noodled) return;
+    const top = L.t + 12, h = top + 6;   // from above the window's top edge to just under the card
+    n.style.top = `${-top}px`;
+    n.setAttribute("height", String(h));
+    let d = "M8 0", flip = 1;
+    for (let y = 0; y < h; y += 8) { const e = Math.min(y + 8, h); d += ` Q${8 + 3 * flip} ${(y + e) / 2} 8 ${e}`; flip = -flip; }
+    n.innerHTML = `<path d="${d}" stroke="#C99338" stroke-width="4.4"/><path d="${d}" stroke="#EDBB5F" stroke-width="2.8"/>`;
+  }
+
+  // ---- Intro: a few short steps from Toni, ending on a desk setup checklist ----
   const WELCOME = [
     { title: "Hey, I'm {name}", text: "{fullName}. While Claude's noodling on your prompt, I'll get you up and stretching." },
     { title: "Only on long waits", text: "Quick prompts never get me. If Claude's still going after 15 sec, I show up. Once every 20 min, tops." },
-    { title: "You're the boss", text: "Hit Done, Snooze, or just ignore me. How to has the steps. Pause me anytime from the menu bar." },
+    { title: "You're the boss", text: "Hit Start and I'll time the set, or Snooze me. How to has the steps. Pause me anytime from the menu bar." },
     { title: "What bugs you?", text: "Pick one and I'll lean on the right moves. Change it anytime in Settings.", pick: true },
     { title: "Quick desk check", text: "Stretching helps, a good setup helps more. Here's the short version.", setup: true },
   ];
@@ -335,24 +841,29 @@
     ["Sit all the way back.", "Let the chair hold up your lower back. A small cushion works if it doesn't."],
     ["Light from the side.", "A window behind your screen or behind you means glare and squinting."],
   ];
-  const CHECK = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--tile)"/><path d="M5.5 9.2 L7.8 11.4 L12.5 6.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  $("setupList").innerHTML = SETUP.map(([b, t]) => `<li>${CHECK}<span><b>${b}</b> ${t}</span></li>`).join("");
+  const TICK = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--tile)"/><path d="M5.5 9.2 L7.8 11.4 L12.5 6.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  $("setupList").innerHTML = SETUP.map(([b, t]) => `<li>${TICK}<span><b>${b}</b> ${t}</span></li>`).join("");
   const FOCUS = [
     ["neck", "Tech neck", "Head drifting forward, shoulders rounding in. More chin tucks, neck and upper back."],
     ["hips", "Tight hips", "Anterior pelvic tilt, the arched low back from sitting all day. More hip and leg work."],
     ["all", "General stiffness", "A bit of everything. All eight moves."],
   ];
-  let wStep = 0, focus = "all", who = { name: "Toni", fullName: "Toni the Rigatoni" };
+  let wStep = 0, focus = "all", who = { name: "Toni", fullName: "Toni the Rigatoni" }, stepping = false;
 
   function renderPick() {
     $("pick").innerHTML = "";
     FOCUS.forEach(([id, title, desc]) => {
       const b = document.createElement("button");
+      b.dataset.focus = id;
       b.setAttribute("aria-pressed", id === focus);
       b.innerHTML = `<i class="radio"></i><div><b></b><span></span></div>`;
       b.querySelector("b").textContent = title;
       b.querySelector("span").textContent = desc;
-      b.addEventListener("click", () => { focus = id; renderPick(); send({ action: "focus", value: id }); });
+      b.addEventListener("click", () => {
+        focus = id;
+        $("pick").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x.dataset.focus === focus));
+        send({ action: "focus", value: id });
+      });
       $("pick").appendChild(b);
     });
   }
@@ -362,63 +873,124 @@
     const fill = (t) => t.replace("{name}", who.name).replace("{fullName}", who.fullName);
     $("wTitle").textContent = fill(w.title);
     $("wText").textContent = fill(w.text);
-    $("wDots").innerHTML = WELCOME.map((_, i) => `<i class="${i === wStep ? "on" : ""}"></i>`).join("");
-    $("wNext").textContent = last ? "Try a stretch" : "Next";
-    $("wSkip").textContent = last ? "Got it" : "Skip";
+    if ($("wDots").children.length !== WELCOME.length) $("wDots").innerHTML = WELCOME.map(() => "<i></i>").join("");
+    [...$("wDots").children].forEach((d, i) => d.classList.toggle("on", i === wStep));
     card.classList.toggle("setup-open", !!w.setup);
     card.classList.toggle("pick-open", !!w.pick);
     if (w.pick) renderPick();
-    reportHeight();
+    return last;
   }
 
-  window.showWelcome = function (p) {
-    setNoodle(p && p.noodle);
-    clearInterval(timer);
-    card.classList.remove("stopped", "open");
+  function fillWelcome(p) {
+    mode = "welcome";
+    clearCard();
+    stopClock();
+    clearTimeout(nudgeTimer);
+    card.classList.remove("stopped", "open", "running", "finished");
     card.classList.add("welcome");
-    focus = (p && ["neck", "hips", "all"].includes(p.focus)) ? p.focus : "all";
-    who = { name: (p && p.name) || "Toni", fullName: (p && p.fullName) || "Toni the Rigatoni" };
-    setFigure(p || {});
+    focus = ["neck", "hips", "all"].includes(p.focus) ? p.focus : "all";
+    who = { name: p.name || "Toni", fullName: p.fullName || "Toni the Rigatoni" };
+    setFigure(p);
+    setPeek("");
     wStep = 0;
+    $("wNextLabel").textContent = "Next";
+    $("wSkipLabel").textContent = "Skip";
     renderWelcome();
-  };
+  }
+
+  window.showWelcome = (p) => show(() => fillWelcome(p || {}), p || {});
+
+  async function goStep(next) {
+    if (stepping) return;
+    stepping = true;
+    const copy = $("wCopy");
+    const shown = [...card.querySelectorAll(".pick, .setup")].filter((s) => s.offsetParent);
+    if (!reduced()) {
+      shown.forEach((s) => anim(s, [{ opacity: 1 }, { opacity: 0 }], M.fade, { key: "o", dur: 0.12 }));
+      await anim(copy, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateX(-10px)" }], { ease: "cubic-bezier(.4, 0, 1, 1)", dur: 0.12 }, { key: "t" });
+    }
+    wStep = next;
+    let last = false;
+    const grown = morphHeight(() => { last = renderWelcome(); });
+    shown.forEach((s) => stopAnim(s, "o"));
+    morphLabel($("wNextLabel"), last ? "Try a stretch" : "Next", $("wNext"));
+    morphLabel($("wSkipLabel"), last ? "Got it" : "Skip", $("wSkip"));
+    if (!reduced()) {
+      anim(copy, [{ opacity: 0, transform: "translateX(12px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "t" });
+      const items = [...card.querySelectorAll(".pick button, .setup li, .setup h2")].filter((el) => el.offsetParent);
+      items.forEach((el, i) => anim(el, [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], M.pop, { key: "o", delay: 0.06 + i * 0.04 }));
+      card.querySelectorAll(".setup li svg").forEach((svg, i) => anim(svg, [{ transform: "scale(.3)" }, { transform: "none" }], M.pop, { key: "s", delay: 0.14 + i * 0.05 }));
+    }
+    await grown;
+    stepping = false;
+  }
 
   $("wNext").addEventListener("click", () => {
-    if (wStep < WELCOME.length - 1) { wStep++; renderWelcome(); } else send({ action: "welcome-try" });
+    if (wStep < WELCOME.length - 1) goStep(wStep + 1); else send({ action: "welcome-try" });
   });
   $("wSkip").addEventListener("click", () => send({ action: "welcome-close" }));
 
-  $("done").addEventListener("click", () => send({ action: "done" }));
-  $("snooze").addEventListener("click", () => send({ action: "snooze" }));
+  $("primary").addEventListener("click", () => ex.state === "ready" ? startSet() : finishSet());
+  $("secondary").addEventListener("click", () => {
+    if (ex.state === "running") { interacted = true; stopClock(); send({ action: "stop" }); } else snooze();
+  });
   $("howto").addEventListener("click", () => setOpen(!card.classList.contains("open"), true));
+  card.addEventListener("mouseenter", () => { hovering = true; interacted = true; send({ action: "hover", value: true }); });
+  card.addEventListener("mouseleave", () => { hovering = false; send({ action: "hover", value: false }); });
 
-  // Browser preview: cycle through every exercise with the chosen character.
+  // ---- Browser preview: stands in for Swift, cycles through every exercise ----
+  const demo = { receive() {} };
   if (!native) {
+    document.documentElement.classList.add("demo-page");
+    document.body.classList.add("demo");
     const bar = document.createElement("div");
-    bar.className = "demo";
-    bar.innerHTML = `<button data-a="prev">Prev</button><button data-a="next">Next</button><button data-a="stop">Claude's done</button><button data-a="theme">Light / dark</button><button data-a="char">Next noodle</button><button data-a="intro">Intro</button>`;
+    bar.className = "demo-bar";
+    bar.innerHTML = ["Next", "Replay", "Nudge", "Claude's done", "Ignore", "Noodle drop", "Left edge", "Light / dark", "Reduce motion", "Next noodle", "Intro"]
+      .map((t) => `<button>${t}</button>`).join("");
     document.body.appendChild(bar);
-    document.body.style.overflow = "auto";
-    let list = [], i = 0, character = "rigatoni";
-    const show = () => {
-      const ex = list[i];
-      const file = ex.figure.split("/").pop();
-      window.showCard(Object.assign({}, ex, {
-        figure: character === "sprout" ? ex.figure : `figures/${character}/${file}`,
-        index: i + 1, total: list.length, doneToday: 2,
-        subtitle: "Claude's on it. Good time for a quick one.",
+    let list = [], i = 0, character = "rigatoni", edge = "right", entrance = "slide", done = 2, again = false;
+    const text = (url) => fetch(url).then((r) => r.ok ? r.text() : "").catch(() => "");
+    const art = (file) => character === "sprout" ? `figures/${file}` : `figures/${character}/${file}`;
+    const layout = () => ({ t: 24, r: 24, b: 24, l: 24, edge, anchor: "top" });
+    async function demoShow() {
+      const e = list[i];
+      const [figureSVG, waveSVG, peekSVG] = await Promise.all([text(art(e.figure.split("/").pop())), text(art("wave.svg")), text(art("peek.svg"))]);
+      const noodle = entrance === "bloom";
+      window.showCard(Object.assign({}, e, {
+        figureSVG, waveSVG, peekSVG, index: i + 1, total: list.length, doneToday: done, snoozeMinutes: 10,
+        subtitle: "Claude's on it. Good time for a quick one.", layout: layout(),
+        entrance: noodle ? "hold" : "slide", noodle: noodle ? 16 : undefined,
       }));
+      if (noodle) setTimeout(() => window.enter("bloom"), 60);
+    }
+    demo.receive = (msg) => {
+      if (msg.action !== "resize") console.log("card ->", msg);
+      const a = msg.action;
+      if (a === "done") { done++; setTimeout(() => window.leave("done"), 20); }
+      if (a === "snooze") setTimeout(() => window.leave("snoozed"), 20);
+      if (a === "stop") setTimeout(() => window.leave("stopped"), 20);
+      if (a === "welcome-close") window.leave("closed");
+      if (a === "welcome-try") { i = (i + 1) % list.length; demoShow(); }
+      if (a === "gone") setTimeout(() => { if (!again) i = (i + 1) % list.length; again = false; demoShow(); }, again ? 250 : 900);
     };
-    bar.addEventListener("click", (e) => {
-      const a = e.target.dataset.a;
-      if (a === "next") { i = (i + 1) % list.length; show(); }
-      if (a === "prev") { i = (i + list.length - 1) % list.length; show(); }
-      if (a === "stop") window.setSubtitle("Claude's done, finish your set");
-      if (a === "theme") { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark"; }
-      if (a === "char") { const cast = ["rigatoni", "spaghetti", "penne", "lasagna", "sprout"]; character = cast[(cast.indexOf(character) + 1) % cast.length]; show(); }
-      if (a === "intro") window.showWelcome({ figure: character === "sprout" ? "figures/wave.svg" : `figures/${character}/wave.svg` });
+    bar.addEventListener("click", async (e) => {
+      const t = e.target.textContent;
+      if (t === "Next") { if (phase !== "out") { window.leave("closed"); } else { i = (i + 1) % list.length; demoShow(); } }
+      if (t === "Replay") { if (phase === "out") demoShow(); else { again = true; window.leave("closed"); } }
+      if (t === "Nudge") { nudged = false; interacted = false; peek(); }
+      if (t === "Claude's done") window.setSubtitle();
+      if (t === "Ignore") window.leave("ignored");
+      if (t === "Noodle drop") { entrance = entrance === "bloom" ? "slide" : "bloom"; e.target.textContent = "Noodle drop"; e.target.style.fontWeight = entrance === "bloom" ? 700 : ""; }
+      if (t === "Left edge" || t === "Right edge") { edge = edge === "right" ? "left" : "right"; e.target.textContent = edge === "right" ? "Left edge" : "Right edge"; }
+      if (t === "Light / dark") { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark"; }
+      if (t === "Reduce motion") { const r = document.documentElement; r.dataset.motion = r.dataset.motion === "reduce" ? "" : "reduce"; e.target.style.fontWeight = r.dataset.motion ? 700 : ""; }
+      if (t === "Next noodle") { const cast = ["rigatoni", "spaghetti", "penne", "lasagna", "sprout"]; character = cast[(cast.indexOf(character) + 1) % cast.length]; demoShow(); }
+      if (t === "Intro") {
+        const [figureSVG] = await Promise.all([text(art("wave.svg"))]);
+        window.showWelcome({ figureSVG, focus: "neck", name: "Toni", fullName: "Toni the Rigatoni", layout: layout(), entrance: "slide" });
+      }
     });
-    fetch("exercises.json").then((r) => r.json()).then((ex) => { list = ex; show(); });
+    fetch("exercises.json").then((r) => r.json()).then((all) => { list = all; demoShow(); });
   }
 </script>
 </body>

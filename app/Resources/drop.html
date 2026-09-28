@@ -16,11 +16,10 @@
   #toni { position: absolute; left: 50%; margin-left: -48px; width: 96px; height: 96px; color: #2B2420; }
   @media (prefers-color-scheme: dark) { #toni { color: #F6F1EE; } }
   #toni svg { width: 96px; height: 96px; display: block; overflow: visible; }
-  @keyframes drop {
+  @keyframes drop {   /* one small dip past the landing spot, then it settles */
     0%   { transform: translateY(var(--from)); }
-    62%  { transform: translateY(7px); }
-    80%  { transform: translateY(-3px); }
-    92%  { transform: translateY(1px); }
+    70%  { transform: translateY(5px); }
+    88%  { transform: translateY(-1px); }
     100% { transform: translateY(0); }
   }
 </style>

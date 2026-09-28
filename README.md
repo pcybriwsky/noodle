@@ -2,10 +2,10 @@
 
 Stretching while Claude is noodling.
 
-![Toni the Rigatoni dropping in on a noodle](docs/demo.gif)
+![Toni the Rigatoni sliding in with a stretch](docs/demo.gif)
 <!-- GIF placeholder: record a card popping up and drop it at docs/demo.gif -->
 
-While Claude Code is busy on a long prompt, a little noodle sticker drops in from your menu bar on a strand of spaghetti with a quick desk stretch. Pick your pasta: Toni the Rigatoni, Sammy the Spaghetti, Patty the Penne, or Lenny the Lasagna. Quick prompts never trigger a card, and it never steals focus from your terminal or editor.
+While Claude Code is busy on a long prompt, a card slides in from the edge of your screen with a quick desk stretch and a little noodle sticker to show you how. Hit Start and your noodle times the set. Pick your pasta: Toni the Rigatoni, Sammy the Spaghetti, Patty the Penne, or Lenny the Lasagna. Quick prompts never trigger a card, and it never steals focus from your terminal or editor.
 
 Works everywhere Claude Code runs hooks: the CLI, the VS Code and Cursor extensions, and the Code tab in Claude Desktop. macOS only.
 
@@ -23,14 +23,16 @@ Needs Xcode command line tools (`swift`) and `jq`.
 
 ## How it works
 
-- You send a prompt. If Claude is still working 15 seconds later, your noodle drops in from the menu bar and the card hangs where it lands. Clicks pass right through the drop. Prefer it plain? Settings > Entrance > Just the card.
+- You send a prompt. If Claude is still working 15 seconds later, a card slides in from the corner, like a notification. Want more of a show? Settings > Entrance > Drop in on a noodle, and your noodle rides a strand of spaghetti down from the menu bar first.
 - At most one card every 20 minutes.
 - No cards while you're on a call. If any app is using your mic or camera, Toni waits. You can also have him skip busy calendar events.
 - Working late? No quiet hours by default, so you still get nudged.
-- Done logs it, Snooze pushes the next one back 10 minutes, and ignoring it is fine too.
+- **Start** runs the timer while your noodle demos the move. When time's up (or you hit Done early) it logs the set, celebrates a little, and gets out of your way. **Snooze** pushes the next one back 10 minutes.
+- Ignoring it is fine too. After 20 seconds your noodle peeks over the top of the card once, and after a minute the card drifts off on its own. It stays put while your pointer is on it.
 - **How to** opens beginner steps for the move, plus the most common mistake to avoid.
 - If Claude finishes while a card is up, it says so, and you can finish your set.
 - The menu bar icon shows today's count and has Pause, Show one now, Say hi to Toni, and Settings.
+- With Reduce motion on, cards fade in and out instead of sliding, and your noodle skips the peek.
 
 ## Settings
 
@@ -50,7 +52,7 @@ Under the hood it's `~/.claude-posture/config.json` (Settings > Edit config file
 | `quietHours` | off, `22:00` to `07:00` | no cards in this window when `enabled` is true |
 | `enabledExercises` | all | ids from `exercises.json`, in the order you want them |
 | `character` | `rigatoni` | `rigatoni` (Toni), `spaghetti` (Sammy), `penne` (Patty), `lasagna` (Lenny), or `sprout` |
-| `entrance` | `noodle` | `noodle` drops in from the menu bar (top corners, skipped with Reduce motion), `card` is just the card |
+| `entrance` | `card` | `card` slides in from the screen edge, `noodle` drops in from the menu bar first (top corners, skipped with Reduce motion) |
 | `expandSteps` | `false` | open How to on every card, handy while the moves are new |
 | `focus` | `all` | `neck`, `hips`, `all`, or `custom` after picking exercises by hand |
 | `holdDuringCalls` | `true` | skip cards while any app is using the mic or camera |
@@ -74,7 +76,7 @@ scripts/dev.sh show     # ...and show a card
 scripts/dev.sh intro    # ...and replay the intro
 ```
 
-`app/Resources/card.html` opens in a browser as a demo with prev/next, dark mode, and the intro. Serve `app/` locally so it can load the figures, e.g. `python3 -m http.server -d app`.
+`app/Resources/card.html` opens in a browser as a demo with every move, the peek, the noodle drop, dark mode, Reduce motion, and the intro. Serve `app/` locally so it can load the figures, e.g. `python3 -m http.server -d app`.
 
 ## Uninstall
 
